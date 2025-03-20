@@ -1,0 +1,28 @@
+project:
+  type: book
+
+book:
+  title: "mouse and human SComatic analysis"
+  author: "Alba Méndez Alejandre"
+  date: "10/01/2025"
+  chapters:
+    - index.qmd
+    - intro.qmd
+    - 1_DataProcessing.qmd
+    - 2_SComatic.qmd
+    - 3_AnnotationVariants.qmd
+    - 4_FunctionalAnalysis.qmd
+    - references.qmd
+
+bibliography: references.bib
+
+format:
+  html:
+    theme:
+      - cosmo
+      - brand
+  pdf:
+    documentclass: scrreprt
+
+
+
