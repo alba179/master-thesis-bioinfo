@@ -1,0 +1,503 @@
+# 3. Inference of velocity
+
+
+## Slingshot
+
+```{r}
+.libPaths("/home/albax/miniforge3/envs/seurat_v4/lib/R/library")
+
+library(Seurat)
+library(slingshot)
+
+library(grDevices)
+library(RColorBrewer)
+library(ggplot2)
+library(dplyr)
+library(viridis)
+
+```
+
+
+### Load filtered seurat object
+```{r}
+Esoph <- readRDS(file = "mcGinn_2021/output/esoph_star_filtered_mm10.rds")
+
+# Convert SeuratObject to SingleCellExperiment with Seurat function 'as.SingleCellExperiment()'
+Esoph_sce <- as.SingleCellExperiment(Esoph)
+
+# view idents
+Idents(Esoph) # Basal_1, Basal_2, Basal_3, Suprabasal, Epithelial_DEN
+
+# view metadata columns from sce experiment object, in order to know which one to use 
+Esoph_sce@colData
+
+# we will use annot_scvelo which has 5 levels: Basal_1, Basal_2, Basal_3, Suprabasal, Epithelial_DEN
+Esoph_sce@colData$annot_scvelo
+
+# add umap data to sce object
+umap_data <- Embeddings(Esoph[["umap"]])  # Extract UMAP data
+reducedDims(Esoph_sce)$UMAP <- umap_data
+
+factor(Esoph_sce$annot_scvelo)
+
+```
+
+
+```{r}
+# Run trajectory inference with slingshot
+set.seed(1)
+Esoph_sce <- slingshot(Esoph_sce, clusterLabels = 'annot_scvelo', reducedDim = 'UMAP')
+Esoph_sce$slingParams["star.clus"]
+Esoph_sce$slingParams["end.clus"]
+
+slingshot_obj <- SlingshotDataSet(Esoph_sce)
+slingshot_obj@slingParams$start.clus
+slingshot_obj@slingParams$end.clus
+```
+
+
+### Plot results
+
+```{r}
+
+# Plot trajectory (curves how they are called by Slingshot)
+png("slingshot_results/plots/Esoph_slingshot_mm10.png", width=1000, height=1000, units="px")
+
+breaks <- seq(min(slingPseudotime(Esoph_sce, na=FALSE), na.rm = TRUE), 
+               max(slingPseudotime(Esoph_sce, na=FALSE), na.rm = TRUE), 
+               length.out = 100)
+viridis_colors <- magma(100)
+plotcol <- viridis_colors[cut(slingPseudotime(Esoph_sce, na=FALSE), breaks = breaks)]
+
+layout(matrix(c(1, 2), ncol = 2), widths = c(2, 0.25), height = c(1,0.2))
+par(mar=c(5, 4, 4, 1), xpd=TRUE)  # Adjust margins for the main plot
+plot(reducedDims(Esoph_sce)$UMAP, col = plotcol, pch=16, asp = 1)
+
+lines(SlingshotDataSet(Esoph_sce), lwd=2, col='black')
+lines(SlingshotDataSet(Esoph_sce), type = 'lineages', lwd=2, col='black')
+
+par(mar = c(5, 1, 4, 1)) 
+plot.new() 
+plot.window(xlim = c(0, 1), ylim = c(0, 1))
+
+legend_image <- as.raster(viridis_colors, ncol=1)
+legend_width <- 0.7
+legend_height <- 0.25
+x_left <- (1 - legend_width) / 2
+x_right <- x_left + legend_width
+y_bottom <- (1 - legend_height) / 2
+y_top <- y_bottom + legend_height
+rasterImage(legend_image, x_left, y_bottom, x_right, y_top)
+text(x = 0.5, y = 0.65, labels = "Legend", cex = 1.2, font = 2, pos = 3)
+
+dev.off()
+
+```
+
+
+```{r}
+
+# Plot trajectory (curves how they are called by Slingshot)
+png("slingshot_results/plots/Esoph_slingshot_curves_mm10.png", width=1000, height=1000, units="px")
+
+breaks <- seq(min(slingPseudotime(Esoph_sce, na=FALSE), na.rm = TRUE), 
+               max(slingPseudotime(Esoph_sce, na=FALSE), na.rm = TRUE), 
+               length.out = 100)
+viridis_colors <- magma(100)
+plotcol <- viridis_colors[cut(slingPseudotime(Esoph_sce, na=FALSE), breaks = breaks)]
+
+layout(matrix(c(1, 2), ncol = 2), widths = c(2, 0.25), height = c(1,0.2))
+par(mar=c(5, 4, 4, 1), xpd=TRUE)  # Adjust margins for the main plot
+plot(reducedDims(Esoph_sce)$UMAP, col = plotcol, pch=16, asp = 1)
+
+lines(SlingshotDataSet(Esoph_sce), lwd=2, col='black')
+# lines(SlingshotDataSet(Esoph_sce), type = 'lineages', lwd=2, col='black')
+
+par(mar = c(5, 1, 4, 1)) 
+plot.new() 
+plot.window(xlim = c(0, 1), ylim = c(0, 1))
+
+legend_image <- as.raster(viridis_colors, ncol=1)
+legend_width <- 0.7
+legend_height <- 0.25
+x_left <- (1 - legend_width) / 2
+x_right <- x_left + legend_width
+y_bottom <- (1 - legend_height) / 2
+y_top <- y_bottom + legend_height
+rasterImage(legend_image, x_left, y_bottom, x_right, y_top)
+text(x = 0.5, y = 0.65, labels = "Legend", cex = 1.2, font = 2, pos = 3)
+
+dev.off()
+
+```
+
+
+### Plot lineage structure
+```{r}
+
+palette_d <- c("#7A0403FF", "#FB8022FF", "#A2FC3CFF", "#28BBECFF", "#30123BFF")
+
+png("./velocity/slingshot_results/plots/Esoph_slingshot_trajectories_clusters_mm10.png", width=1000, height=1000, units="px")
+
+plot(reducedDims(Esoph_sce)$UMAP, col = palette_d[as.numeric(droplevels(Esoph_sce$annot_scvelo))], pch=16, asp = 1)
+
+lines(SlingshotDataSet(Esoph_sce), lwd=2, type = 'lineages', col = 'black')
+
+legend(x="topright", legend=c("Basal_1", "Basal_2", "Basal_3", "Suprabasal", "Epithelial_DEN"), col=palette_d[1:5], pch=16, cex=2)
+
+dev.off()
+```
+
+
+
+## scVelo
+
+### Load of .h5ad file
+
+```{python}
+#!/home/albax/miniforge3/envs/ame python3
+# -*- coding: utf-8 -*-
+"""
+Created on Jul 26 2024
+
+@author: albax
+"""
+import sys
+import os
+
+# Add the site-packages directory to sys.path
+specific_path = "/home/albax/miniforge3/envs/ame/lib/python3.10/site-packages"
+if specific_path not in sys.path:
+    sys.path.append(specific_path)
+
+sys.path.insert(0, '/home/albax/scvelo/scvelo')
+
+import scvelo as scv
+import scanpy as sc
+import scipy.sparse as sp
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+from matplotlib.colors import ListedColormap
+
+adata = scv.read("../Esoph.h5ad", cache=True)
+
+adata
+adata.layers.keys() # should include spliced and unspliced
+adata.layers['spliced'] # check presence
+adata.layers['unspliced'] # check presence
+adata.var_names = adata.var['_index']
+
+scv.pp.filter_and_normalize(adata, min_shared_counts=20, n_top_genes=2000)
+
+######## deprecated: 
+# scv.pp.moments(adata, n_pcs=30, n_neighbors=30)
+################
+
+# 2. Compute PCA with Scanpy
+sc.pp.pca(adata, n_comps=30)
+
+# 2. Compute neighbors with Scanpy
+sc.pp.neighbors(adata, n_pcs=30, n_neighbors=30, use_rep='X_pca')
+
+scv.pp.moments(adata, n_pcs=30, n_neighbors=30) # uses connectivites from step before
+
+# rename levels from annot_scvelo slot
+# rename_dict = {
+#     0: 'Basal_1', # 1
+#     1: 'Basal_2', # 2
+#     2: 'Basal_3', # 3
+#     3: 'Suprabasal', # 4
+#     4: 'Epithelial_DEN', # 5
+# }
+
+# adata.obs['annot_scvelo'] = adata.obs['annot_scvelo'].replace(rename_dict)
+
+```
+
+Define functions and colors for plotting: 
+```{python}
+def save_stream(adata, file, format=["svg", "png"], **kwargs):
+    fig, ax = plt.subplots(figsize=(9, 7))  
+    scv.pl.velocity_embedding_stream(adata, ax=ax, arrow_size=1, cutoff_perc=10, **kwargs)
+    
+    for extension in format:
+        file_name = file + "." + extension
+        fig.savefig(file_name, format=extension, bbox_inches='tight')
+    
+    return fig, ax  
+
+
+def save_grid(adata, file, format=["svg", "png"], **kwargs):
+    fig, ax = plt.subplots(figsize=(9, 7))  
+    scv.pl.velocity_embedding_grid(adata, ax=ax, arrow_length=5, arrow_size=3, **kwargs) 
+
+    for extension in format:
+        file_name = file + "." + extension
+        fig.savefig(file_name, format=extension, bbox_inches='tight')
+    
+    return fig, ax 
+
+
+def save_embedding(adata, file, format=["svg", "png"], **kwargs):
+    fig, ax = plt.subplots(figsize=(9, 7)) 
+    scv.pl.velocity_embedding(adata, ax=ax, arrow_length=5, arrow_size=3, **kwargs)  
+    
+    for extension in format:
+        file_name = file + "." + extension
+        fig.savefig(file_name, format=extension, bbox_inches='tight')
+    
+    return fig, ax  
+
+
+palette = sns.color_palette("plasma_r")
+colors_d = ["#7A0403FF", "#FB8022FF", "#A2FC3CFF", "#30123BFF", "#28BBECFF"]
+palette_d = sns.color_palette(colors_d)
+
+```
+
+### Stochastic model
+```{python}
+
+scv.tl.velocity(adata, mode ="stochastic") # not good model
+scv.tl.velocity_graph(adata, n_jobs=6) # number of cores to use
+
+# scv.pl.pca(adata, color="annot_scvelo")
+# scv.pl.umap(adata, color="annot_scvelo")
+
+```
+
+#### Save plots for stochastic model
+
+```{python}
+fig_stream_stoc, ax_stream_stoc = save_stream(adata, file="scvelo_results/plots/Esoph_stream_stoch", format=['svg', 'png'], basis="umap", color="annot_scvelo", palette=palette_d, figsize=(9, 7), legend_loc='right margin', title = "Stochastic model (stream)")
+
+fig_grid_stoc, ax_grid_stoc = save_grid(adata, file="scvelo_results/plots/Esoph_grid_stoch", format=['svg', 'png'], basis='umap', color="annot_scvelo", palette=palette_d, figsize=(9, 7), legend_loc='right margin', title = "Stochastic model (grid)" )
+
+fig_embedding_stoc, ax_embedding_stoc = save_embedding(adata, file="scvelo_results/plots/Esoph_veloc_stoch", format=['svg', 'png'], basis="umap", color="annot_scvelo", palette=palette_d, figsize=(9, 7), legend_loc='right margin', dpi=200, title = "Stochastic model (embedding)")
+
+```
+
+```{python}
+# grid layout for stoc (run everything as chunk)
+fig_combined, axs = plt.subplots(1, 3, figsize=(27, 7))
+
+axs[0].imshow(fig_stream_stoc.canvas.renderer.buffer_rgba())
+axs[0].axis('off')
+axs[1].imshow(fig_grid_stoc.canvas.renderer.buffer_rgba())
+axs[1].axis('off')
+axs[2].imshow(fig_embedding_stoc.canvas.renderer.buffer_rgba())
+axs[2].axis('off') 
+
+combined_file_path = "scvelo_results/plots/Esoph_combined_plots_stoc"
+fig_combined.tight_layout()
+fig_combined.savefig(combined_file_path + '_mm10.svg', format='svg', bbox_inches='tight')
+fig_combined.savefig(combined_file_path + '_mm10.png', format='png', dpi=300, bbox_inches='tight')
+plt.show()
+
+```
+
+Save the .h5ad file with stochastic model
+```{python}
+del adata.raw
+adata.var.rename(columns={'_index': 'index'}, inplace=True)
+adata.obs.rename(columns={'_index': 'index'}, inplace=True)
+
+adata.write(filename = "scvelo_results/Esoph_stochastic_mm10.h5ad", compression='gzip')
+
+```
+
+
+### Deterministic model
+
+```{python}
+scv.tl.velocity(adata, mode = "deterministic")
+scv.tl.velocity_graph(adata, n_jobs=6)
+# scv.pl.velocity_embedding_stream(adata, basis="umap", color="annot_scvelo")
+
+# scv.pl.pca(adata, color="annot_scvelo")
+# scv.pl.umap(adata, color="annot_scvelo")
+
+```
+
+
+#### Save plots of deterministic model
+
+```{python}
+fig_stream_det, ax_stream_det = save_stream(adata, file="scvelo_results/plots/Esoph_stream_det", format=['svg', 'png'], basis="umap", color="annot_scvelo", palette=palette_d, figsize=(9, 7), legend_loc='right margin', title = "Deterministic model (stream)")
+
+fig_grid_det, ax_grid_det = save_grid(adata, file="scvelo_results/plots/Esoph_grid_det", format=['svg', 'png'], basis='umap', color="annot_scvelo", palette=palette_d, figsize=(9, 7), legend_loc='right margin', title = "Deterministic model (grid)" )
+
+fig_embedding_det, ax_embedding_det = save_embedding(adata, file="scvelo_results/plots/Esoph_veloc_det", format=['svg', 'png'], basis="umap", color="annot_scvelo", palette=palette_d, figsize=(9, 7), legend_loc='right margin', dpi=200, title = "Deterministic model (embedding)")
+
+```
+
+
+```{python}
+# grid layout for deterministic (run everything as chunk)
+fig_combined, axs = plt.subplots(1, 3, figsize=(27, 7))
+
+axs[0].imshow(fig_stream_det.canvas.renderer.buffer_rgba())
+axs[0].axis('off')
+axs[1].imshow(fig_grid_det.canvas.renderer.buffer_rgba())
+axs[1].axis('off')
+axs[2].imshow(fig_embedding_det.canvas.renderer.buffer_rgba())
+axs[2].axis('off') 
+
+combined_file_path = "scvelo_results/plots/Esoph_combined_plots_det"
+fig_combined.tight_layout()
+fig_combined.savefig(combined_file_path + '_mm10.svg', format='svg', bbox_inches='tight')
+fig_combined.savefig(combined_file_path + '_mm10.png', format='png', dpi=300, bbox_inches='tight')
+plt.show()
+
+```
+
+Save the .h5ad file with dererministic model
+```{python}
+del adata.raw
+adata.var.rename(columns={'_index': 'index'}, inplace=True)
+adata.obs.rename(columns={'_index': 'index'}, inplace=True)
+
+adata.write(filename = "scvelo_results/Esoph_deterministic_mm10.h5ad", compression='gzip')
+
+```
+
+
+### Dynamical model
+
+```{python}
+adata = adata[:, adata.var['highly_variable']]  # Only use highly variable genes
+scv.tl.recover_dynamics(adata, n_jobs=6)
+scv.tl.velocity(adata, mode = "dynamical")
+scv.tl.velocity_graph(adata, n_jobs=6)
+
+scv.pl.velocity_embedding_stream(adata, basis="umap", color="annot_scvelo_names")
+
+# scv.pl.pca(adata, color="annot_scvelo")
+# scv.pl.umap(adata, color="annot_scvelo")
+
+```
+
+
+#### Save plots for dynamical model
+
+```{python}
+fig_stream_dyn, ax_stream_dyn = save_stream(adata, file="scvelo_results/plots/Esoph_stream_dyn", format=['svg', 'png'], basis="umap", color="annot_scvelo", palette=palette_d, figsize=(9, 7), legend_loc='right margin', title = "Dynamical model (stream)")
+
+fig_grid_dyn, ax_grid_dyn = save_grid(adata, file="scvelo_results/plots/Esoph_grid_det", format=['svg', 'png'], basis='umap', color="annot_scvelo", palette=palette_d, figsize=(9, 7), legend_loc='right margin', title = "Dynamical model (grid)" )
+
+fig_embedding_dyn, ax_embedding_dyn = save_embedding(adata, file="scvelo_results/plots/Esoph_veloc_dyn", format=['svg', 'png'], basis="umap", color="annot_scvelo", palette=palette_d, figsize=(9, 7), legend_loc='right margin', dpi=200, title = "Dynamical model (embedding)")
+
+```
+
+
+```{python}
+# grid layout for dynamical model (run everything as chunk)
+fig_combined, axs = plt.subplots(1, 3, figsize=(27, 7))
+
+axs[0].imshow(fig_stream_dyn.canvas.renderer.buffer_rgba())
+axs[0].axis('off')
+axs[1].imshow(fig_grid_dyn.canvas.renderer.buffer_rgba())
+axs[1].axis('off')
+axs[2].imshow(fig_embedding_dyn.canvas.renderer.buffer_rgba())
+axs[2].axis('off') 
+
+combined_file_path = "scvelo_results/plots/Esoph_combined_plots_dyn"
+fig_combined.tight_layout()
+fig_combined.savefig(combined_file_path + '_mm10.svg', format='svg', bbox_inches='tight')
+fig_combined.savefig(combined_file_path + '_mm10.png', format='png', dpi=300, bbox_inches='tight')
+plt.show()
+
+```
+
+Save the .h5ad file with dynamical model
+```{python}
+del adata.raw
+adata.var.rename(columns={'_index': 'index'}, inplace=True)
+adata.obs.rename(columns={'_index': 'index'}, inplace=True)
+
+adata.write(filename = "scvelo_results/Esoph_dynamical_mm10.h5ad", compression='gzip')
+
+```
+
+#### Coherence/Confidence
+
+```{python}
+adata_re = scv.read("scvelo_results/Esoph_dynamical_mm10.h5ad", cache=True)
+adata_re.var_names = adata_re.var['index']
+adata_re
+```
+
+```{python}
+scv.tl.velocity_confidence(adata)
+scv.pl.scatter(adata, basis='umap', color=['velocity_length', 'velocity_confidence'], color_map='coolwarm', perc=[0, 100], save="scvelo_results/plots/Esoph_dyn_confidence.png")
+
+adata.obs['annot_scvelo_names'] = adata.obs['annot_scvelo_names'].astype('category')
+scv.tl.rank_velocity_genes(adata, groupby='annot_scvelo_names', min_corr=0.3)
+df = scv.get_df(adata.uns['rank_velocity_genes']['names'])
+df.to_csv("scvelo_results/Esoph_dyn_genes_rank.csv")
+
+```
+
+### Full plots
+
+```{python}
+import matplotlib.pyplot as plt
+import io
+
+def get_image_data(fig):
+    """ Convert a Matplotlib figure to an image array. """
+    buf = io.BytesIO()
+    fig.savefig(buf, format='png', bbox_inches='tight', pad_inches=0)
+    buf.seek(0)
+    img = plt.imread(buf)
+    buf.close()
+    return img
+
+for fig in [fig_stream_dyn, fig_grid_dyn, fig_embedding_dyn, 
+            fig_stream_det, fig_grid_det, fig_embedding_det, 
+            fig_stream_stoc, fig_grid_stoc, fig_embedding_stoc]:
+    fig.canvas.draw()
+
+fig_combined, axs = plt.subplots(3, 3, figsize=(27, 21)) 
+
+image_data = [
+    get_image_data(fig_stream_dyn),
+    get_image_data(fig_grid_dyn),
+    get_image_data(fig_embedding_dyn),
+    get_image_data(fig_stream_det),
+    get_image_data(fig_grid_det),
+    get_image_data(fig_embedding_det),
+    get_image_data(fig_stream_stoc),
+    get_image_data(fig_grid_stoc),
+    get_image_data(fig_embedding_stoc)
+]
+
+for ax, img in zip(axs.flat, image_data):
+    ax.imshow(img)
+    ax.axis('off')  # Hide the axes
+
+
+fig_combined.tight_layout()
+fig_combined.savefig("scvelo_results/plots/Esoph_combined_plots_mm10.png", format='png', dpi=300, bbox_inches='tight')
+fig_combined.savefig("scvelo_results/plots/Esoph_combined_plots_mm10.svg", format='svg', dpi=300, bbox_inches='tight')
+fig_combined.savefig("scvelo_results/plots/Esoph_combined_plots_mm10.pdf", format='pdf', dpi=300, bbox_inches='tight')
+plt.show()
+
+```
+
+
+### Cycling progenitors
+
+```{python}
+scv.tl.score_genes_cell_cycle(adata_re)
+
+# Plot cycling progenitors
+scv.pl.scatter(adata_re, color_gradients=['S_score', 'G2M_score'], edgecolor='gainsboro', linewidths=0.1, colorbar=True, smooth=False, perc=[0, 100], size=6, alpha=1, save="scvelo_results/plots/Esoph_filt_dyn_cycling_progenitors.svg")
+scv.pl.scatter(adata_re, color_gradients=['S_score', 'G2M_score'], edgecolor='gainsboro', linewidths=0.1, colorbar=True, smooth=False, perc=[0, 100], size=6, alpha=1, dpi=300, save="scvelo_results/plots/Esoph_filt_dyn_cycling_progenitors.png")
+
+scv.pl.scatter(adata_re, basis='umap', color='phase', palette=['silver', 'coral', 'royalblue'], size=6, alpha=0.4, dpi=300, title=f"Cell phase, dynamical model", save="scvelo_results/plots/Esoph_filt_dyn_phase.svg")
+scv.pl.scatter(adata_re, basis='umap', color='phase', palette=['silver', 'coral', 'royalblue'], size=6, alpha=0.4, dpi=300, title=f"Cell phase, dynamical model", save="scvelo_results/plots/Esoph_filt_dyn_phase.png")
+
+```
+

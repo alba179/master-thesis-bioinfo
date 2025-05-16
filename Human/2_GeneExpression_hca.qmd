@@ -1,0 +1,830 @@
+---
+title: "2 - Gene Expression in esophagus HCA dataset"
+format:
+  html:
+    toc: true
+jupyter:
+  kernel: python3
+fig-show: hold
+execute:
+  eval: false
+author: Alba Mendez Alejandre
+date: 04-2025
+---
+
+# Import libraries
+```{r}
+
+.libPaths("/home/albax/miniforge3/envs/seurat_v4/lib/R/library")
+
+if(.Platform$OS.type == "linux") Sys.setenv(PATH= paste("/home/albax/miniforge3/envs/seurat_v4/lib",Sys.getenv()["PATH"],sep=";"))
+
+library(reticulate)
+
+use_condaenv("/home/albax/miniforge3/envs/seurat_v4", required = TRUE)
+py_config()
+
+import("kaleido")
+import("orca")
+# import("numpy")
+# import("leidenalg")
+# import("pandas")
+
+library(Seurat) 
+library(dplyr) 
+library(ggplot2) 
+library(plotly) 
+library(SingleCellExperiment) 
+# library(httpgd) 
+library(patchwork)
+library(dplyr)
+library(tidyverse)
+library(tibble)
+
+color.list <- RColorBrewer::brewer.pal(12,"Paired")
+color.list <- c(color.list,RColorBrewer::brewer.pal(12,"Set3"))
+
+# Palette from orange to violet
+palette <- scale_color_viridis_c(option = "plasma", direction = -1) # continue colors palette
+palette_d <- scale_color_viridis_d(option = "turbo", direction = -1) # discrete colors palette
+
+projectPath <- setwd("/home/albax/human_esophagus") # where we are
+
+```
+
+
+
+# Import RDS
+```{r}
+my_esoph <- readRDS(file = "./data/hca_myesoph.rds")
+my_esoph
+oesopha <- readRDS(file = "/home/dario/TFM/2019.12.31_Meyer/singlecell/paper_analysis/oesophagus_ts.rds")
+oesopha <- UpdateSeuratObject(oesopha)
+oesopha
+
+hca_esoph <- readRDS(file = "./data/hca_esoph_with_annotations.rds")
+hca_esoph <- UpdateSeuratObject(hca_esoph)
+hca_esoph
+# An object of class Seurat 
+# 24245 features across 87947 samples within 1 assay 
+# Active assay: RNA (24245 features, 0 variable features)
+#  3 layers present: counts, data, scale.data
+#  2 dimensional reductions calculated: pca, umap
+DefaultAssay(hca_esoph) <- "RNA"
+```
+
+Functions for plots: 
+```{r}
+generate_plotly_boxplot <- function(data_table, col_to_plot) {
+    fig <- data_table %>%
+        plot_ly(
+            x = ~Group,
+            y = ~data_table[[col_to_plot]],
+            split = ~Group,
+            type = 'box',
+            boxmean = TRUE,
+            showlegend = FALSE,
+            text = ~Gene, 
+            hoverinfo = 'text+x'
+        )
+    fig <- fig %>% layout(yaxis = list(rangemode="tozero", title = col_to_plot), xaxis = list(tickangle = 45), title = "Gene expression")
+
+    return(fig)
+}
+
+generate_plotly_boxplot_ggplot2 <- function(data_table, col_to_plot) {
+  # Create the boxplot using ggplot2
+  p <- ggplot(data_table, aes(x = Group, y = data_table[[col_to_plot]], fill = Group)) +
+    geom_boxplot() +
+    stat_summary(fun = "mean", geom = "line", size = 2, color = "red") + # Adding boxplot mean
+    theme_minimal() +
+    coord_cartesian(ylim = c(0, 2)) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1), legend.position = "none") +
+    labs(title = "Gene expression", x = "Group", y = "Expression ($RNA@data)")
+
+  # fig <- ggplotly(p)
+
+  return(p)
+}
+
+```
+
+# Expression for specific sets, gene by gene
+
+```{r}
+# common cancer genes from MartinCorena, 2018
+# genes not foun in object: ADAM19, BAI3, MUC17, PPP1R3A, PTPRT, SALL1, SCN1A, SPHKAP
+esoph_feat <- c("ADAM19", "ADAMTS18", "AJUBA", "AKT1", "AKT2", "APOB", "ARID1A", "ARID2", "AURKA", "BAI3", "BRAF", "CASP8", "CCND1", "CDH1", "CDKN2A", "CR2", "CREBBP", "CUL3", "DICER1", "EGFR", "EPHA2", "ERBB2", "ERBB3", "ERBB4", "EZH2", "FAT1", "FAT4", "FBXW7", "FGFR1", "FGFR2", "FGFR3", "FLG2", "GRIN2A", "GRM3", "HRAS", "IRF6", "KCNH5", "KEAP1", "KMT2A", "KMT2C", "KMT2D", "KRAS", "MET",  "MUC17", "NF1", "NFE2L2", "NOTCH1", "NOTCH2", "NOTCH3", "NOTCH4", "NRAS", "NSD1", "PCED1B", "PIK3CA", "PLCB1", "PPP1R3A", "PREX2", "PTCH1", "PTEN", "PTPRT", "RB1", "RBM10", "SALL1", "SCN1A", "SCN11A", "SETD2", "SMAD4", "SMO", "SPHKAP", "SOX2",  "SUFU", "TP53", "TP63", "TRIOBP", "ZNF750", "TGFBR2") 
+
+# intOGen genes foun to be mutated
+intogen_mutated <- c('TCF7L2', 'BARD1', 'NCOR1', 'NUTM1', 'RBM39', 'CDKN1A', 'SETD2', 'KMT2D', 'NACA', 'CCDC6', 'MAX', 'MAP2K1', 'RPL22', 'RAP1B', 'CDH1', 'SIN3A', 'CAMTA1', 'PABPC1', 'CUX1', 'DDX6', 'UBE2A', 'TBL1XR1', 'ACSL3', 'DUSP16', 'EIF1AX', 'MACC1', 'PI4KA', 'KRAS', 'UBXN11', 'HLA-C', 'FGFR1', 'NKTR', 'ARAF', 'KDM5A', 'CUL3', 'ETV6', 'PCM1', 'ZMYM2', 'HLA-B', 'DDX3X', 'FHIT', 'NCOA2', 'HSP90AB1', 'PICALM', 'AKAP9', 'SNX29', 'NOTCH2', 'POLE', 'ARNT', 'AFDN', 'PTPN14', 'PARP4', 'ERBB2', 'CCND1', 'MAML2', 'ACVR1', 'PRDM2', 'NFKBIE', 'TCF12', 'HSP90AA1', 'HNF1A', 'MIB2', 'BIRC6', 'SMARCA4', 'DROSHA', 'ARHGAP5', 'NRG1', 'MLLT6', 'TOP2A', 'DOT1L', 'EGFR', 'PER3', 'IRF1', 'ALPK1', 'CDKN1B', 'CLTCL1', 'KLF6', 'FBXO11', 'MSI2', 'ESRRA', 'PCBP1', 'TRAF7', 'POU2F2', 'EFTUD2', 'STAT6', 'KLF5', 'PTPN3', 'RNF213', 'CHD2', 'RAF1', 'BRD4', 'LSM14A', 'BCL10', 'SND1', 'ARID1B')
+
+```
+
+
+## common cancer genes MartinCorena 2018
+DO NOT RUN:
+```{r, exec=FALSE}
+# 1. Get normalized data from RNA slot for the genes we are interested in
+genes_expr <- FetchData(hca_esoph, vars=esoph_feat, slot="data", clean="none")
+
+# 2. Change barcodes to rownames and genes to colnames
+genes_expr <- rownames_to_column(genes_expr, "Cell")
+
+# 3. long-format table with the expression for each gene in each barcode
+genes_expr_long <- reshape2::melt(genes_expr, id="Cell", variable.name="Gene", value.name="Expression")
+
+# 4. remove cells without expressed genes
+genes_expr_long <- genes_expr_long[genes_expr_long$Expression > 0, ] 
+
+# 5. sum the total gene expression for each row, each cell
+expr_xcell <- Matrix::rowSums(FetchData(hca_esoph, vars=esoph_feat, slot="data", clean="none")) 
+
+# 6.add the total expression per cell to the plot (without removing cells without expressed genes)
+expr_xcell_df <- data.frame(Cell = names(expr_xcell), Gene = rep("Mean per cell", length(expr_xcell)), Expression = unname(expr_xcell))
+genes_expr_long <- rbind(genes_expr_long, expr_xcell_df)
+
+fig <- generate_plotly_boxplot(genes_expr_long)
+fig
+
+```
+
+
+Correct the code above:
+```{r}
+# 1. Get normalized data from RNA slot for the genes we are interested in
+genes_expr <- FetchData(hca_esoph, vars=esoph_feat, slot="data", clean="none")
+
+# 2. Change barcodes to rownames and genes to colnames
+genes_expr <- rownames_to_column(genes_expr, "Cell")
+
+# 3. long-format table with the expression for each gene in each barcode
+genes_expr_long <- reshape2::melt(genes_expr, id="Cell", variable.name="Gene", value.name="Expression")
+
+# 4. remove cells without expressed genes
+genes_expr_long <- genes_expr_long[genes_expr_long$Expression > 0, ] 
+
+# 5. sum the total gene expression for each row, each cell
+expr_xcell <- Matrix::rowSums(FetchData(hca_esoph, vars=esoph_feat, slot="data", clean="none")) 
+expr_xcell <- expr_xcell[expr_xcell > 0]
+
+# 6.add the total expression per cell to the plot (removing cells without expressed genes)
+expr_xcell_df <- data.frame(Cell = names(expr_xcell), Gene = rep("Total expression per cell", length(expr_xcell)), Expression = unname(expr_xcell))
+genes_expr_long <- rbind(genes_expr_long, expr_xcell_df)
+
+fig <- generate_plotly_boxplot(genes_expr_long)
+fig
+```
+
+
+With total mean gene expression per cell:
+```{r}
+# 1. Get normalized data from RNA slot for the genes we are interested in
+genes_expr_fetch <- FetchData(hca_esoph, vars=esoph_feat, slot="data", clean="none")
+
+# 2. Change barcodes to rownames and genes to colnames
+genes_expr <- rownames_to_column(genes_expr_fetch, "Cell")
+
+# 3. long-format table with the expression for each gene in each barcode
+genes_expr_long <- reshape2::melt(genes_expr, id="Cell", variable.name="Gene", value.name="Expression")
+
+# 4. remove cells without expressed genes
+genes_expr_long <- genes_expr_long[genes_expr_long$Expression > 0, ] 
+
+# 5. sum the total gene expression for each row, each cell
+total_expr_xcell <- Matrix::rowSums(genes_expr_fetch) 
+
+# 6. Count the number of genes with >0 expression, per cell
+num_expressed_genes <- Matrix::rowSums(genes_expr_fetch > 0)
+
+# 7. Remove cells with no expressed genes
+total_expr_xcell <- total_expr_xcell[num_expressed_genes > 0]
+num_expressed_genes <- num_expressed_genes[num_expressed_genes > 0]
+
+# 8. Compute the mean gene expression per cell
+mean_expr_xcell <- total_expr_xcell / num_expressed_genes
+
+# 9. add the total mean gene expression per cell to the plot 
+mean_expr_xcell_df <- data.frame(Cell = names(mean_expr_xcell), Gene = rep("Total mean gene expression per cell", length(mean_expr_xcell)), Expression = unname(mean_expr_xcell))
+genes_expr_long <- rbind(genes_expr_long, mean_expr_xcell_df, expr_xcell_df[expr_xcell_df$Gene %in% c("Total expression per cell"), ])
+
+gene_mean_expr <- genes_expr_long %>%
+  group_by(Gene) %>%
+  summarise(mean_expression = mean(Expression, na.rm = TRUE))
+
+gene_mean_expr <- gene_mean_expr[order(gene_mean_expr$mean_expression), ] # Order genes by their mean expression (ascending order)
+genes_expr_long$Gene <- factor(genes_expr_long$Gene, levels = gene_mean_expr$Gene)
+
+genes_expr_long_excluded <- genes_expr_long[!genes_expr_long$Gene %in% c("Total mean gene expression per cell", "Total expression per cell"), ]
+genes_expr_long_final <- rbind(genes_expr_long_excluded, genes_expr_long[genes_expr_long$Gene %in% c("Total mean gene expression per cell", "Total expression per cell"), ])
+
+fig <- generate_plotly_boxplot(genes_expr_long_final)
+fig <- fig %>% layout(
+  yaxis = list( 
+    title = "Normalized expression")
+)
+fig
+htmlwidgets::saveWidget(as_widget(fig), "gene_expression/plots/common_cancer_genes_nCounts_norm.html")
+
+fig <- fig %>% layout(
+  yaxis = list(
+    type = "log", 
+    title = "Expression (log)",
+    tickmode = "array", 
+    tickvals = c(1, 10, 100, 1000, 10000), 
+    ticktext = c("1", "10", "100", "1000", "10000")  
+  )
+)
+fig
+
+htmlwidgets::saveWidget(as_widget(fig), "gene_expression/plots/common_cancer_genes_nCounts_norm_log.html")
+
+```
+
+```{r, exec=FALSE}
+# genes_expr_long_final
+
+```
+
+## intOGen mutated genes
+
+With total expression per cell:
+```{r}
+# 1. Get normalized data from RNA slot for the genes we are interested in
+genes_expr_fetch <- FetchData(hca_esoph, vars=intogen_mutated, slot="data", clean="none")
+
+# 2. Change barcodes to rownames and genes to colnames
+genes_expr <- rownames_to_column(genes_expr_fetch, "Cell")
+
+# 3. long-format table with the expression for each gene in each barcode
+genes_expr_long <- reshape2::melt(genes_expr, id="Cell", variable.name="Gene", value.name="Expression")
+
+# 4. remove cells without expressed genes
+genes_expr_long <- genes_expr_long[genes_expr_long$Expression > 0, ] 
+
+# 5. sum the total gene expression for each row, each cell
+expr_xcell <- Matrix::rowSums(genes_expr_fetch) 
+expr_xcell <- expr_xcell[expr_xcell > 0]
+
+# 6.add the total expression per cell to the plot (removing cells without expressed genes)
+expr_xcell_df <- data.frame(Cell = names(expr_xcell), Gene = rep("Total expression per cell", length(expr_xcell)), Expression = unname(expr_xcell))
+genes_expr_long <- rbind(genes_expr_long, expr_xcell_df)
+
+fig <- generate_plotly_boxplot(genes_expr_long)
+fig
+```
+
+With total mean gene expression per cell:
+```{r}
+# 1. Get normalized data from RNA slot for the genes we are interested in
+genes_expr_fetch <- FetchData(hca_esoph, vars=intogen_mutated, slot="data", clean="none")
+
+# 2. Change barcodes to rownames and genes to colnames
+genes_expr <- rownames_to_column(genes_expr_fetch, "Cell")
+
+# 3. long-format table with the expression for each gene in each barcode
+genes_expr_long <- reshape2::melt(genes_expr, id="Cell", variable.name="Gene", value.name="Expression")
+
+# 4. remove cells without expressed genes
+genes_expr_long <- genes_expr_long[genes_expr_long$Expression > 0, ] 
+
+# 5. sum the total gene expression for each row, each cell
+total_expr_xcell <- Matrix::rowSums(genes_expr_fetch) 
+
+# 6. Count the number of genes with >0 expression, per cell
+num_expressed_genes <- Matrix::rowSums(genes_expr_fetch > 0)
+
+# 7. Remove cells with no expressed genes
+total_expr_xcell <- total_expr_xcell[num_expressed_genes > 0]
+num_expressed_genes <- num_expressed_genes[num_expressed_genes > 0]
+
+# 8. Compute the mean expression per cell
+mean_expr_xcell <- total_expr_xcell / num_expressed_genes
+
+# 7. add the total mean gene expression per cell to the plot 
+mean_expr_xcell_df <- data.frame(Cell = names(mean_expr_xcell), Gene = rep("Total mean gene expression per cell", length(mean_expr_xcell)), Expression = unname(mean_expr_xcell))
+genes_expr_long <- rbind(genes_expr_long, mean_expr_xcell_df)
+
+gene_mean_expr <- genes_expr_long %>%
+  group_by(Gene) %>%
+  summarise(mean_expression = mean(Expression, na.rm = TRUE))
+
+gene_mean_expr <- gene_mean_expr[order(gene_mean_expr$mean_expression), ] # Order genes by their mean expression (ascending order)
+genes_expr_long$Gene <- factor(genes_expr_long$Gene, levels = gene_mean_expr$Gene)
+
+genes_expr_long_excluded <- genes_expr_long[!genes_expr_long$Gene %in% c("Total mean gene expression per cell", "Total expression per cell"), ]
+genes_expr_long_final <- rbind(genes_expr_long_excluded, genes_expr_long[genes_expr_long$Gene %in% c("Total mean gene expression per cell", "Total expression per cell"), ])
+
+fig <- generate_plotly_boxplot(genes_expr_long_final)
+htmlwidgets::saveWidget(as_widget(fig), "gene_expression/plots/intOGen_genes_nCounts_norm.html")
+
+fig <- fig %>% layout(
+  yaxis = list(
+    type = "log", 
+    title = "Expression (log)",
+    tickmode = "array", 
+    tickvals = c(1, 10, 100, 1000, 10000), 
+    ticktext = c("1", "10", "100", "1000", "10000")  
+  )
+)
+fig
+htmlwidgets::saveWidget(as_widget(fig), "gene_expression/plots/intOGen_genes_nCounts_norm_log.html")
+
+```
+
+
+# Grouped gene expression
+We are going to calculate the average expression os specific sets of genes. For that, we are going to do:
+
+
+"Avg_expression_per_cell_epi_genes" es la expresión media normalizada por célula de TODOS los genes del epi panel (drivers).
+
+"Avg_expression_per_cell_all_mut_genes" es la expresión media normalizada por célula de TODOS los genes que se encuentran mutados (incluidos drivers, dupluicated...).
+
+"Avg_expresion_per_cell_epi_mut_genes" es la expresión media normalizada por célula de los genes drivers del epi panel que se encuentran mutados
+
+- All *mutated* genes + all genes 
+- common cancer *mutated* genes + common cancer genes
+- intOGen *mutated* genes + intogen genes
+
+1. Calcular la expresión media por gen mutado -> Avg_expression_per_gene_all_mut_genes
+2. Calcular la expresión media por gen driver (mutado o no) de common cancer -> Avg_expression_common_cancer_genes
+3. Calcular la expresión media por gen mutado de intOGen -> Avg_expression_intogen_mut_genes
+
+Para calcular los gene expression plots, vamos a recapitular:
+- @assays$RNA@counts -> contiene los raw counts
+- @assays$RNA@data -> contiene los log1p counts = log(1 + x). Esta transofrmación se hace en datasets que contienen muchos numeros pequeños, cercanos a 0 (skewed data).
+- @assays$RNA@scale.data -> contiene Z-scored (mean=0, sd=1) expression values, typically after regressing out unwanted. For visualization in PCA or UMAP. 
+
+
+
+```{r}
+mutated_genes <- read.table("/home/albax/dario_TFM/singlecell/gene_expression/mutated_genes_hca.txt", sep = "\t", header = TRUE)
+
+colnames(mutated_genes)
+```
+
+
+
+## 1. Calcular la expresión media por gen mutado -> Avg_expression_per_gene_all_mut_genes
+```{r}
+# 1. Get normalized data from RNA slot for the genes we are interested in
+genes_expr_fetch <- FetchData(hca_esoph, vars=mutated_genes$all_mutated_genes, slot="data", clean="none")
+
+# 2. sum the total gene expression for each row, each cell
+# total_expr_xcell <- Matrix::rowSums(genes_expr_fetch) 
+
+# 2. sum the total gene expression for each column, each gene
+total_expr_xgene <- Matrix::colSums(genes_expr_fetch)
+
+# 3. Count the number of genes with >0 expression, per cell
+# num_expressed_genes <- Matrix::rowSums(genes_expr_fetch > 0)
+
+# 3. Count the number of cells with >0 expression, per gene
+num_expressed_cells <- Matrix::colSums(genes_expr_fetch > 0)
+
+# 4. Remove cells with no expressed genes
+# total_expr_xcell <- total_expr_xcell[num_expressed_genes > 0]
+# num_expressed_genes <- num_expressed_genes[num_expressed_genes > 0]
+
+# 4. Remove gens with no expressed cells
+total_expr_xgene <- total_expr_xgene[num_expressed_cells > 0]
+num_expressed_cells <- num_expressed_cells[num_expressed_cells > 0]
+
+# 5. Compute the mean expression of each gene per cell
+mean_expr_xcell <- total_expr_xgene / num_expressed_cells
+
+# 6. Put the data in a df
+expression_mutated <- data.frame(Gene = names(mean_expr_xcell), Group = rep("Avg_expression_per_gene_all_mut_genes", length(mean_expr_xcell)), Expression = unname(mean_expr_xcell))
+
+```
+
+
+## 2. Calcular la expresión media por gen mutado de common cancer -> Avg_expression_per_gene_common_cancer_mut_genes
+
+```{r}
+# 1. Get normalized data from RNA slot for the genes we are interested in
+genes_expr_fetch <- FetchData(hca_esoph, vars=mutated_genes$common_cancer_mutated_genes, slot="data", clean="none")
+
+# 2. sum the total gene expression for each row, each cell
+total_expr_xgene <- Matrix::colSums(genes_expr_fetch)
+
+# 3. Count the number of genes with >0 expression, per cell
+num_expressed_cells <- Matrix::colSums(genes_expr_fetch > 0)
+
+# 4. Remove cells with no expressed genes
+total_expr_xgene <- total_expr_xgene[num_expressed_cells > 0]
+num_expressed_cells <- num_expressed_cells[num_expressed_cells > 0]
+
+# 5. Compute the mean expression per cell
+mean_expr_xcell <- total_expr_xgene / num_expressed_cells
+
+# 6. Add the data to the df
+new_rows <- data.frame(Gene = names(mean_expr_xcell), 
+                       Group = rep("Avg_expression_per_gene_common_cancer_mut_genes", length(mean_expr_xcell)), 
+                       Expression = unname(mean_expr_xcell))
+
+# 7. Add the rows to the df
+expression_mutated <- rbind(expression_mutated, new_rows)
+
+```
+
+## 3. Calcular la expresión media por gen mutado de intOGen -> Avg_expression_per_gene_intogen_mut_genes
+
+```{r}
+# 1. Get normalized data from RNA slot for the genes we are interested in
+genes_expr_fetch <- FetchData(hca_esoph, vars=mutated_genes$intogen_mutated_genes, slot="data", clean="none")
+
+# 2. sum the total gene expression for each row, each cell
+total_expr_xgene <- Matrix::colSums(genes_expr_fetch)
+
+# 3. Count the number of genes with >0 expression, per cell
+num_expressed_cells <- Matrix::colSums(genes_expr_fetch > 0)
+
+# 4. Remove cells with no expressed genes
+total_expr_xgene <- total_expr_xgene[num_expressed_cells > 0]
+num_expressed_cells <- num_expressed_cells[num_expressed_cells > 0]
+
+# 5. Compute the mean expression per cell
+mean_expr_xcell <- total_expr_xgene / num_expressed_cells
+
+# 6. Add the data to the df
+new_rows <- data.frame(Gene = names(mean_expr_xcell), 
+                       Group = rep("Avg_expression_per_gene_intogen_mut_genes", length(mean_expr_xcell)), 
+                       Expression = unname(mean_expr_xcell))
+
+# 7. Add the rows to the df
+expression_mutated <- rbind(expression_mutated, new_rows)
+
+```
+
+
+## 4. Calcular la expresión media por gen (mutado o no) driver -> Avg_expression_per_gene_common_cancer_genes
+
+```{r}
+all_drivers <- c("ADAM29", "ADAMTS18", "AJUBA", "AKT1", "AKT2", "APOB", "ARID1A", "ARID2", "AURKA", "BAI3", "BRAF", "CASP8", "CCND1", "CDH1", "CDKN2A", "CR2", "CREBBP", "CUL3", "DICER1", "EGFR", "EPHA2", "ERBB2", "ERBB3", "ERBB4", "EZH2", "FAT1", "FAT4", "FBXW7", "FGFR1", "FGFR2", "FGFR3", "FLG2", "GRIN2A", "GRM3", "HRAS", "IRF6", "KCNH5", "KEAP1", "KMT2A", "KMT2C", "KMT2D", "KRAS", "MET", "MUC17", "NF1", "NFE2L2", "NOTCH1", "NOTCH2", "NOTCH3", "NOTCH4", "NRAS", "NSD1", "PCED1B", "PIK3CA", "PLCB1", "PPP1R3A", "PREX2", "PTCH1", "PTEN", "PTPRT", "RB1", "RBM10", "SALL1", "SCN11A", "SCN1A", "SETD2", "SMAD4", "SMO", "SOX2", "SPHKAP", "SUFU", "TP53", "TP63", "TRIOBP", "ZNF750", "TGFBR2")
+
+```
+
+
+```{r}
+# 1. Get normalized data from RNA slot for the genes we are interested in
+genes_expr_fetch <- FetchData(hca_esoph, vars=all_drivers, slot="data", clean="none")
+
+# 2. sum the total gene expression for each row, each cell
+total_expr_xgene <- Matrix::colSums(genes_expr_fetch)
+
+# 3. Count the number of genes with >0 expression, per cell
+num_expressed_cells <- Matrix::colSums(genes_expr_fetch > 0)
+
+# 4. Remove cells with no expressed genes
+total_expr_xgene <- total_expr_xgene[num_expressed_cells > 0]
+num_expressed_cells <- num_expressed_cells[num_expressed_cells > 0]
+
+# 5. Compute the mean expression per cell
+mean_expr_xcell <- total_expr_xgene / num_expressed_cells
+
+# 6. Add the data to the df
+new_rows <- data.frame(Gene = names(mean_expr_xcell), 
+                       Group = rep("Avg_expression_per_gene_common_cancer_genes", length(mean_expr_xcell)), 
+                       Expression = unname(mean_expr_xcell))
+
+# 7. Add the rows to the df
+expression_mutated <- rbind(expression_mutated, new_rows)
+
+```
+
+
+## 5. Calcular la expresión media por gen (mutado o no) driver -> Avg_expression_per_gene_intogen_genes
+
+```{r}
+all_intogen <- read.table("/home/albax/intogen/IntOGen-DriverGenes.tsv", sep="\t", header = TRUE)
+
+```
+
+
+```{r}
+# 1. Get normalized data from RNA slot for the genes we are interested in
+genes_expr_fetch <- FetchData(hca_esoph, vars=all_intogen$Symbol, slot="data", clean="none")
+
+# 2. sum the total gene expression for each row, each cell
+total_expr_xgene <- Matrix::colSums(genes_expr_fetch)
+
+# 3. Count the number of genes with >0 expression, per cell
+num_expressed_cells <- Matrix::colSums(genes_expr_fetch > 0)
+
+# 4. Remove cells with no expressed genes
+total_expr_xgene <- total_expr_xgene[num_expressed_cells > 0]
+num_expressed_cells <- num_expressed_cells[num_expressed_cells > 0]
+
+# 5. Compute the mean expression per cell
+mean_expr_xcell <- total_expr_xgene / num_expressed_cells
+
+# 6. Add the data to the df
+new_rows <- data.frame(Gene = names(mean_expr_xcell), 
+                       Group = rep("Avg_expression_per_gene_intogen_genes", length(mean_expr_xcell)), 
+                       Expression = unname(mean_expr_xcell))
+
+# 7. Add the rows to the df
+expression_mutated <- rbind(expression_mutated, new_rows)
+
+```
+
+## 6. Calcular la expresión media por gen (mutado o no) por célula -> Avg_expression_per_gene_all_genes
+
+```{r}
+all_genes <- rownames(hca_esoph$RNA$data)
+
+```
+
+
+```{r}
+# 1. Get normalized data from RNA slot for the genes we are interested in
+genes_expr_fetch <- FetchData(hca_esoph, vars=all_genes, slot="data", clean="none", as.sparse=TRUE)
+
+# 2. sum the total gene expression for each row, each cell
+total_expr_xgene <- Matrix::colSums(genes_expr_fetch)
+
+# 3. Count the number of genes with >0 expression, per cell
+num_expressed_cells <- Matrix::colSums(genes_expr_fetch > 0)
+
+# 4. Remove cells with no expressed genes
+total_expr_xgene <- total_expr_xgene[num_expressed_cells > 0]
+num_expressed_cells <- num_expressed_cells[num_expressed_cells > 0]
+
+# 5. Compute the mean expression per cell
+mean_expr_xcell <- total_expr_xgene / num_expressed_cells
+
+# 6. Add the data to the df
+new_rows <- data.frame(Gene = names(mean_expr_xcell), 
+                       Group = rep("Avg_expression_per_gene_all_genes", length(mean_expr_xcell)), 
+                       Expression = unname(mean_expr_xcell))
+
+# 7. Add the rows to the df
+expression_mutated <- rbind(expression_mutated, new_rows)
+
+```
+
+
+Add a column to the df named "Mutated" that can take two values: Only mutated, All.
+```{r}
+expression_mutated$Mutated <- ifelse(grepl("mut", expression_mutated$Group), "Only_mutated", "All")
+```
+
+
+Plot:
+
+```{r}
+fig <- generate_plotly_boxplot(expression_mutated, "LogExpression")
+fig
+# fig <- plot_ly(expression_mutated, x = ~Gene, y = ~Expression, color = ~Mutated, type = "box", colors = c("Only_mutated" = "#EF553B", "All" = "#636EFA")) %>%
+#   layout(yaxis = list(rangemode = "tozero"))
+
+htmlwidgets::saveWidget(as_widget(fig), "gene_expression/plots/grouped_gene_expression_nCounts_norm.html")
+
+fig <- generate_plotly_boxplot_ggplot2(expression_mutated, "LogExpression")
+fig
+
+ggsave(plot = fig, "gene_expression/plots/grouped_gene_expression_nCounts_norm_log.png", dpi = 300)
+ggsave(plot = fig, "gene_expression/plots/grouped_gene_expression_nCounts_norm_log.svg")
+ggsave(plot = fig, "gene_expression/plots/grouped_gene_expression_nCounts_norm_log.pdf")
+
+
+fig <- generate_plotly_boxplot_ggplot2(expression_mutated, "Expression")
+fig
+
+ggsave(plot = fig, "gene_expression/plots/grouped_gene_expression_nCounts_norm.png", dpi = 300)
+ggsave(plot = fig, "gene_expression/plots/grouped_gene_expression_nCounts_norm.svg")
+ggsave(plot = fig, "gene_expression/plots/grouped_gene_expression_nCounts_norm.pdf")
+
+```
+
+ViolinPlot:
+
+```{r}
+fig <- plot_ly(expression_mutated, y = ~Expression, split = ~Gene, type = "violin")
+fig <- fig %>% layout(yaxis = list(rangemode="tozero"))
+fig
+htmlwidgets::saveWidget(as_widget(fig), "gene_expression/plots/grouped_vlnplot_mutated_genes_nCounts_norm.html")
+
+```
+
+### Statiscal test
+Esperamos que Avg_expression_per_cell_common_cancer_mut_genes tenga menor media que Avg_expresion_per_cell_all_mut_genes.
+
+```{r}
+avg_expr_all_mut_genes <- expression_mutated$Expression[expression_mutated$Gene == "Avg_expression_per_cell_all_mut_genes"]
+avg_expr_common_cancer_mut_genes <- expression_mutated$Expression[expression_mutated$Gene == "Avg_expression_per_cell_common_cancer_mut_genes"]
+
+# H0: we expect a lower average value (gene expression) in cancer mutated drivers than in overall mutated genes
+result <- wilcox.test(avg_expr_common_cancer_mut_genes, avg_expr_all_mut_genes, 
+                      alternative = "less")
+result
+#         Wilcoxon rank sum test with continuity correction
+
+# data:  avg_expr_common_cancer_mut_genes and avg_expr_all_mut_genes
+# W = 249294691, p-value < 2.2e-16
+# alternative hypothesis: true location shift is less than 0
+
+
+#####################################################################################################
+#####################################################################################################
+
+
+Avg_expression_per_cell_common_cancer_genes <- expression_mutated$Expression[expression_mutated$Gene == "Avg_expression_per_cell_common_cancer_genes"]
+
+# H0: we expect a lower average value (gene expression) in cancer drivers than in overall mutated genes
+result <- wilcox.test(Avg_expression_per_cell_common_cancer_genes, avg_expr_all_mut_genes, 
+                      alternative = "less")
+result
+#         Wilcoxon rank sum test with continuity correction
+
+# data:  Avg_expression_per_cell_common_cancer_genes and avg_expr_all_mut_genes
+# W = 90939714, p-value < 2.2e-16
+# alternative hypothesis: true location shift is less than 0
+
+
+#####################################################################################################
+#####################################################################################################
+
+Avg_expression_per_cell_all_genes <- expression_mutated$Expression[expression_mutated$Gene == "Avg_expression_per_cell_all_genes"]
+
+# H0: we expect a lower average value (gene expression) in cancer drivers than in overall genes
+result <- wilcox.test(Avg_expression_per_cell_common_cancer_genes, Avg_expression_per_cell_all_genes, 
+                      alternative = "less")
+result
+#         Wilcoxon rank sum test with continuity correction
+
+# data:  Avg_expression_per_cell_common_cancer_genes and Avg_expression_per_cell_all_genes
+# W = 198305123, p-value < 2.2e-16
+# alternative hypothesis: true location shift is less than 0
+
+```
+
+
+```{r}
+write.table(expression_mutated, sep="\t", file="gene_expression/expression_table.txt", row.names=FALSE, quote=FALSE)
+
+```
+
+
+
+# Avg Gene expression
+Esta es la version definitiva que vamos a utilizar, con python. La idea es tener 3 "vectores", de tal forma que construyamos una tabla tal que: 
+    | mutated_genes_scomatic | cancer_panel_genes | mutated_cancer_panel_genes  |
+genA |  0.32167 |
+genB | 1.219486 |
+genC | 0.124125 |
+genD | 1.12442 |
+...  | ...
+
+
+Cada valor es el promedio de expresión de ese gen a lo largo de todas las células donde se expresan, es decir, a lo largo de todas las células que tengan una expresión !=0 de ese gen. Así, ocnseguimos solo un vector, que es un vector promedio. 
+
+Ejemplo: el p53 lo calcula para todas las células donde se expresa p53 (!=0). 
+
+
+```{python}
+import itertools
+import numpy as np
+import pandas as pd
+import gzip
+import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
+import matplotlib.colors
+import plotly.express as px
+import plotly.figure_factory as ff
+import seaborn as sns
+import scipy
+import ast
+
+from scipy.io import mmread
+from scipy.sparse import csr_matrix
+
+```
+
+## 1. Guardar matriz cuentas normalizada
+```{python}
+# (codigo en linea 179 del script "1_hca_esoph_inspection"")
+
+```
+
+## 2. Load genes names to subset from Epi matrix
+
+```{python}
+mutated_genes = pd.read_csv("/home/albax/dario_TFM/singlecell/gene_expression/mutated_genes_hca.txt", sep="\t", index_col=0) # we need "all_mutated_genes" and "common_cancer_mutated_genes"
+
+```
+
+
+## 3. Read matrix
+```{python}
+# Only Epi cells normalized count matrix
+count_matrix_norm = mmread('/home/albax/human_esophagus/matrix_counts/hca_corrected_counts_matrix_Epi.mtx') # only Epi counts
+
+count_matrix_norm_csr = csr_matrix(count_matrix_norm)
+count_matrix_norm_csr.min() # Max is 8.275 only in Epi
+count_matrix_norm_csr.max()
+count_matrix_norm_csr
+
+# <Compressed Sparse Row sparse matrix of dtype 'float64' -> whole mtx
+	# with 126113746 stored elements and shape (23835, 68173)
+
+# <Compressed Sparse Row sparse matrix of dtype 'float64' -> only epi matrix
+# 	with 118729710 stored elements and shape (23835, 61241)> (genes, cells) (rows,columns)
+count_matrix_norm_csr.shape[0] # rows = genes
+count_matrix_norm_csr.shape[1] # cols = cells
+
+# load cell names of the total matrix
+all_cell_names = pd.read_csv('/home/albax/human_esophagus/matrix_counts/cell_names.txt', header=None)[0].values  #68173
+
+# load cell names of the total matrix
+all_gene_names = pd.read_csv('/home/albax/human_esophagus/matrix_counts/gene_names.txt', header=None)[0].values # 23835
+
+```
+
+
+## 4. Average of each subset of genes
+average of each gene from "mutated_genes$all_mutated_genes" across all cells (cols) that are !=0 for that gene
+
+```{python}
+def compute_avg_nonzero_expression(gene_list, gene_to_index, count_matrix, all_gene_names, column_name):
+    # Filter gene list to only those present in the matrix
+    valid_genes = [gene for gene in gene_list if gene in gene_to_index]
+
+    avg_expression = {}
+    for gene in valid_genes:
+        idx = gene_to_index[gene]
+        gene_row = count_matrix[idx, :]
+        non_zero_values = gene_row.data # only non-zero values stored in sparse matrix
+        # print(len(non_zero_values))
+
+        if len(non_zero_values) > 0:
+          avg_expression[gene] = np.mean(non_zero_values)
+        else:
+          avg_expression[gene] = 0
+
+    # Convert to DataFrame
+    df = pd.DataFrame.from_dict(avg_expression, orient="index", columns=[column_name])
+    df.index.name = "gene"
+    return df.reset_index()
+```
+
+
+```{python}
+gene_to_index = {gene: idx for idx, gene in enumerate(all_gene_names)}
+
+# Average expression of all somatic mutated genes
+mutated_gene_list = mutated_genes["all_mutated_genes"].dropna().unique()
+avg_expr_df_somatic = compute_avg_nonzero_expression(mutated_gene_list, gene_to_index,    count_matrix_norm_csr, all_gene_names, column_name="avg_expr_per_gene_somatic_mut")
+
+# Average expression of common cancer genes
+common_cancer_list = ("ADAM29", "ADAMTS18", "AJUBA", "AKT1", "AKT2", "APOB", "ARID1A", "ARID2", "AURKA", "BAI3", "BRAF", "CASP8", "CCND1", "CDH1", "CDKN2A", "CR2", "CREBBP", "CUL3", "DICER1", "EGFR", "EPHA2", "ERBB2", "ERBB3", "ERBB4", "EZH2", "FAT1", "FAT4", "FBXW7", "FGFR1", "FGFR2", "FGFR3", "FLG2", "GRIN2A", "GRM3", "HRAS", "IRF6", "KCNH5", "KEAP1", "KMT2A", "KMT2C", "KMT2D", "KRAS", "MET", "MUC17", "NF1", "NFE2L2", "NOTCH1", "NOTCH2", "NOTCH3", "NOTCH4", "NRAS", "NSD1", "PCED1B", "PIK3CA", "PLCB1", "PPP1R3A", "PREX2", "PTCH1", "PTEN", "PTPRT", "RB1", "RBM10", "SALL1", "SCN11A", "SCN1A", "SETD2", "SMAD4", "SMO", "SOX2", "SPHKAP", "SUFU", "TP53", "TP63", "TRIOBP", "ZNF750", "TGFBR2")
+avg_expr_df_common_cancer = compute_avg_nonzero_expression(common_cancer_list, gene_to_index, count_matrix_norm_csr, all_gene_names, column_name="avg_expr_per_gene_common_cancer")
+merged_df = pd.merge(avg_expr_df_somatic, avg_expr_df_common_cancer, on="gene", how="outer") # keep all genes and fill with NaN
+
+# Average expression of common cancer mutated genes
+common_cancer_mut_list = mutated_genes["common_cancer_mutated_genes"].dropna().unique()
+avg_expr_df_common_cancer_mut = compute_avg_nonzero_expression(common_cancer_mut_list, gene_to_index, count_matrix_norm_csr, all_gene_names, column_name="avg_expr_per_gene_common_cancer_mut")
+merged_df = pd.merge(merged_df, avg_expr_df_common_cancer_mut, on="gene", how="outer")
+
+```
+
+## 5. ViolinPlot for expression of each subset
+
+```{python}
+melted_df = merged_df.melt(id_vars=["gene"], value_vars=("avg_expr_per_gene_common_cancer","avg_expr_per_gene_somatic_mut",  "avg_expr_per_gene_common_cancer_mut"),                          var_name="gene_group", value_name="Expression")
+
+plt.figure(figsize=(4, 8))
+sns.violinplot(data=melted_df, x="gene_group", y="Expression", orient="v", log_scale=False, cut=0)
+plt.xlabel("Gene group")
+plt.xticks(rotation=90)
+plt.ylabel("Gene expression (normalized)")
+plt.title("Violin plot of expression levels by gene group")
+plt.grid(True, which='both', linestyle='--', linewidth=0.2)
+plt.tight_layout()
+plt.savefig('/home/albax/human_esophagus/gene_expression/plots/avg_expr_per_gene.png', dpi=500)
+plt.show()
+
+```
+
+
+## statistical tests
+We expect the distribution of "mutated cancer genes / cancer genes" to be less than "scomatic mutated genes", as we expect that it is more difficult to capture driver genes becasue of lack of capture (which we can prove by low gene expression and low depth). 
+
+```{python}
+from scipy.stats import mannwhitneyu
+
+
+mut_scomatic = avg_expr_df_somatic["avg_expr_per_gene_somatic_mut"].tolist()
+cancer_expr = avg_expr_df_common_cancer["avg_expr_per_gene_common_cancer"].tolist()
+
+# less: distribution underlying x is stochastically less than the distribution underlying y [mannwhitneyu(x,y)]
+mannwhitneyu(cancer_expr, mut_scomatic, alternative = "less") # MannwhitneyuResult(statistic=np.float64(42726.0), pvalue=np.float64(0.0008325722309072082))
+
+
+cancer_mut_expr = avg_expr_df_common_cancer_mut["avg_expr_per_gene_common_cancer_mut"].tolist()
+mannwhitneyu(cancer_mut_expr, mut_scomatic, alternative = "less") # MannwhitneyuResult(statistic=np.float64(9744.5), pvalue=np.float64(0.7028241416624055))
+
+
+```

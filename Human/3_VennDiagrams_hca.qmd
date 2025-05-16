@@ -1,0 +1,101 @@
+---
+title: "3 - Visualization of intersected genes with Venn diagrams in esophagus HCA dataset"
+format:
+  html:
+    toc: true
+jupyter:
+  kernel: python3
+fig-show: hold
+execute:
+  eval: false
+author: Alba Mendez Alejandre
+date: 04-2025
+---
+
+# Import libraries
+
+```{r}
+.libPaths("/home/albax/miniforge3/envs/seurat_v4/lib/R/library")
+
+if(.Platform$OS.type == "linux") Sys.setenv(PATH= paste("/home/albax/miniforge3/envs/seurat_v4/lib",Sys.getenv()["PATH"],sep=";"))
+
+use_condaenv("/home/albax/miniforge3/envs/seurat_v4", required = TRUE)
+
+library(VennDiagram)
+library(ggplot2)
+library(ggvenn)
+library(svglite)
+
+projectPath <- setwd("/home/albax/human_esophagus") # where we are
+
+```
+
+# Gene lists to plot
+we are going to plot specific sets of genes against all of the SComatic detected genes.
+
+- intOGen human driver database
+- common cancer genes from MartinCorena et al
+
+```{r}
+all_intogen <- read.table("/home/albax/intogen/IntOGen-DriverGenes.tsv", sep="\t", header = TRUE)
+
+
+common_cancer_genes <- c("ADAM29", "ADAMTS18", "AJUBA", "AKT1", "AKT2", "APOB", "ARID1A", "ARID2", "AURKA", "BAI3", "BRAF", "CASP8", "CCND1", "CDH1", "CDKN2A", "CR2", "CREBBP", "CUL3", "DICER1", "EGFR", "EPHA2", "ERBB2", "ERBB3", "ERBB4", "EZH2", "FAT1", "FAT4", "FBXW7", "FGFR1", "FGFR2", "FGFR3", "FLG2", "GRIN2A", "GRM3", "HRAS", "IRF6", "KCNH5", "KEAP1", "KMT2A", "KMT2C", "KMT2D", "KRAS", "MET", "MUC17", "NF1", "NFE2L2", "NOTCH1", "NOTCH2", "NOTCH3", "NOTCH4", "NRAS", "NSD1", "PCED1B", "PIK3CA", "PLCB1", "PPP1R3A", "PREX2", "PTCH1", "PTEN", "PTPRT", "RB1", "RBM10", "SALL1", "SCN11A", "SCN1A", "SETD2", "SMAD4", "SMO", "SOX2", "SPHKAP", "SUFU", "TP53", "TP63", "TRIOBP", "ZNF750", "TGFBR2")
+
+```
+
+SComatic mutated genes. They are __ in total.
+```{r}
+all_mutated_scomatic <- read.table("data/mutated_genes_hca.tsv", sep="\t", header = FALSE)
+
+```
+
+
+# Plot Venn diagrams
+
+## 1. Detected in SComatic vs. intOGen
+```{r}
+detected_genes <- all_mutated_scomatic[all_mutated_scomatic$V1 %in% intersect(all_mutated_scomatic$V1, all_intogen$Symbol), ] # 95
+
+# Generate Venn diagram
+p <- ggvenn(list("intOgen genes" = all_intogen$Symbol, "SComatic mutated genes" = all_mutated_scomatic$V1), fill_color = c("yellow", "blue"))
+ggsave("venn_intersect/venn_scomatic_vs_intogen.svg", p,  device = "svg")
+ggsave("venn_intersect/venn_scomatic_vs_intogen.pdf", p,  device = "pdf")
+ggsave("venn_intersect/venn_scomatic_vs_intogen.png", p,  device = "png", dpi = 300)
+p
+
+write.table(detected_genes, "venn_intersect/venn_scomatic_vs_intogen.csv", sep = ",", quote = FALSE, row.names = FALSE)
+
+```
+
+## 2. Detected in SComatic vs. common cancer
+
+```{r}
+detected_genes <- all_mutated_scomatic[all_mutated_scomatic$V1 %in% intersect(all_mutated_scomatic$V1, common_cancer_genes), ] # 95
+
+# Generate Venn diagram
+p <- ggvenn(list("common cancer genes" = common_cancer_genes, "SComatic mutated genes" = all_mutated_scomatic$V1), fill_color = c("green", "blue"))
+
+ggsave("venn_intersect/venn_scomatic_vs_common_cancer_genes.svg", p,  device = "svg")
+ggsave("venn_intersect/venn_scomatic_vs_common_cancer_genes.pdf", p,  device = "pdf")
+ggsave("venn_intersect/venn_scomatic_vs_common_cancer_genes.png", p,  device = "png", dpi = 300)
+p
+
+write.table(detected_genes, "venn_intersect/venn_scomatic_vs_common_cancer_genes.csv", sep = ",", quote = FALSE, row.names = FALSE)
+
+```
+
+## 3. Detected in SComatic vs intogen vs common cancer
+
+```{r}
+# Generate Venn diagram
+svglite("venn_intersect/venn_scomatic_vs_intogen_vs_common_cancer_genes.svg")
+p <- ggvenn(list("intOgen genes" = all_intogen$Symbol, "common cancer genes" = common_cancer_genes, "SComatic mutated genes" = all_mutated_scomatic$V1), fill_color = c("yellow", "green", "blue"), text_size = 6)
+
+ggsave("venn_intersect/venn_scomatic_vs_intogen_vs_common_cancer_genes.svg", p,  device = "svg")
+ggsave("venn_intersect/venn_scomatic_vs_intogen_vs_common_cancer_genes.pdf", p,  device = "pdf")
+ggsave("venn_intersect/venn_scomatic_vs_intogen_vs_common_cancer_genes.png", p,  device = "png", dpi = 300)
+p
+
+```
+

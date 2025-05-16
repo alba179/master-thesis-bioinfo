@@ -1,0 +1,429 @@
+---
+title: "1 - Inspection of HCA seurat object"
+format:
+  html:
+    toc: true
+jupyter:
+  kernel: python3
+fig-show: hold
+execute:
+  eval: false
+author: Alba Mendez Alejandre
+date: 02-2025
+---
+
+# Import libraries
+```{r}
+
+.libPaths("/home/albax/miniforge3/envs/seurat_v4/lib/R/library")
+
+if(.Platform$OS.type == "linux") Sys.setenv(PATH= paste("/home/albax/miniforge3/envs/seurat_v4/lib",Sys.getenv()["PATH"],sep=";"))
+
+library(reticulate)
+
+use_condaenv("/home/albax/miniforge3/envs/seurat_v4", required = TRUE)
+py_config()
+
+import("numpy")
+import("leidenalg")
+import("pandas")
+
+library(Seurat) 
+library(dplyr) 
+library(ggplot2) 
+library(plotly) 
+library(SingleCellExperiment) 
+# library(httpgd) 
+library(patchwork)
+library(dplyr)
+library(tidyverse)
+library(tibble)
+
+color.list <- RColorBrewer::brewer.pal(12,"Paired")
+color.list <- c(color.list,RColorBrewer::brewer.pal(12,"Set3"))
+
+# Palette from orange to violet
+palette <- scale_color_viridis_c(option = "plasma", direction = -1) # continue colors palette
+palette_d <- scale_color_viridis_d(option = "turbo", direction = -1) # discrete colors palette
+
+projectPath <- setwd("/home/albax/human_esophagus") # where we are
+
+```
+
+
+# Load rds object
+
+```{r}
+# hca_esoph <- readRDS(file = "./data/hca_esoph_with_annotations.rds")
+# hca_esoph <- UpdateSeuratObject(hca_esoph)
+# hca_esoph
+
+# hca_esoph_com <- readRDS(file = "./data/myesoph_norm_dim.rds")
+# hca_esoph_com
+
+my_esoph <- readRDS("./data/hca_myesoph.rds")
+my_esoph
+
+```
+
+
+
+# Viewing barcodes of potential artifacts in UMAP
+While doing the heatmap clustering analysis, we found that donor 296C has a very strange pattern, with more than 100 clones in a single cluster (cluster 30 with cognate True), also it only has 5 clusters... Why is this happening?
+
+To answer that question, we thought that maybe Malat1 was highly present in the cells of those clones...
+
+```{r}
+# load CB_seurat barcodes from cluster30
+cbs_lista <- read.table("/home/albax/dario_TFM/singlecell/seurat/cluster30_CBs")
+
+```
+
+```{r}
+DimPlot(hca_esoph, cells.highlight=cbs_lista$V1)
+
+```
+
+
+## MALAT1
+
+As shown in https://www.biorxiv.org/content/10.1101/2024.07.14.603469v2 and https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-024-11015-5 , low levels of MALAT1 might indicate empty droplets or poor quality cells, as it is a nuclear marker, so its absence indicates cells lacking a nucleus. Therefore, low expression of MALAT1 might indicate low-quality cells. 
+
+mirar la distribución de Malat1 (violinplot o density plot) y en paralelo la de nCount y % de intronic counts...
+Para esto último, dicen que ellos usan un paquete de R llamado DropletQC... to remove empty droplets based on intronic content, pero que básicamente mira:
+- intronic proportion in each cell from bam file.
+- threshold on empty droplet detected cells.
+- detect damaged cells.
+Pero que de todas formas al haber implementado RNA velocity, segruamente no necesitemos ni aplicarlo, que basta con mirar la distribución del % de nCount_unspliced y en este caso parece bastante claro que esas células están dañadas y se pueden quitar....
+De todas formas, para lo que a nosotros nos interesa, a estas alturas de la película creo que se queda más como una cosa testimonial, para tener en cuenta de cara al futuro...
+
+
+
+```{r}
+FeaturePlot(my_esoph, features = c("MALAT1")) & scale_y_continuous(breaks = seq(0, 20, by = 2)) & palette
+
+FeaturePlot(my_esoph, features = c("MALAT1"), split.by = "Donor") & scale_y_continuous(breaks = seq(0, 20, by = 2)) & palette
+
+```
+
+it doesn't look like there are low-quality cells in 296C...
+
+# DE genes for these cells
+
+```{r}
+all_CBs <-colnames(hca_esoph)[hca_esoph@meta.data$Donor == "296C"]
+rest_CBs <- setdiff(all_CBs, cbs_lista$V1)
+
+hca_esoph <- SetIdent(hca_esoph, value = hca_esoph@meta.data$Donor)
+
+```
+
+```{r}
+markers_CB <- FindMarkers(hca_esoph, ident.1 = cbs_lista$V1, ident.2 = rest_CBs) # from more expression to less in cbs_lista
+
+```
+
+```{r}
+significant_genes <- markers_CB[markers_CB$p_val_adj < 0.05 & abs(markers_CB$avg_log2FC) < 0, ]
+# log2FC > 0 means that the gene is more highly expressed in ident.1 (group 1) compared to ident.2 (group 2).
+
+```
+
+
+# Expression in 296C donor vs cluster 30
+Do those barcodes have higher expression than the rest of them?
+
+```{r}
+# 1. Create a list of the barcodes we are interested in, to view all the gene expression avg from them.
+
+# DefaultAssay(hca_otr_pr) <- "spliced_SCT" # we have to use normalized values (normalized counts)
+
+# genes_expr <- FetchData(my_esoph, vars=rownames(my_esoph), layer="data", clean="none") # we have to use non-normalized data
+# genes_expr <- rownames_to_column(genes_expr, "Cell")
+# genes_expr_long <- reshape2::melt(genes_expr, id="Cell", variable.name="Gene", value.name="Expression")
+
+# # Remove cells without expressed genes
+# genes_expr_long <- genes_expr_long[genes_expr_long$Expression > 0, ]
+
+# # Add mean gene expression per cell of the clones 296C
+# expr_mean_296C <- Matrix::rowSums(FetchData(my_esoph, vars=rownames(my_esoph), cells=cbs_lista$V1, layer="data", clean="none"))
+
+# # adding average expression per cell in a new column named "Average_Expression", each cell is a row 
+# genes_expr <- genes_expr %>%
+#   rowwise() %>%
+#   mutate(Expr_per_cell = summarise(across(everything()), sum, na.rm = TRUE))
+
+# mean_data_df <- as.data.frame(genes_expr)
+# row.names(mean_data_df) <- row.names(genes_expr)
+
+# valid_genes <- intersect(c(epi_genes, "Expr_per_cell"), colnames(mean_data_df))
+# mean_data_filtered <- mean_data_df %>%
+#   select(all_of(valid_genes))
+
+# epi_genes_expr <- mean_data_filtered %>%
+#   pivot_longer(cols = everything(), names_to = "Gene", values_to = "Expression") %>%
+#   mutate(Gene = factor(Gene, levels = c(setdiff(names(mean_data_filtered), "Expr_per_cell"), "Expr_per_cell")))
+
+```
+
+OTHER WAY OF DOING IT
+```{r}
+# normalized matrix counts
+norm_counts <- my_esoph[["RNA"]]@data # columns are cells and rows are genes, not sure if RNA has SCT ransformed counts
+
+metadata <- my_esoph@meta.data # 68173 total cells
+epi_cells <- rownames(metadata[grep("^Epi", metadata$Celltypes_updated_July_2020), ]) # 61214 epi cells
+norm_counts_epi <- norm_counts[, epi_cells]
+
+# Matrix::writeMM(norm_counts, file = "matrix_counts/hca_corrected_counts_matrix.mtx")
+# Matrix::writeMM(norm_counts_epi, file = "matrix_counts/hca_corrected_counts_matrix_Epi.mtx")
+
+cells_296C <- colnames(my_esoph)[my_esoph$Donor == "296C"] # matrix for only Donor = 296C
+norm_counts_296 <- norm_counts[, cells_296C]
+
+# Save the row names (gene names)
+write.table(rownames(norm_counts), file = "matrix_counts/gene_names.txt", 
+            row.names = FALSE, col.names = FALSE, quote = FALSE)
+
+# Save the column names (cell names)
+write.table(colnames(norm_counts), file = "matrix_counts/cell_names.txt", 
+            row.names = FALSE, col.names = FALSE, quote = FALSE)
+
+# Save the column names (cell names) that are only epithelial cells
+write.table(colnames(norm_counts_296), file = "matrix_counts/cell_names_296C.txt", 
+        row.names = FALSE, col.names = FALSE, quote = FALSE)        
+
+```
+
+
+```{python}
+import itertools
+import numpy as np
+import pandas as pd
+import gzip
+import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
+import matplotlib.colors
+import plotly.express as px
+import plotly.figure_factory as ff
+import seaborn as sns
+import scipy
+import ast
+
+from scipy.io import mmread
+from scipy.sparse import csr_matrix
+
+```
+
+
+```{python}
+# A. Whole normalized count matrix
+# count_matrix_norm = mmread('/home/albax/human_esophagus/matrix_counts/hca_corrected_counts_matrix.mtx') # load normalized matrix counts, columns are cells and rows are genes
+count_matrix_norm = mmread('/home/albax/human_esophagus/matrix_counts/hca_corrected_counts_matrix_Epi.mtx') # only Epi counts
+
+count_matrix_norm_csr = csr_matrix(count_matrix_norm)
+count_matrix_norm_csr.min() # min is 0 and max is 8.6. Max is 8.275 only in Epi
+count_matrix_norm_csr.max()
+count_matrix_norm_csr
+
+# <Compressed Sparse Row sparse matrix of dtype 'float64'
+	# with 126113746 stored elements and shape (23835, 68173)
+
+# <Compressed Sparse Row sparse matrix of dtype 'float64'
+# 	with 118729710 stored elements and shape (23835, 61241)>
+
+```
+
+We are going to calculate the average gene expression per cell, by doing a sum of the values of each column and dividing it by the number of genes (rows) in that column that aren't zero. 
+```{python}
+# epi_panel = pd.read_csv('../colom_2021/gene_panel_epi_carcinog.txt', header=None)[0].values # load gene list we want
+genes_296 = pd.read_csv("/home/albax/human_esophagus/matrix_counts/affected_genes_296C_cluster30.txt",  header=None)[0].values # list of genes that are affected by mutations ni the cluster 30 of donor 296C, 378 unique genes
+
+cbs_lista_c30 = pd.read_csv("/home/albax/dario_TFM/singlecell/seurat/cluster30_CBs",  header=None)[0].values # we have 1835 cells in the cluster c30. What might be going wrong in these cells?
+
+cell_names_296 = pd.read_csv('/home/albax/human_esophagus/matrix_counts/cell_names_296C.txt', header=None)[0].values # only 296C barcodes
+
+all_gene_names = pd.read_csv('/home/albax/human_esophagus/matrix_counts/gene_names.txt', header=None)[0].values # load gene names of the matrix
+
+cell_names = pd.read_csv('/home/albax/human_esophagus/matrix_counts/cell_names.txt', header=None)[0].values # load cell names (barcodes) of the matrix
+
+
+
+# average_expression_per_cell = count_matrix_norm_csr.sum(axis=0).A1 # sum for each column and convert to 1D array, so now we have the total gene expression for each cell
+column_sums = count_matrix_norm_csr.sum(axis=0).A1
+non_zero_counts = (count_matrix_norm_csr != 0).sum(axis=0).A1 # count cells that have >0 expression
+average_expression_per_cell = np.divide(column_sums, non_zero_counts, out=np.zeros_like(column_sums, dtype=float), where=non_zero_counts!=0) # divide by the rows, in each column, that aren't zero
+average_expression_per_cell 
+
+average_expression_per_cell
+average_expression_per_cell.min() # without averaging (non_zero_counts):  min is 298 and max is 4406
+average_expression_per_cell.max() # min is 0.77 and max is 1.36
+
+```
+
+
+```{python}
+selected_gene_indices = [i for i, gene in enumerate(all_gene_names) if gene in genes_296] # select indices (rows) that are present in genes_296
+cell_indices_296 = [i for i, cell in enumerate(cell_names) if cell in cell_names_296] # select only cells from 296C
+
+# selected_data_csr = count_matrix_norm_csr[selected_gene_indices, :] # subset a df with all the columns but only the rows (genes) we want
+
+# 1. Subset matrix count_matrix_norm_csr to include ONLY cells from donor 296C (cell_names_296C.txt)
+selected_data_csr = count_matrix_norm_csr[selected_gene_indices, :][:, cell_indices_296]  # subset a df with only 296C columns and only the rows (genes) we want
+
+selected_data_csr.min() # range: {0, 7.933}, this means there are values with up to 7.933 expression level (of genes, the KRT13). 301 genes and 11730 barcodes
+selected_data_296C = pd.DataFrame(selected_data_csr.toarray(), index=[all_gene_names[i] for i in selected_gene_indices], columns=cell_names_296) # count matrix with 301 rows (genes) and columns are cells from only donor 296C
+selected_data_296C
+
+# 2. Add expression per cell for all 296C Epi cells
+column_sums = selected_data_csr.sum(axis=0).A1 # norm counts sum of each 296C cell
+non_zero_counts = (selected_data_csr != 0).sum(axis=0).A1 # count cells that have >0 expression
+average_expression_per_cell = np.divide(column_sums, non_zero_counts, out=np.zeros_like(column_sums, dtype=float), where=non_zero_counts!=0) # divide by the rows, in each column, that aren't zero. This way, we obtain an average of how much each gene is expressing...
+average_expression_per_cell 
+
+selected_data_296C.loc['Mean_gene_expression_per_cell'] = average_expression_per_cell # add a row that is the sum of the total expression per cell. The columns (barcodes) are exactly the same. 
+
+# 3. Obtain a df with the rest of 296C (Epi) cells
+select_data_nonc30 = selected_data_296C.loc[:, ~selected_data_296C.columns.isin(cbs_lista_c30)]
+
+## 3.1. Melt the df
+select_data_nonc30_melt = pd.melt(select_data_nonc30.T, var_name='Gene', value_name='Expression') 
+
+## 3.2. Keep only "Mean_gene_expression_per_cell"
+select_data_nonc30_melt = select_data_nonc30_melt[select_data_nonc30_melt["Gene"] == "Mean_gene_expression_per_cell"]
+select_data_nonc30_melt_genes = select_data_nonc30_melt[select_data_nonc30_melt["Gene"] != "Mean_gene_expression_per_cell"] # do the opposite and rename it as 
+
+
+# 4. Mean gene expression accross all cells of each gene in cluster 30
+select_296C_c30 = selected_data_296C.loc[:, selected_data_296C.columns.isin(cbs_lista_c30)] # only 1835 cells from that cluster 30
+
+select_296C_c30_melt = pd.melt(select_296C_c30.T, var_name='Gene', value_name='Expression') # explode the data for c30
+select_296C_c30_melt['Expression'] = select_296C_c30_melt['Expression'].replace(0, np.nan) # replace zeros by NA
+select_296C_c30_melt = select_296C_c30_melt[select_296C_c30_melt['Expression'] > 0]  # Remove non-positive values
+select_296C_c30_melt_navg = select_296C_c30_melt[select_296C_c30_melt['Gene'] != 'Mean_gene_expression_per_cell']
+sorted_genes_c30 = select_296C_c30_melt_navg.groupby('Gene')['Expression'].mean().sort_values().index # re-order the genes from less expressed to most expressed
+# select_296C_c30_melt['Gene'] = pd.Categorical(select_296C_c30_melt['Gene'], categories=sorted_genes_c30.append(pd.Index(['Total_mean_expresion_per_cell'])), ordered=True)
+select_296C_c30_melt['Gene'] = pd.Categorical(select_296C_c30_melt['Gene'], ordered=True)
+# select_296C_c30_melt_navg['Gene'] = pd.Categorical(select_296C_c30_melt_navg['Gene'], categories=sorted_genes_c30.append(pd.Index(['Mean_gene_expression_per_cell'])), ordered=True)
+
+cluster30_vs_rest296C = pd.concat([select_data_nonc30_melt, select_296C_c30_melt_navg], ignore_index=True)
+cluster30_vs_rest296C['Gene'] = pd.Categorical(cluster30_vs_rest296C['Gene'], categories=sorted_genes_c30.append(pd.Index(['Mean_gene_expression_per_cell'])), ordered=True)
+
+plt.figure(figsize=(100, 6))
+sns.violinplot(cluster30_vs_rest296C, x='Gene', y='Expression', orient='v', log_scale=False)
+plt.xticks(rotation=90)
+plt.grid(True, which='both', linestyle='--', linewidth=0.2)
+plt.title("Gene expression for __")
+plt.show()
+plt.ylim(0.01, cluster30_vs_rest296C['Expression'].max() * 1.5)
+plt.tight_layout()
+# plt.savefig('/home/albax/human_esophagus/matrix_counts/_.png', dpi=500)
+plt.close()
+
+cluster30_vs_rest296C['Mean_violins'] = cluster30_vs_rest296C['Gene'].apply(lambda x: 'Mean_gene_expression_per_cell' if x == 'Mean_gene_expression_per_cell' else 'Mutated_genes_cluster30')
+
+cluster30_vs_rest296C['Mean_violins'] = pd.Categorical(cluster30_vs_rest296C['Mean_violins'], categories =['Mutated_genes_cluster30', 'Mean_gene_expression_per_cell'], ordered=True)
+
+plt.figure(figsize=(4, 6))
+sns.violinplot(cluster30_vs_rest296C, x='Mean_violins', y='Expression', orient='v', log_scale=False, inner=None)
+plt.xticks(rotation=45)
+plt.grid(True, which='both', linestyle='--', linewidth=0.2)
+plt.title("Gene expression for mutated genes in cluster 30 \n vs rest of cells in donor 296C")
+plt.show()
+plt.ylim(0.01, cluster30_vs_rest296C['Expression'].max() * 1.5)
+plt.tight_layout()
+# plt.savefig('/home/albax/human_esophagus/matrix_counts/_.png', dpi=500)
+plt.close()
+
+# melted_data = pd.melt(selected_data_296C.T, var_name='Gene', value_name='Expression') # explode the data
+# melted_data
+# melted_data['Expression'] = melted_data['Expression'].replace(0, np.nan) # replace zeros by NA
+# melted_data = melted_data[melted_data['Expression'] > 0]  # Remove non-positive values
+
+# melted_data_non_avg = melted_data[melted_data['Gene'] != 'Total_mean_expresion_per_cell']
+# melted_data_non_avg
+# sorted_genes = melted_data_non_avg.groupby('Gene')['Expression'].mean().sort_values().index # re-order the genes from less expressed to most expressed
+
+# melted_data['Gene'] = pd.Categorical(melted_data['Gene'], categories=sorted_genes.append(pd.Index(['Total_mean_expresion_per_cell'])), ordered=True)
+
+# num_unique_genes = melted_data['Gene'].nunique()
+# print(f"The number of rows in melted_data is: {num_unique_genes}") # it is 302 because we have added the "gene" named "Average expression per cell" in order to plot it easier
+
+```
+
+
+```{python}
+select_data_nonc30_melt_genes['origin'] = 'rest_296C'
+select_296C_c30_melt_navg['origin'] = 'cluster_30'
+
+combined_df = pd.concat([select_data_nonc30_melt_genes, select_296C_c30_melt_navg], ignore_index=True)
+combined_df['Mean_violins'] = combined_df['origin'].apply(lambda x: 'Mean_gene_expression_cell_rest' if x == 'rest_296C' else 'Mutated_genes_cluster30')
+
+sorted_combined = combined_df.groupby('Gene')['Expression'].mean().sort_values().index
+combined_df['Gene'] = pd.Categorical(combined_df['Gene'], categories=sorted_combined.append(pd.Index(['Mean_gene_expression_per_cell'])), ordered=True)
+
+plt.figure(figsize=(5, 6))
+# sns.violinplot(combined_df, x='Gene', y='Expression', hue = "origin", split = True, orient='v', log_scale=False, inner=None)
+sns.violinplot(combined_df, x='Mean_violins', y='Expression', orient='v', log_scale=False)
+plt.xticks(rotation=45)
+plt.grid(True, which='both', linestyle='--', linewidth=0.2)
+plt.title("Gene expression for mutated genes in cluster 30 \n vs rest of cells in donor 296C")
+plt.show()
+plt.ylim(0.01, combined_df['Expression'].max() * 1.5)
+plt.tight_layout()
+# plt.savefig('/home/albax/human_esophagus/matrix_counts/c30_vs_rest296C_CELLS.png', dpi=500)
+plt.close()
+
+```
+
+
+```{python}
+combined_df = combined_df[combined_df['Gene'] != "Mean_gene_expression_per_cell"]
+combined_df["Gene"] = combined_df["Gene"].cat.remove_categories("Mean_gene_expression_per_cell")
+
+combined_df = combined_df.dropna(subset=["Expression"])
+combined_df = combined_df[combined_df["Expression"] > 0]
+gene_means = combined_df[combined_df["origin"] == "cluster_30"].groupby("Gene")["Expression"].mean()
+gene_means = gene_means.dropna()
+sorted_genes = gene_means.sort_values(ascending=True).index.tolist()
+combined_df = combined_df[combined_df["Gene"].isin(sorted_genes)]
+combined_df['Gene'] = pd.Categorical(combined_df['Gene'], categories=sorted_genes, ordered=True)
+
+plt.figure(figsize=(100, 6))
+sns.violinplot(combined_df[combined_df["origin"] == "cluster_30"], x='Gene', y='Expression', orient='v', order = sorted_genes, log_scale=False)
+sns.violinplot(combined_df[combined_df['origin'] == "rest_296C"], x='Mean_violins', y='Expression', orient='v', log_scale=False)
+plt.xticks(rotation=90)
+plt.grid(True, which='both', linestyle='--', linewidth=0.2)
+plt.title("Gene expression for each mutated gene in cluster 30 \n vs rest of cells in 296C")
+plt.show()
+plt.ylim(0.01, combined_df['Expression'].max() * 1.5)
+plt.tight_layout()
+# plt.savefig('/home/albax/human_esophagus/matrix_counts/c30genes_vs_rest296Cavg.png', dpi=500)
+plt.close()
+
+```
+
+
+## Plot for each gene vs average expression per cell
+
+```{python}
+
+# Violin plot
+plt.figure(figsize=(100, 6))
+sns.violinplot(melted_data, x='Gene', y='Expression', orient='v', log_scale=False)
+plt.xticks(rotation=90)
+plt.grid(True, which='both', linestyle='--', linewidth=0.2)
+plt.title("Violin Plot of Expression Levels for Selected Genes")
+plt.show()
+plt.ylim(0.01, melted_data['Expression'].max() * 1.5)
+plt.tight_layout()
+# plt.savefig('/home/albax/human_esophagus/matrix_counts/expression_plots_per_cell.png', dpi=500)
+plt.close()
+
+# negative_values = melted_data[melted_data['Expression'] < 0]
+
+# Display negative values
+# print(negative_values)
+
+```
+

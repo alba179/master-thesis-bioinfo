@@ -1,0 +1,1302 @@
+---
+title: "Analysis of mutated clones in human esophagus"
+format: html
+    toc: true
+author: Alba Mendez Alejandre
+date: "November 12, 2024"
+---
+
+### Import libraries
+
+```{r}
+# for R libraries
+.libPaths("/home/albax/miniforge3/envs/seurat_v4/lib/R/library")
+
+if(.Platform$OS.type == "linux") Sys.setenv(PATH= paste("/home/albax/miniforge3/envs/seurat_v4/lib",Sys.getenv()["PATH"],sep=";"))
+
+# load libraries
+library(Seurat)
+
+setwd("/home/albax/human_esophagus")
+
+```
+
+
+```{r Import libraries}
+# For plotting
+library(RColorBrewer)
+library(viridis)
+library(ggplot2)
+library(tidyverse)
+library(eulerr)
+library(tidyr)
+library(svglite)
+library(nVennR)
+
+
+color.list <- RColorBrewer::brewer.pal(12,"Paired")
+color.list <- c(color.list,RColorBrewer::brewer.pal(12,"Set3"))
+
+# Palette from orange to violet
+palette <- scale_color_viridis_c(option = "plasma", direction = -1) # continue colors palette
+palette_d <- scale_color_viridis_d(option = "turbo", direction = -1) # discrete colors palette
+
+set.seed(1)
+
+```
+
+
+# HUMAN
+
+## Import human rds from Dario's work
+```{r}
+hca_esoph <- readRDS(file = "./data/hca_esoph_with_annotations.rds")
+hca_esoph <- UpdateSeuratObject(hca_esoph)
+hca_esoph
+# An object of class Seurat 
+# 24245 features across 87947 samples within 1 assay 
+# Active assay: RNA (24245 features, 0 variable features)
+#  3 layers present: counts, data, scale.data
+#  2 dimensional reductions calculated: pca, umap
+```
+
+*NOTE: 328C libraries were most of them of very bad quality, which means that we only have library T0...Therefore, we ain't going to use it for downstream analysis of SComatic , we filter out 328C at the same time than germline variants*
+
+## Map oldCloneIDs to cluster heatmap IDs and newCloneIDs
+UNA CÉLULA PUEDE ENCONTRARSE EN VARIOS CLONES PERO SOLO EN UN ÚNICO CLUSTER. POR CÉLULA, PODRÁ HABER VARIOS VALORES EN CLONEIDS, PERO SOLO UN VALOR EN CLUSTERID.
+
+```{r}
+# map_clones <- read.table("SingleCellGenotype_newclones_map.tsv", sep = "\t", header=TRUE)
+col_names <- c("CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "Cell_type", "Cell_type_BAM", "Donor", "Condition", "substitution_type", "Clone", "CB_seurat", "CSQ", "IMPACT", "n_annotations", "Num_cells_expected", "VAF", "VAF_mean", "CCF", "CCF_mean", "Cc", "Sex", "Age", "ClusterCloneIDs", "ClusterID")
+map_clones <- read.table("SingleCellGenotype_cells_annotated_CCF_VAF.tsv", sep = "\t", header=FALSE, col.names = col_names)
+
+colnames(map_clones)
+# rownames(map_clones) <- map_clones$CB_seurat
+
+length(map_clones$CB_seurat) # 49138 cells (with duplicates)...though we have in reality 87947
+
+
+barcodes <- rownames(hca_esoph@meta.data)
+# barcodes <- as.character(barcodes)
+# map_clones$Cells <- as.character(map_clones$Cells)
+matched_indices <- match(barcodes, map_clones$CB_seurat)
+matched_cells <- map_clones$CB_seurat[matched_indices]
+matched_cells[is.na(matched_indices)] <- NA
+map_clones$Cells <- matched_cells
+
+unmatched_barcodes <- barcodes[is.na(match(barcodes, map_clones$CB_seurat))]
+na_rows <- data.frame(matrix(NA, nrow = length(unmatched_barcodes), ncol = ncol(map_clones)))
+colnames(na_rows) <- colnames(map_clones)
+na_rows$CB_seurat <- unmatched_barcodes
+map_clones_expanded <- rbind(map_clones, na_rows) # append to the df
+
+# group df by unique CBs 
+grouped_data <- map_clones_expanded %>%
+  group_by(CB_seurat) %>%
+  summarize(
+    Cell_type_BAM = unique(Cell_type_BAM),
+    ClusterID = unique(ClusterID),
+    ClusterCloneIDs = unique(ClusterCloneIDs)     
+  )
+
+matched_indices <- match(barcodes, grouped_data$CB_seurat)
+grouped_data$CB_seurat <- ifelse(grouped_data$CB_seurat %in% barcodes, grouped_data$CB_seurat, NA)
+length(grouped_data$CB_seurat)
+grouped_data$Cells <- grouped_data$CB_seurat # change name
+
+identical(length(grouped_data$CB_seurat), nrow(hca_esoph@meta.data)) # must be TRUE
+ids.in.df <- sort(grouped_data$CB_seurat)
+ids.in.seurat <- sort(row.names(hca_esoph@meta.data))
+identical(ids.in.df, ids.in.seurat) # must be TRUE too
+
+
+hca_esoph@meta.data <- hca_esoph@meta.data %>%
+  rownames_to_column(var = "Cells") %>% 
+  left_join(grouped_data %>% select(Cells, ClusterID, ClusterCloneIDs), by = "Cells")
+  column_to_rownames("Cells")
+
+unique(hca_esoph@meta.data$ClusterCloneIDs)
+unique(hca_esoph@meta.data$ClusterID)
+
+
+```
+
+```{r}
+# saveRDS(hca_esoph, "./data/hca_esoph_with_annotations.rds")
+
+```
+
+
+## List nCount & nCells
+
+```{r}
+levels(hca_esoph@meta.data$donor_time) 
+summary(hca_esoph[,hca_esoph@meta.data$donor_time == '328C_0h']@meta.data$donor_time)
+
+results_hca <- data.frame(donor_time = character(), Sum_nCount_gene = numeric(), stringsAsFactors = FALSE)
+cell_counts_per_sample <- table(hca_esoph@meta.data$donor_time) # number of cells per donor_time
+ 
+# suma de los nCount_gene para cada donor_time
+for (i in unique(hca_esoph$donor_time)) {
+  # Subset the data based on the current sample name and calculate the sum of nCount_gene
+  sum_count <- sum(hca_esoph[, hca_esoph$donor_time == i]$n_counts)
+  num_cells <- cell_counts_per_sample[i]
+
+  # Append the results to the results_hca
+  results_hca <- rbind(results_hca, data.frame(donor_time = i, Sum_nCount_gene = sum_count, Num_cells = num_cells))
+}
+write.csv(results_hca, "nCounts_per_donor_time_Esophfilt.csv", row.names = FALSE)
+
+```
+
+
+## Descriptive analysis of clones
+
+Prepare a function to access the collapsed mutated clone annotations stored in the Seurat metadata.
+
+```{r}
+plot_mutant_clone_seurat <- function(seurat_obj, clone_name, save_path = ".") {
+    # Generate vector to exclude non-annotated cells
+    annotated_cells <- !is.na(seurat_obj@meta.data$Clone)
+    
+    # Generate vector to select metadata exclusive to the clone
+    clone_metadata <- grepl(clone_name, seurat_obj@meta.data$Clone)
+
+    # Select cells from the mutated clone
+    mutated_cells <- seurat_obj@meta.data[annotated_cells & clone_metadata, "CB_seurat"]
+
+    # Get annotation data for the mutated clone
+    clone <- seurat_obj@meta.data[annotated_cells & clone_metadata, ] %>%
+        select(!(c("CB", "CB_seurat", "DP"))) %>%
+        distinct()
+
+    # Create UMAP plot with the mutated clone using Seurat
+    p <- DimPlot(seurat_obj, cells.highlight = mutated_cells) + 
+        labs(caption = p_info)
+
+    # Save the plot
+    # save_name <- paste0(save_path, "/", clone_name)
+    # ggsave(paste0(save_name, ".svg"), plot = p)
+    # ggsave(paste0(save_name, ".png"), plot = p)
+
+    # Save the information asociated with the clone to a file
+    # write.table(clone, file = paste0(save_name, ".tsv"), quote = FALSE, sep = "\t", row.names = TRUE, col.names = FALSE)
+}
+```
+
+```{r}
+plot_mutant_clone_seurat(hca_esoph, "")
+
+```
+
+Which clones are the most frequent/biggest?
+
+```{r}
+get_most_frequent_clones <- function(seurat_obj, top_n = 10) {
+    # Ensure dplyr is loaded for data manipulation
+    library(dplyr)
+    
+    # Check if the Clone column exists in metadata
+    if (!"Clone" %in% colnames(seurat_obj@meta.data)) {
+        stop("The 'Clone' column is not present in the metadata.")
+    }
+    
+    # Filter out cells without clone annotation and count clone frequencies
+    clone_counts <- seurat_obj@meta.data %>%
+        filter(!is.na(ClusterCloneIDs)) %>%                  # Exclude NA values
+        group_by(ClusterCloneIDs) %>%                         # Group by clone
+        # group_by(donor_time) %>%
+        # group_by(Donor) %>%                       
+        summarise(Frequency = n()) %>%             # Count each clone
+        arrange(desc(Frequency))                   # Sort clones by frequency
+    
+    # Select top_n most frequent clones
+    top_clones <- head(clone_counts, top_n)
+    
+    return(top_clones)
+}
+
+get_biggest_clusters <- function(seurat_obj, top_n = 10) {
+    # Ensure dplyr is loaded for data manipulation
+    library(dplyr)
+    
+    # Check if the Clone column exists in metadata
+    if (!"Clone" %in% colnames(seurat_obj@meta.data)) {
+        stop("The 'Clone' column is not present in the metadata.")
+    }
+    
+    # Filter out cells without clone annotation and count clone frequencies
+    cluster_counts <- seurat_obj@meta.data %>%
+        filter(!is.na(ClusterID)) %>%                  # Exclude NA values
+        group_by(ClusterID) %>%                         # Group by clone
+        # group_by(donor_time) %>%
+        # group_by(Donor) %>%                       
+        summarise(Frequency = n()) %>%             # Count each clone
+        arrange(desc(Frequency))                   # Sort clones by frequency
+    
+    # Select top_n most frequent clones
+    top_clusters <- head(cluster_counts, top_n)
+    
+    return(top_clusters)
+}
+
+```
+
+
+```{r}
+top_clones <- get_most_frequent_clones(hca_esoph, top_n = 500)
+print(top_clones)
+
+top_clusters <- get_biggest_clusters(hca_esoph, top_n = 500)
+print(top_clusters)
+
+```
+
+
+## Check co-mutations (sub-clonality)
+We should see sub-clonality for each sequenced library == biological sample (donor_time),  which are 20 in total, as 4 are lost.
+
+So we are going to make a logical df (df3), where also the bio cond is mapped.
+
+
+```{r}
+
+# 1. extract only CHROM, POS and donor_time from metadata, convert rownames (barcodes) into a column named CB_seurat. 8921 rows
+df <- hca_esoph@meta.data[, c("CHROM", "POS", "Donor", "Time")] %>% 
+    rownames_to_column("CB_seurat") %>% 
+    filter(!is.na(CHROM))
+
+# 2. Split the df by Donor, and have a list of df one for each donor
+df_list <- split(df, df$Donor)
+
+# 3. in each donor df, explode CHROM and POS values into multiple rows, maintain only CB_seurat and time_CHROM_POS. 13011 rows. This way we can find multiplied time_CHROM_POS
+df2_list <- lapply(df_list, function(donor_df) {
+    donor_df %>%
+        separate_rows(CHROM, POS, sep = ";") %>%
+        mutate("time_CHROM_POS" = paste(Time, CHROM, POS, sep = "_")) %>%
+        select("time_CHROM_POS", "CB_seurat")
+})
+
+# 4. create df where each row is a cell barcode, and each column is the mutated POS, and is logical, where TRUE if that cell is mutated in that time_CHROM_POS and FALSE if not 
+df3_list <- lapply(df2_list, function(donor_df2) { 
+    donor_df2 %>%
+        mutate(value = TRUE) %>% 
+        pivot_wider(names_from = "time_CHROM_POS", values_from = "value", values_fill = FALSE) %>%
+        column_to_rownames("CB_seurat") %>%
+        as.data.frame()
+})
+
+# 5. same as 2) but groups rows by cond_CHROM_POS and collapses in CB_seurat the cells with that cond_CHROM_POS mutated
+df2_list <- lapply(df_list, function(donor_df) { 
+    donor_df %>%
+        separate_rows(CHROM, POS, sep = ";") %>%
+        mutate("time_CHROM_POS" = paste(Time, CHROM, POS, sep = "_")) %>%
+        select("time_CHROM_POS", "CB_seurat") %>%
+        group_by(time_CHROM_POS) %>%
+        summarize(across(everything(), ~ paste(., collapse = ";"))) %>%
+        as.data.frame()
+})
+
+
+l_df2_list <- list() # list of lists
+
+for (donor in names(df2_list)) {
+  donor_df2 <- df2_list[[donor]]
+
+  l <- list() # keys are cond_CHROM_POS and elements are CB_seurat barcodes (map in which cells from the bio sample we find that mutated position)
+    # $`367C_72h_chr9_33025341`
+    # [1] "CTACCCAGTCTCATCC-1-HCATisStab7646031"
+    # [2] "CTTAGGACAACAACCT-1-HCATisStab7646031"
+  
+  # 3. Loop over each row of the current donor's dataframe (df2)
+  for (i in 1:nrow(donor_df2)) {
+    # Split the CB_seurat column if there are multiple barcodes separated by ";"
+    cells <- unlist(strsplit(donor_df2[i, "CB_seurat"], ";"))
+    l[[donor_df2[i, "time_CHROM_POS"]]] <- cells
+  }
+
+  l_df2_list[[donor]] <- l
+}
+
+
+results_df_list <- list() # list of lists
+
+for (donor in names(df_list)) {
+    donor_df <- df_list[[donor]]
+
+    result_list <- list() # keys are CB_seurat barcodes and elements are cond_CHROM_POS (map the mutated positions of a cell in each bio cond)
+
+    # $`GATGCTAAGACCTTTG-1-HCATisStabAug177376568`
+    # [1] "325C_72h_chr13_24499564" "325C_72h_chr4_40534353" 
+    # this cell is mutated in both of that pos
+
+    for (i in 1:nrow(donor_df)) {
+        # Split the CHROM and POS columns by semicolon for the current row
+        chrom_values <- unlist(strsplit(donor_df[i, "CHROM"], ";"))
+        pos_values <- unlist(strsplit(donor_df[i, "POS"], ";"))
+        time_values <- donor_df[i, "Time"]
+
+        # Combine corresponding CHROM and POS values with "_"
+        combined_values <- paste(time_values, chrom_values, pos_values, sep = "_")
+
+        # Store in the result list with the name from the ID column
+        result_list[[donor_df[i, "CB_seurat"]]] <- combined_values
+    }
+
+    results_df_list[[donor]] <- result_list
+}
+
+
+# Eulerplot
+
+# my_euler <- euler(df3[,1:15]) # df3 is the logical dataframe, select only some cols ()
+
+# save_path <- "/home/albax/human_esophagus/eulerr/plots"
+
+# # svglite(paste0(save_path, "/euler_plot.svg"))
+# png(paste0(save_path, "/euler_plot_15.png"), width = 800, height = 600)
+# plot(my_euler, quantities = TRUE)
+# dev.off()
+
+```
+
+### Euler plot
+```{r}
+euler_plot <- function(df, condition_name, ncols, plot_path) {
+    
+    my_euler <- euler(df[, 1:ncols]) # select 1-15 cols of the df, for example
+    
+    number_cols <- paste0("_", ncols)
+
+    save_path <- paste0(plot_path, "/", condition_name, "_euler_plot", number_cols, ".png")
+    png(save_path, width = 800, height = 600)
+    svglite(paste0(plot_path, "/", condition_name, "_euler_plot", number_cols, ".svg"))
+
+    plot(my_euler, quantities = TRUE)
+    
+}
+
+```
+
+```{r}
+# we have to pass to the function the df3
+for (donor in names(df3_list)) { 
+    
+    donor_df <- df3_list[[donor]]
+    donor_code <- donor
+
+    euler_plot(df=donor_df, condition_name=donor_code, ncols=8, plot_path="/home/albax/human_esophagus/eulerr/plots")
+ # only do this for the first one
+}
+
+```
+
+
+## nVennR
+
+### Donor 367C
+
+
+### Donor 325C
+
+```{r}
+# cluster 20 with PTPN14 gene mutated (from intOGen)
+subdf_c20 <- grouped_data[!is.na(grouped_data$ClusterID) & grouped_data$ClusterID == 20, ]
+clone_c20 <- unique(unlist(strsplit(subdf_c20$ClusterCloneIDs, ",")))
+
+BCs_c20 <- lapply(clone_c20, function(clone_id) {
+  rownames(hca_esoph@meta.data)[grepl(clone_id, hca_esoph@meta.data$ClusterCloneIDs)]
+})
+names(BCs_c20) <- clone_c20
+plotVenn(BCs_c20, outFile = "eulerr/plots/cluster20_nVenn.svg", systemShow = TRUE) 
+
+# cluster 22 with DDX3X mutated (from intOGen)
+subdf_c22 <- grouped_data[!is.na(grouped_data$ClusterID) & grouped_data$ClusterID == 22, ]
+clone_c22 <- unique(unlist(strsplit(subdf_c22$ClusterCloneIDs, ",")))
+
+BCs_c22 <- lapply(clone_c22, function(clone_id) {
+  rownames(hca_esoph@meta.data)[grepl(clone_id, hca_esoph@meta.data$ClusterCloneIDs)]
+})
+names(BCs_c22) <- clone_c22
+plotVenn(BCs_c22, outFile = "eulerr/plots/cluster22_nVenn.svg", systemShow = TRUE, nCycles = 20000) 
+
+
+```
+
+
+
+### Donor 296C
+ClusterIDs: 30,31,32,33 y 34
+
+```{r}
+# cluster 30 296C -> este es imposible de hacer
+subdf_c30 <- grouped_data[!is.na(grouped_data$ClusterID) & grouped_data$ClusterID == 30, ]
+clone_c30 <- unique(unlist(strsplit(subdf_c30$ClusterCloneIDs, ",")))
+
+BCs_c30 <- lapply(clone_c30, function(clone_id) {
+  rownames(hca_esoph@meta.data)[grepl(clone_id, hca_esoph@meta.data$ClusterCloneIDs)]
+})
+names(BCs_c30) <- clone_c30
+plotVenn(BCs_c30, outFile = "eulerr/plots/cluster30_nVenn.svg", systemShow = TRUE) 
+
+# cluster 31 296C
+subdf_c31 <- grouped_data[!is.na(grouped_data$ClusterID) & grouped_data$ClusterID == 31, ]
+clone_c31 <- unique(unlist(strsplit(subdf_c31$ClusterCloneIDs, ",")))
+
+BCs_c31 <- lapply(clone_c31, function(clone_id) {
+  rownames(hca_esoph@meta.data)[grepl(clone_id, hca_esoph@meta.data$ClusterCloneIDs)]
+})
+names(BCs_c31) <- clone_c31
+plotVenn(BCs_c31, outFile = "eulerr/plots/cluster31_nVenn.svg", systemShow = TRUE) 
+
+# cluster 32
+subdf_c32 <- grouped_data[!is.na(grouped_data$ClusterID) & grouped_data$ClusterID == 32, ]
+clone_c32 <- unique(unlist(strsplit(subdf_c32$ClusterCloneIDs, ",")))
+
+BCs_c32 <- lapply(clone_c32, function(clone_id) {
+  rownames(hca_esoph@meta.data)[grepl(clone_id, hca_esoph@meta.data$ClusterCloneIDs)]
+})
+names(BCs_c32) <- clone_c32
+plotVenn(BCs_c32, outFile = "eulerr/plots/cluster32_nVenn.svg", systemShow = TRUE) 
+
+
+# cluster 34 contains CLINVAR annotations
+subdf_c34 <- grouped_data[!is.na(grouped_data$ClusterID) & grouped_data$ClusterID == 34, ]
+clone_c34 <- unique(unlist(strsplit(subdf_c34$ClusterCloneIDs, ",")))
+
+BCs_c34 <- lapply(clone_c34, function(clone_id) {
+  rownames(hca_esoph@meta.data)[grepl(clone_id, hca_esoph@meta.data$ClusterCloneIDs)]
+})
+names(BCs_c34) <- clone_c34
+plotVenn(BCs_c34, outFile = "eulerr/plots/cluster34_nVenn.svg", systemShow = TRUE) 
+
+
+```
+
+
+### Donor 356C
+ClusterIDs: 35,36,37
+
+```{r}
+# cluster 35
+subdf_c35 <- grouped_data[!is.na(grouped_data$ClusterID) & grouped_data$ClusterID == 35, ]
+clone_c35 <- unique(unlist(strsplit(subdf_c35$ClusterCloneIDs, ",")))
+
+BCs_c35 <- lapply(clone_c35, function(clone_id) {
+  rownames(hca_esoph@meta.data)[grepl(clone_id, hca_esoph@meta.data$ClusterCloneIDs)]
+})
+names(BCs_c35) <- clone_c35
+plotVenn(BCs_c35, outFile = "eulerr/plots/cluster35_nVenn.svg", systemShow = TRUE) 
+
+
+# cluster 36
+subdf_c36 <- grouped_data[!is.na(grouped_data$ClusterID) & grouped_data$ClusterID == 36, ]
+clone_c36 <- unique(unlist(strsplit(subdf_c36$ClusterCloneIDs, ",")))
+
+BCs_c36 <- lapply(clone_c36, function(clone_id) {
+  rownames(hca_esoph@meta.data)[grepl(clone_id, hca_esoph@meta.data$ClusterCloneIDs)]
+})
+names(BCs_c36) <- clone_c36
+plotVenn(BCs_c36, outFile = "eulerr/plots/cluster36_nVenn.svg", systemShow = TRUE) 
+
+# cluster 37
+subdf_c37 <- grouped_data[!is.na(grouped_data$ClusterID) & grouped_data$ClusterID == 37, ]
+clone_c37 <- unique(unlist(strsplit(subdf_c37$ClusterCloneIDs, ",")))
+
+BCs_c37 <- lapply(clone_c37, function(clone_id) {
+  rownames(hca_esoph@meta.data)[grepl(clone_id, hca_esoph@meta.data$ClusterCloneIDs)]
+})
+names(BCs_c37) <- clone_c37
+plotVenn(BCs_c37, outFile = "eulerr/plots/cluster37_nVenn.svg", systemShow = TRUE) 
+
+```
+
+### Donor 362C
+ClusterIDs: 38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53
+
+```{r}
+# cluster 38 -> peta
+subdf_c38 <- grouped_data[!is.na(grouped_data$ClusterID) & grouped_data$ClusterID == 38, ]
+clone_c38 <- unique(unlist(strsplit(subdf_c38$ClusterCloneIDs, ",")))
+
+BCs_c38 <- lapply(clone_c38, function(clone_id) {
+  rownames(hca_esoph@meta.data)[grepl(clone_id, hca_esoph@meta.data$ClusterCloneIDs)]
+})
+names(BCs_c38) <- clone_c38
+plotVenn(BCs_c38, outFile = "eulerr/plots/cluster38_nVenn.svg", systemShow = TRUE, nCycles = 20000) 
+
+# cluster 39, clone 1362 contains ClinVar annotation 
+subdf_c39 <- grouped_data[!is.na(grouped_data$ClusterID) & grouped_data$ClusterID == 39, ]
+clone_c39 <- unique(unlist(strsplit(subdf_c39$ClusterCloneIDs, ",")))
+
+BCs_c39 <- lapply(clone_c39, function(clone_id) {
+  rownames(hca_esoph@meta.data)[grepl(clone_id, hca_esoph@meta.data$ClusterCloneIDs)]
+})
+names(BCs_c39) <- clone_c39
+plotVenn(BCs_c39, outFile = "eulerr/plots/cluster39_nVenn.svg", systemShow = TRUE, nCycles = 70000) 
+
+# cluster 40 
+subdf_c40 <- grouped_data[!is.na(grouped_data$ClusterID) & grouped_data$ClusterID == 40, ]
+clone_c40 <- unique(unlist(strsplit(subdf_c40$ClusterCloneIDs, ",")))
+
+BCs_c40 <- lapply(clone_c40, function(clone_id) {
+  rownames(hca_esoph@meta.data)[grepl(clone_id, hca_esoph@meta.data$ClusterCloneIDs)]
+})
+names(BCs_c40) <- clone_c40
+plotVenn(BCs_c40, outFile = "eulerr/plots/cluster40_nVenn.svg", systemShow = TRUE) 
+
+# cluster 41 nnnn
+subdf_c41 <- grouped_data[!is.na(grouped_data$ClusterID) & grouped_data$ClusterID == 41, ]
+clone_c41 <- unique(unlist(strsplit(subdf_c41$ClusterCloneIDs, ",")))
+
+BCs_c41 <- lapply(clone_c41, function(clone_id) {
+  rownames(hca_esoph@meta.data)[grepl(clone_id, hca_esoph@meta.data$ClusterCloneIDs)]
+})
+names(BCs_c41) <- clone_c41
+plotVenn(BCs_c41, outFile = "eulerr/plots/cluster41_nVenn.svg", systemShow = TRUE, nCycles = 50000) 
+
+# cluster 44 -> imposible
+subdf_c44 <- grouped_data[!is.na(grouped_data$ClusterID) & grouped_data$ClusterID == 44, ]
+clone_c44 <- unique(unlist(strsplit(subdf_c44$ClusterCloneIDs, ",")))
+
+BCs_c44 <- lapply(clone_c44, function(clone_id) {
+  rownames(hca_esoph@meta.data)[grepl(clone_id, hca_esoph@meta.data$ClusterCloneIDs)]
+})
+names(BCs_c44) <- clone_c44
+plotVenn(BCs_c44, outFile = "eulerr/plots/cluster44_nVenn.svg", systemShow = TRUE, nCycles = 60000) 
+
+
+# cluster 45
+subdf_c45 <- grouped_data[!is.na(grouped_data$ClusterID) & grouped_data$ClusterID == 45, ]
+clone_c45 <- unique(unlist(strsplit(subdf_c45$ClusterCloneIDs, ",")))
+
+BCs_c45 <- lapply(clone_c45, function(clone_id) {
+  rownames(hca_esoph@meta.data)[grepl(clone_id, hca_esoph@meta.data$ClusterCloneIDs)]
+})
+names(BCs_c45) <- clone_c45
+plotVenn(BCs_c45, outFile = "eulerr/plots/cluster45_nVenn.svg", systemShow = TRUE, nCycles = 50000) 
+
+# cluster 46
+subdf_c46 <- grouped_data[!is.na(grouped_data$ClusterID) & grouped_data$ClusterID == 46, ]
+clone_c46 <- unique(unlist(strsplit(subdf_c46$ClusterCloneIDs, ",")))
+
+BCs_c46 <- lapply(clone_c46, function(clone_id) {
+  rownames(hca_esoph@meta.data)[grepl(clone_id, hca_esoph@meta.data$ClusterCloneIDs)]
+})
+names(BCs_c46) <- clone_c46
+plotVenn(BCs_c46, outFile = "eulerr/plots/cluster46_nVenn.svg", systemShow = TRUE, nCycles = 50000) 
+
+
+```
+
+
+
+
+# MOUSE
+```{r}
+Esoph_filt <- readRDS(file = "../mcGinn_2021/output/esoph_star_filtered_mm10_vep_annot_rep.rds")
+colnames(Esoph_filt@meta.data)[colnames(Esoph_filt@meta.data) == "Clone.x"] <- "Clone" # change metadata name to another
+
+```
+
+
+```{r}
+top_clones <- get_most_frequent_clones(Esoph_filt, top_n = 500)
+print(top_clones)
+
+```
+
+
+```{bash}
+# [matterhorn]
+
+conda activate d_scanpy
+
+wd="/storage/mcGinn_2021/scomatic/analysis/SingleCellGenotype"
+file=${wd}/SingleCellGenotype_mutated_clones_rep_vep.vcf
+
+python vep-vcf-to-tsv.py $file ${file/%.vep.vcf/.tsv} | tee ${wd}/logs/vep_vcf_to_tsv_$(date +'%Y%m%d_%H%M%S').log
+
+```
+
+
+```{r}
+# Read TSV with VEP annotations
+annotations <- read.table("../mcGinn_2021/SingleCellGenotype_mutated_clones_rep_vep.tsv", header = TRUE, sep = "\t", stringsAsFactors = FALSE, comment.char = "")
+# Rename chromosome column
+colnames(annotations)[colnames(annotations) == "X.CHROM"] <- "CHROM"
+
+######################################
+# ADD THE ANNOTATIONS TO SEURAT OBJECT
+######################################
+# Match Seurat cell barcodes to the annotation table cell barcodes
+mutated_cells <- colnames(Esoph_filt) %in% unique(annotations$CB_seurat)
+
+# Collapse annotations for the same cell into the same row
+collapsed_ann <- annotations %>% 
+    group_by(CB_seurat) %>% 
+    summarize(across(everything(), ~ paste(., collapse = ";"))) %>%
+    as.data.frame()
+
+# Join annotations into their corresponding barcodes in Seurat
+seu_meta <- rownames_to_column(Esoph_filt@meta.data, var = "CB_seurat")
+Esoph_filt@meta.data <- left_join(seu_meta, collapsed_ann, by = join_by(CB_seurat == CB_seurat)) %>% column_to_rownames("CB_seurat")
+
+Esoph_filt@meta.data$condition <- plyr::mapvalues(
+  Esoph_filt@meta.data$condition, 
+  from = c("Adult", "Old_CTL", "Old_DEN"), 
+  to = c("Adult CTL", "Old Adult CTL", "Old Adult DEN")
+)
+
+# right now, our seurat object contains ALL the annotations from vep after SingeCellGenotype. 
+
+# Save Seurat object
+# saveRDS(Esoph_filt, file = "../mcGinn_2021/output/esoph_star_filtered_mm10_vep_annot_all.rds")
+
+```
+
+GUARDAR EN UN RDS DIFERENTE!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+## Check co-mutations (sub-clonality)
+We should see sub-clonality for each sequenced library == biological sample (donor_time),  which are 20 in total, as 4 are lost.
+
+So we are going to make a logical df (df3), where also the bio cond is mapped.
+
+```{r}
+# open file with barcodes in heatmap clusters
+expanded_depths <- read.table("../mcGinn_2021/Clusters_clones_depths_expanded.tsv", header = TRUE, sep = "\t", stringsAsFactors = FALSE, comment.char = "")
+
+clusters_CBs <- expanded_depths$CB_seurat # ONLY 367 CELLS
+
+```
+
+```{r}
+# 1. extract only CHROM, POS and donor_time from metadata, convert rownames (barcodes) into a column named CB_seurat. 8921 rows
+df <- Esoph_filt@meta.data[, c("CHROM", "POS", "condition")] %>% 
+    rownames_to_column("CB_seurat") %>% 
+    filter(!is.na(CHROM))
+
+# 1.2 Subset the df to only include cell barcodes that are found through heatmap clusters
+df <- df %>% filter(CB_seurat %in% clusters_CBs)
+
+# 2. Split the df by Donor, and have a list of df one for each donor
+df_list <- split(df, df$condition)
+
+# 3. in each donor df, explode CHROM and POS values into multiple rows, maintain only CB_seurat and cond_CHROM_POS. 13011 rows. This way we can find multiplied cond_CHROM_POS
+df2_list <- lapply(df_list, function(cond_df) {
+    cond_df %>%
+        separate_rows(CHROM, POS, sep = ";") %>%
+        mutate("cond_CHROM_POS" = paste(condition, CHROM, POS, sep = "_")) %>%
+        select("cond_CHROM_POS", "CB_seurat")
+})
+
+# 4. create df where each row is a cell barcode, and each column is the mutated POS, and is logical, where TRUE if that cell is mutated in that cond_CHROM_POS and FALSE if not 
+df3_list <- lapply(df2_list, function(cond_df2) { 
+    cond_df2 %>%
+        mutate(value = TRUE) %>% 
+        pivot_wider(names_from = "cond_CHROM_POS", values_from = "value", values_fill = FALSE) %>%
+        column_to_rownames("CB_seurat") %>%
+        as.data.frame()
+})
+
+# 5. same as 2) but groups rows by cond_CHROM_POS and collapses in CB_seurat the cells with that cond_CHROM_POS mutated
+df2_list <- lapply(df_list, function(cond_df) { 
+    cond_df %>%
+        separate_rows(CHROM, POS, sep = ";") %>%
+        mutate("cond_CHROM_POS" = paste(condition, CHROM, POS, sep = "_")) %>%
+        select("cond_CHROM_POS", "CB_seurat") %>%
+        group_by(cond_CHROM_POS) %>%
+        summarize(across(everything(), ~ paste(., collapse = ";"))) %>%
+        as.data.frame()
+})
+
+
+l_df2_list <- list() # list of lists
+
+for (condition in names(df2_list)) {
+  cond_df2 <- df2_list[[condition]]
+
+  l <- list() # keys are cond_CHROM_POS and elements are CB_seurat barcodes (map in which cells from the bio sample we find that mutated position)
+    # $`367C_72h_chr9_33025341`
+    # [1] "CTACCCAGTCTCATCC-1-HCATisStab7646031"
+    # [2] "CTTAGGACAACAACCT-1-HCATisStab7646031"
+  
+  # 3. Loop over each row of the current condition's dataframe (df2)
+  for (i in 1:nrow(cond_df2)) {
+    # Split the CB_seurat column if there are multiple barcodes separated by ";"
+    cells <- unlist(strsplit(cond_df2[i, "CB_seurat"], ";"))
+    l[[cond_df2[i, "cond_CHROM_POS"]]] <- cells
+  }
+
+  l_df2_list[[condition]] <- l
+}
+
+
+results_df_list <- list() # list of lists
+
+for (condition in names(df_list)) {
+    cond_df <- df_list[[condition]]
+
+    result_list <- list() # keys are CB_seurat barcodes and elements are cond_CHROM_POS (map the mutated positions of a cell in each bio cond)
+
+    # $`GATGCTAAGACCTTTG-1-HCATisStabAug177376568`
+    # [1] "325C_72h_chr13_24499564" "325C_72h_chr4_40534353" 
+    # this cell is mutated in both of that pos
+
+    for (i in 1:nrow(cond_df)) {
+        # Split the CHROM and POS columns by semicolon for the current row
+        chrom_values <- unlist(strsplit(cond_df[i, "CHROM"], ";"))
+        pos_values <- unlist(strsplit(cond_df[i, "POS"], ";"))
+        cond_values <- cond_df[i, "condition"]
+
+        # Combine corresponding CHROM and POS values with "_"
+        combined_values <- paste(cond_values, chrom_values, pos_values, sep = "_")
+
+        # Store in the result list with the name from the ID column
+        result_list[[cond_df[i, "CB_seurat"]]] <- combined_values
+    }
+
+    results_df_list[[condition]] <- result_list
+}
+
+```
+
+
+```{r}
+# df that maps the CHROM_POS with clone_ID, for eulerr plot
+chrompos_clone <- read.table("../mcGinn_2021/map_chrompos_cloneid.tsv", header = TRUE, sep = "\t", stringsAsFactors = FALSE, comment.char = "")
+
+```
+
+### eulerr plots
+
+```{r}
+euler_plot <- function(df, condition_name, plot_path, cloneIDs, map_chromposclone, cluster_sel) {
+
+    if (is.null(cluster_sel)) {
+        selected_rows <- map_chromposclone[map_chromposclone$Clone %in% cloneIDs, ] # select only rows that contain those clones
+
+        select_pos_plot <- df[, grepl(paste(selected_rows$CHROM_POS, collapse = "|"), colnames(df))] # select columns in the df that match CHROM_POS values of the clones we want to plot
+        select_pos_plot <- select_pos_plot[rowSums(select_pos_plot) > 0, ] # remove rows (cells) that aint in this cluster
+        
+        my_euler <- euler(select_pos_plot)
+        # my_euler <- euler(df[, 1:ncols]) # select 1-15 cols of the df, for example
+        
+        # save_path <- paste0(plot_path, "_euler_plot.png")
+        # png(save_path, width = 800, height = 600)
+        # svglite(paste0(plot_path, "/_euler_plot.svg"))
+
+        save_path <- file.path(plot_path, paste0(condition_name, "_eulerr.png"))
+        png(save_path, width = 800, height = 600)
+
+        # png(paste0(plot_path, "eulerr.png"), width = 800, height = 600)
+        # svglite(paste0(plot_path, "eulerr.svg"))
+        # legend_labels <- paste0("Clone: ", selected_rows$Clone, "\nPOS: ", selected_rows$CHROM_POS)
+    
+        # plot(my_euler, quantities = TRUE, labels = legend_labels, horiz = TRUE, legend = list(side = "right", nrow = length(legend_labels), ncol = 1, labels = paste0(selected_rows$Clone)))
+        plot(my_euler, quantities = TRUE)
+
+        # dev.off()
+    }
+
+    else {
+        cloneIDs <- NULL
+        
+        selected_rows <- map_chromposclone %>%
+            filter(Cluster_heatmap == cluster_sel)
+
+        selected_rows <- na.omit(selected_rows)
+        cloneIDs <- selected_rows$Clone
+
+        select_pos_plot <- df[, grepl(paste(selected_rows$CHROM_POS, collapse = "|"), colnames(df))] # select columns in the df that match CHROM_POS values of the clones we want to plot
+        select_pos_plot <- select_pos_plot[apply(select_pos_plot, 1, function(x) any(x == TRUE)), ]
+        
+        my_euler <- euler(select_pos_plot)
+        # my_euler <- euler(df[, 1:ncols]) # select 1-15 cols of the df, for example
+
+        save_path <- paste0(plot_path, "Cluster_", cluster_sel, "_eulerr.png")
+        png(save_path, width = 800, height = 600)
+        svglite(paste0(plot_path, "Cluster_", cluster_sel, "_eulerr.svg"))
+        legend_labels <- paste0("Clone: ", selected_rows$Clone, "\nPOS: ", selected_rows$CHROM_POS)
+
+        plot(my_euler, quantities = TRUE, labels = legend_labels, horiz = TRUE, legend = list(side = "right", nrow = (length(legend_labels) / 1), ncol = 1, labels = paste0(selected_rows$Clone))) #ncol is in how many cols we want the legend to be in 
+        dev.off()
+    }
+
+    # return(list(select_pos_plot = select_pos_plot, my_euler = my_euler, plot = plot))
+}
+
+```
+
+
+```{r}
+# we have to pass to the function the df3
+for (condition in names(df3_list)) { 
+    
+    condition_df <- df3_list[[condition]]
+    condition_code <- condition
+
+    euler_plot(df=condition_df, condition_name=condition_code, plot_path="/home/albax/mcGinn_2021/eulerr/plots")
+ # only do this for the first one
+}
+
+```
+
+
+```{r}
+save_path_pl <- "../mcGinn_2021/eulerr/plots"
+# cluster 7
+result <- euler_plot(df=df3_list$"Adult CTL", condition_name="Adult CTL", plot_path="../mcGinn_2021/eulerr/plots", cloneIDs = NULL, cluster_sel=7, map_chromposclone=chrompos_clone)
+cloneIDs = c("clone_232", "clone_238", "clone_254", "clone_257")
+
+# cluster 29, 30, 31, 32, 33
+euler_plot(df=df3_list$"Old Adult CTL", condition_name="Old Adult CTL", plot_path="../mcGinn_2021/eulerr/plots", cloneIDs = NULL, cluster_sel=29, map_chromposclone=chrompos_clone)
+
+# cluster 26
+df=df3_list$"Adult CTL"
+condition_name="Adult CTL"
+cloneIDs = c("clone_744", "clone_766", "clone_767", "clone_779", "clone_7967")
+
+# cluster 32
+df=df3_list$"Old Adult CTL"
+condition_name="Old Adult CTL"
+cloneIDs = c("clone_931", "clone_927", "clone_872", "clone_868", "clone_898")
+
+# cluster 30
+df=df3_list$"Old Adult CTL"
+condition_name="Old Adult CTL"
+cloneIDs = c("clone_814", "clone_883", "clone_916", "clone_939")
+
+# cluster DEN
+# cluster 20 [611, 641, 667, 622, 638, 651, 654, 621]
+euler_plot(df=df3_list$"Old Adult DEN", condition_name="Old Adult DEN", plot_path = "./eulerr/plots/prueba", cloneIDs = c("clone_611", "clone_641", "clone_667", "clone_622", "clone_638", "clone_651", "clone_654", "clone_621"), map_chromposclone=chrompos_clone, cluster_sel = NULL)
+  ../mcGinn_2021/eulerr/plots/Cluster20
+# cluster 21 [614, 624, 665, 615, 658, 659, 657]
+# euler_plot(df=df3_list$"Old Adult DEN", condition_name="Old Adult DEN", plot_path="../mcGinn_2021/eulerr/plots", cloneIDs = NULL, cluster_sel=21, map_chromposclone=chrompos_clone, cluster_sel = NULL)
+
+# cluster 22
+# unique(chrompos_clone[chrompos_clone$Cluster_heatmap == 22, ])
+# full_path <- paste0(save_path_pl, "/DEN_euler_cluster_22")
+euler_plot(df=df3_list$"Old Adult DEN", condition_name="Old Adult DEN", plot_path="../mcGinn_2021/eulerr/plots/DEN_Cluster_22_", cloneIDs = c("clone_620", "clone_626", "clone_629", "clone_650"), map_chromposclone=chrompos_clone, cluster_sel = NULL)
+
+# euler_plot(df=df3_list$"Old Adult DEN", condition_name="Old Adult DEN", plot_path="../mcGinn_2021/eulerr/plots/DEN_", cloneIDs = NULL, map_chromposclone=chrompos_clone, cluster_sel = 22)
+
+
+# cluster 3
+# unique(chrompos_clone[chrompos_clone$Cluster_heatmap == 3, ])
+euler_plot(df=df3_list$"Old Adult DEN", condition_name="Old Adult DEN", plot_path = "../mcGinn_2021/eulerr/plots/", cloneIDs = c("clone_107", "clone_120", "clone_124", "clone_156"), map_chromposclone=chrompos_clone, cluster_sel = NULL)
+
+# cluster 4
+# unique(chrompos_clone[chrompos_clone$Cluster_heatmap == 4, ])
+euler_plot(df=df3_list$"Old Adult DEN", condition_name="Old Adult DEN", plot_path = "../mcGinn_2021/eulerr/plots/", cloneIDs = c("clone_104", "clone_106", "clone_131", "clone_140"), map_chromposclone=chrompos_clone, cluster_sel = NULL)
+
+
+#############
+# cluster 29
+# unique(chrompos_clone[chrompos_clone$Cluster_heatmap == 29, ])
+euler_plot(df=df3_list$"Old Adult CTL", condition_name="Old Adult CTL", plot_path="../mcGinn_2021/eulerr/plots/OldCTL_Cluster_29_", cloneIDs = c("clone_802", "clone_811", "clone_817", "clone_849", "clone_874", "clone_921"), map_chromposclone=chrompos_clone, cluster_sel = NULL)
+
+# cluster 8
+euler_plot(df=df3_list$"Adult CTL", condition_name="Adult CTL", plot_path="../mcGinn_2021/eulerr/plots/CTL_Cluster_8_", cloneIDs = c("clone_272", "clone_273", "clone_274"), map_chromposclone=chrompos_clone, cluster_sel = NULL)
+
+```
+
+
+```{r}
+# df with position mutated and 
+df  <- 
+
+
+my_euler <- euler(df[, 1:ncols]) # select 1-15 cols of the df, for example
+
+number_cols <- paste0("_", ncols)
+
+save_path <- paste0(plot_path, "/", condition_name, "_euler_plot", number_cols, ".png")
+png(save_path, width = 800, height = 600)
+svglite(paste0(plot_path, "/", condition_name, "_euler_plot", number_cols, ".svg"))
+
+plot(my_euler, quantities = TRUE)
+
+```
+
+
+
+```{r}
+
+
+# cluster 7
+
+
+
+
+
+# cluster 21 from DEN  
+fit1 <- euler(c(
+  "clone_665" = 11,
+  "clone_615" = 2,
+  "clone_657" = 2,
+  "clone_658" = 2,
+  "clone_659" = 2,
+  "clone_614" = 4,
+  "clone_624" = 5,
+  "clone_657&clone_665" = 2,
+  "clone_614&clone_665" = 1,
+  "clone_614&clone_624&clone_665" = 1,
+  "clone_615&clone_624" = 1,
+  "clone_624&clone_658&clone_665" = 1,
+  "clone_624&clone_659&clone_665" = 1
+), shape = "circle", input = c("disjoint")) # "union" gives problems
+
+plot(fit1, quantities = TRUE)
+
+
+# cluster 29
+c29 <- euler(c(
+    "clone_802" = 2,
+    "clone_849" = 2,
+    "clone_921" = 2,
+    "clone_811" = 3,
+    "clone_874" = 3,
+    "clone_817" = 70,
+    "clone_817&clone_921" = 1,
+    "clone_811&clone_817" = 1,
+    "clone_802&clone_817" = 1,
+    "clone_817&clone_849&clone_874" = 1
+), shape = "circle", input = c("disjoint"))
+plot(c29, quantities = TRUE)
+
+
+
+# cluster 32
+c32 <- euler(c(
+    "clone_868" = 2,
+    "clone_872" = 3,
+    "clone_898" = 2,
+    "clone_927" = 4,
+    "clone_931" = 47,
+    "clone_872&clone_931" = 1,
+    "clone_868&clone_931" = 1,
+    "clone_927&clone_931" = 1,
+    "clone_898&clone_931" = 1
+), shape = "circle", input = c("disjoint")) # aqui tmbn sirve union
+plot(c32, quantities = TRUE)
+save_path <- paste0(plot_path, "/", condition_name, "_euler_plot", number_cols, ".png")
+png(save_path, width = 800, height = 600)
+svglite(paste0(plot_path, "/", condition_name, "_euler_plot", number_cols, ".svg"))
+
+```
+
+## fishplot pruebas
+
+Ejemplo de fishplot con el cluster lineal "cluster 32".
+El root es el º (aunque no todas sus células pertenecen al root). Entonces, parece que solo hay 2 eventos mutacionales. 
+
+      2 clone_868
+      3 clone_872
+      2 clone_898
+      4 clone_927
+     47 clone_931
+
+```{r}
+library(fishplot)
+```
+
+```{r}
+timepoints <- c(0, 10, 20) # 2 eventos, nºcolumnas
+# parents <- c(0, 1, 1, 1, 2, 2, 2, 3)  # Parent indices (0 = root)
+parents <- c(0, 1, 1, 1, 1) # Parent indices (0 = root), nº filas
+
+# Define clone names
+# clones <- c("Root", "clone_931", "clone_927", "clone_898", 
+            #  "clone_898&clone_931", 
+            # "clone_927&clone_931")
+clones <- c("clone 931", "clone_927", "clone_872", "clone_898", "clone_868")
+
+# Define proportions of each clone over time. Cada columna es un timepoint, por lo que la matriz tiene que tener tantas columnas como timepoints haya (los cuales son falsos, son realmente pseudotimes que indicamos según el número de subclones + root). El nº filas es cada clon, habrá tantas filas como clones haya. Es importante comprender que no es posible que un clon se vaya "por fuera", digamos que tiene que seguir una linealidad. 
+frac.table <- matrix(c(
+    100, 100, 100,  # Root, clone_931. Al inicio, tiene un % de 100 
+    0, 8.5, 8.5,  # clone_927, al inicio 0, despues 10%, etc...
+    0, 6.38, 6.38,   # clone_872
+    0, 4.25, 4.25, # clone_898
+    0, 4.25, 4.25 # clone_868
+), nrow=5, byrow=TRUE)
+
+fish <- createFishObject(frac.table, parents, timepoints=timepoints, clone.labels=clones)
+fish <- layoutClones(fish)
+fishPlot(fish, shape="spline", title.btm="cluster 21", cex.title=1.2,vlines=timepoints, vlab=paste("Time", timepoints))
+
+```
+
+cluster 21      
+    4 clone_614
+      2 clone_615
+      5 clone_624
+      2 clone_657
+      2 clone_658
+      2 clone_659
+     11 clone_665 -> 100%
+
+```{r}
+timepoints <- c(0, 10, 20, 30) # 2 eventos, nºcolumnas
+parents <- c(0, 0, 0, 2, 2, 3, 3) # Parent indices (0 = root), nº filas
+
+clones <- c("clone_614", "clone_624", "clone_665", "clone_615", "clone_658", "clone_659", "clone_657")
+
+frac.table <- matrix(c(
+    36.36, 40, 40, 40,  # Root, clone_614. Al inicio, tiene un % de 100 
+    0, 8.5, 8.5, 8.5,  # clone_624, al inicio 0, despues 10%, etc...
+    0, 0, 27, 27,   # clone_665, hay un repunte
+    0, 0, 10, 10,  # clone_615
+    0, 0, 10, 10, # clone_658
+    0, 0, 6, 6,  # clone_659
+    0, 0, 6, 6     # clone_657
+), nrow=7, byrow=TRUE)
+
+fish <- createFishObject(frac.table, parents, timepoints=timepoints, clone.labels=clones)
+fish <- layoutClones(fish)
+fishPlot(fish, shape="spline", title.btm="cluster 21", cex.title=1.2,vlines=timepoints, vlab=paste("Time", timepoints))
+
+
+```
+
+## nVennR
+
+With nVennR. Este parece más interesante, al menos para para tener una idea general de la clonalidad. 
+
+- increase the nCycles when working with more than 4 sets (clones) -> nCycles = 20000
+
+
+```{r}
+setwd("/home/albax/mcGinn_2021/eulerr/")
+
+myV <- plotVenn(list(
+    set1 = c(1, 2, 3),
+    set2 = c(2, 3, 4),
+    set3 = c(3, 4, 5, 'a', 'b'),
+    set4 = c(5, 6, 1, 4)
+), outFile = "venn_plot.svg", systemShow = TRUE)
+
+# cluster 7
+clone_c7 <- c("clone_254", "clone_257", "clone_238", "clone_232")
+BCs_c7 <- lapply(clone_c7, function(clone_id) {
+  rownames(Esoph_filt@meta.data)[grepl(clone_id, Esoph_filt@meta.data$clones)]
+})
+names(BCs_c7) <- clone_c7
+plotVenn(BCs_c7, outFile = "cluster7_nVenn.svg", systemShow = TRUE)
+
+myV <- plotVenn(list(
+    clone_254 = c(1, 2, 3, 4, 5),
+    clone_257 = c(1, 2, 3, 4, 5, "cell1", "cell2", "cell3", "cell24"),
+    clone_238 = c("cell1", "cell15"),
+    clone_232 = c("cell15", "cell16")
+), outFile = "cluster7_nVenn.svg", systemShow = TRUE)
+
+
+# cluster 21 DEN
+clone_c21 <- c("clone_614", "clone_615", "clone_624", "clone_657", "clone_658", "clone_659", "clone_665")
+BCs_c21 <- lapply(clone_c21, function(clone_id) {
+  rownames(Esoph_filt@meta.data)[grepl(clone_id, Esoph_filt@meta.data$clones)]
+})
+names(BCs_c21) <- clone_c21
+plotVenn(BCs_c21, outFile = "cluster21_nVenn.svg", systemShow = TRUE, nCycles = 20000) # no se ve una mierda
+
+
+# cluster 4 DEN
+clone_c4 <- c("clone_104", "clone_106", "clone_131", "clone_140")
+BCs_c4 <- lapply(clone_c4, function(clone_id) {
+  rownames(Esoph_filt@meta.data)[grepl(clone_id, Esoph_filt@meta.data$clones)]
+})
+names(BCs_c4) <- clone_c4
+plotVenn(BCs_c4, outFile = "cluster4_nVenn.svg", systemShow = TRUE) 
+
+
+# cluster 22 DEN
+clone_c22 <- c("clone_620", "clone_626", "clone_629", "clone_650")
+BCs_c22 <- lapply(clone_c22, function(clone_id) {
+  rownames(Esoph_filt@meta.data)[grepl(clone_id, Esoph_filt@meta.data$clones)]
+})
+names(BCs_c22) <- clone_c22
+plotVenn(BCs_c22, outFile = "cluster22_nVenn.svg", systemShow = TRUE) 
+
+
+# cluster 20 DEN
+clone_c20 <- c("clone_611", "clone_621", "clone_622", "clone_638", "clone_641", "clone_651", "clone_654", "clone_667")
+BCs_c20 <- lapply(clone_c20, function(clone_id) {
+  rownames(Esoph_filt@meta.data)[grepl(clone_id, Esoph_filt@meta.data$clones)]
+})
+names(BCs_c20) <- clone_c20
+plotVenn(BCs_c20, outFile = "cluster20_nVenn.svg", systemShow = TRUE, nCycles = 50000) 
+
+
+# cluster 29 Old Adult CTL
+clone_c29 <- c("clone_802", "clone_811", "clone_817", "clone_849", "clone_874", "clone_921")
+BCs_c29 <- lapply(clone_c29, function(clone_id) {
+  rownames(Esoph_filt@meta.data)[grepl(clone_id, Esoph_filt@meta.data$clones)]
+})
+names(BCs_c29) <- clone_c29
+plotVenn(BCs_c29, outFile = "cluster29_nVenn.svg", showPlot = TRUE, nCycles = 20000) # increase the nCycles when working with more than 4 sets (clones)
+
+# Cluster 19 Adult CTL
+clone_c19 <- c("clone_553", "clone_571", "clone_578")
+BCs_c19 <- lapply(clone_c19, function(clone_id) {
+  rownames(Esoph_filt@meta.data)[grepl(clone_id, Esoph_filt@meta.data$clones)]
+})
+names(BCs_c19) <- clone_c19
+plotVenn(BCs_c19, outFile = "cluster19_nVenn.svg", showPlot = TRUE)
+
+# cluster 28 Old Adult CTl
+clone_c28 <- c("clone_809", "clone_810", "clone_893")
+BCs_c28 <- lapply(clone_c28, function(clone_id) {
+  rownames(Esoph_filt@meta.data)[grepl(clone_id, Esoph_filt@meta.data$clones)]
+})
+names(BCs_c28) <- clone_c28
+plotVenn(BCs_c28, outFile = "cluster28_nVenn.svg", showPlot = TRUE)
+
+```
+
+
+## How many molecules per cell are really mutated?
+
+
+```{r}
+head(Esoph_filt@assays$RNA$counts) # each colname is a CB_seurat
+
+expanded_depths <- read.table("../mcGinn_2021/Clusters_clones_depths_expanded.tsv", header = TRUE, sep = "\t", stringsAsFactors = FALSE, comment.char = "")
+
+clusters_CBs <- expanded_depths$CB_seurat
+
+# 1. subset columns of the matrix to obtain only barcodes found in clusters from heatmap
+clusterCB_matrix_count <- Esoph_filt@assays$gene$counts[, colnames(Esoph_filt@assays$gene$counts) %in% clusters_CBs]
+
+# 2. Total count of UMIs per CB_seurat (DP)
+clusterCBs_totalcount <- data.frame(
+  CB_seurat = names(colSums(clusterCB_matrix_count)),
+  Total_Count = colSums(clusterCB_matrix_count)
+)
+
+clusterCBs_totalcount <- merge(clusterCBs_totalcount, expanded_depths[, c("CB_seurat", "Clone", "Cluster", "DP", "DP_mean", "DP_median", "DP_IQR", "Sequencing_ID", "Condition", "Cell_type")], by = "CB_seurat", all.x = TRUE)
+
+# Divide DP of clusters CB_seurat / total count CB_seurat
+clusterCBs_totalcount$Mut_fraction_cell <- clusterCBs_totalcount$DP / clusterCBs_totalcount$Total_Count
+
+# write.csv(clusterCBs_totalcount, "../mcGinn_2021/clusterCBs_totalcount.csv", row.names = FALSE)
+
+```
+
+```{r}
+clusterCBs_totalcount <- read.table("../mcGinn_2021/clusterCBs_totalcount.csv", row.names = FALSE)
+
+```
+
+```{r}
+ggplot(clusterCBs_totalcount, aes(x = Total_Count, y = DP, color = Condition)) +
+  geom_point(alpha = 0.6) +
+#   geom_smooth(method = "loess", se = TRUE, color = "red") +
+  labs(title = "Mut_fraction_cell vs. Total Count",
+       x = "Total count UMIs per cell",
+       y = "Mutation fraction per cell") +
+  theme_minimal() +
+  scale_color_viridis_d() +
+  theme(legend.position = "right")
+  
+```
+
+
+
+## barcodes
+
+### How many unique barcodes are per sequencing library?
+
+```{r}
+Idents(Esoph_filt) <- "Sample_name" # sample _name: 16 Levels: SIGAD8_SLX-17937 SIGAD8_SLX-18123 ... SIGAH8_SLX-18123
+
+# SIGAD8
+cells_D8_QC <- WhichCells(Esoph_filt, idents ="SIGAD8_SLX-17937")
+cells_D8_QC <- sapply(strsplit(cells_D8_QC, "-"), `[`, 1)
+cells_D8_18 <- WhichCells(Esoph_filt, idents ="SIGAD8_SLX-18123")
+cells_D8_18 <- sapply(strsplit(cells_D8_18, "-"), `[`, 1)
+
+duplicated_barcodes <- intersect(cells_D8_QC, cells_D8_18)
+nBC <- c(length(cells_D8_QC), length(cells_D8_18), length(duplicated_barcodes)) # 1109
+
+# SIGAE8
+cells_E8_QC <- WhichCells(Esoph_filt, idents ="SIGAE8_SLX-17937")
+cells_E8_QC <- sapply(strsplit(cells_E8_QC, "-"), `[`, 1)
+cells_E8_18 <- WhichCells(Esoph_filt, idents ="SIGAE8_SLX-18123")
+cells_E8_18 <- sapply(strsplit(cells_E8_18, "-"), `[`, 1)
+
+duplicated_barcodes <- intersect(cells_E8_QC, cells_E8_18)
+nBC <- rbind(nBC, c(length(cells_E8_QC), length(cells_E8_18), length(duplicated_barcodes))) # 2476
+
+# SIGAF6
+cells_F6_QC <- WhichCells(Esoph_filt, idents ="SIGAF6_SLX-17937")
+cells_F6_QC <- sapply(strsplit(cells_F6_QC, "-"), `[`, 1)
+cells_F6_18 <- WhichCells(Esoph_filt, idents ="SIGAF6_SLX-18123")
+cells_F6_18 <- sapply(strsplit(cells_F6_18, "-"), `[`, 1)
+
+duplicated_barcodes <- intersect(cells_F6_QC, cells_F6_18)
+nBC <- rbind(nBC, c(length(cells_F6_QC), length(cells_F6_18), length(duplicated_barcodes))) # 2673
+
+# SIGAF8
+cells_F8_QC <- WhichCells(Esoph_filt, idents ="SIGAF8_SLX-17937")
+cells_F8_QC <- sapply(strsplit(cells_F8_QC, "-"), `[`, 1)
+cells_F8_18 <- WhichCells(Esoph_filt, idents ="SIGAF8_SLX-18123")
+cells_F8_18 <- sapply(strsplit(cells_F8_18, "-"), `[`, 1)
+
+duplicated_barcodes <- intersect(cells_F8_QC, cells_F8_18)
+nBC <- rbind(nBC, c(length(cells_F8_QC), length(cells_F8_18), length(duplicated_barcodes))) # 617
+
+# SIGAG6
+cells_G6_QC <- WhichCells(Esoph_filt, idents ="SIGAG6_SLX-17937")
+cells_G6_QC <- sapply(strsplit(cells_G6_QC, "-"), `[`, 1)
+cells_G6_18 <- WhichCells(Esoph_filt, idents ="SIGAG6_SLX-18123")
+cells_G6_18 <- sapply(strsplit(cells_G6_18, "-"), `[`, 1)
+
+duplicated_barcodes <- intersect(cells_G6_QC, cells_G6_18)
+nBC <- rbind(nBC, c(length(cells_G6_QC), length(cells_G6_18), length(duplicated_barcodes))) # 3193
+
+# SIGAG8
+cells_G8_QC <- WhichCells(Esoph_filt, idents ="SIGAG8_SLX-17937")
+cells_G8_QC <- sapply(strsplit(cells_G8_QC, "-"), `[`, 1)
+cells_G8_18 <- WhichCells(Esoph_filt, idents ="SIGAG8_SLX-18123")
+cells_G8_18 <- sapply(strsplit(cells_G8_18, "-"), `[`, 1)
+
+duplicated_barcodes <- intersect(cells_G8_QC, cells_G8_18)
+nBC <- rbind(nBC, c(length(cells_G8_QC), length(cells_G8_18), length(duplicated_barcodes))) # 922
+
+# SIGAH6
+cells_H6_QC <- WhichCells(Esoph_filt, idents ="SIGAH6_SLX-17937")
+cells_H6_QC <- sapply(strsplit(cells_H6_QC, "-"), `[`, 1)
+cells_H6_18 <- WhichCells(Esoph_filt, idents ="SIGAH6_SLX-18123")
+cells_H6_18 <- sapply(strsplit(cells_H6_18, "-"), `[`, 1)
+
+duplicated_barcodes <- intersect(cells_H6_QC, cells_H6_18)
+nBC <- rbind(nBC, c(length(cells_H6_QC), length(cells_H6_18), length(duplicated_barcodes))) # 3867
+
+# SIGAH8
+cells_H8_QC <- WhichCells(Esoph_filt, idents ="SIGAH8_SLX-17937")
+cells_H8_QC <- sapply(strsplit(cells_H8_QC, "-"), `[`, 1)
+cells_H8_18 <- WhichCells(Esoph_filt, idents ="SIGAH8_SLX-18123")
+cells_H8_18 <- sapply(strsplit(cells_H8_18, "-"), `[`, 1)
+
+duplicated_barcodes <- intersect(cells_H8_QC, cells_H8_18)
+nBC <- rbind(nBC, c(length(cells_H8_QC), length(cells_H8_18), length(duplicated_barcodes))) # 4720
+
+```
+
+
+### How many barcodes repeat between SLX- and between SIGA-?
+
+```{r}
+Idents(Esoph_filt) <- "Sequencing_ID" # Sequencing_ID: Levels: SLX-17937 SLX-18123
+cells_QC <- WhichCells(Esoph_filt, idents = "SLX-17937") # 19669
+cells_QC <- sapply(strsplit(cells_QC, "-"), `[`, 1)
+cells_18 <- WhichCells(Esoph_filt, idents = "SLX-18123") # 20094
+cells_18 <- sapply(strsplit(cells_18, "-"), `[`, 1)
+
+duplicated_barcodes <- intersect(cells_QC, cells_18)
+length(duplicated_barcodes) # 19539
+
+```
+
