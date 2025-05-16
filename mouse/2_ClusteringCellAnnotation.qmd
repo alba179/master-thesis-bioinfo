@@ -1,0 +1,944 @@
+# 2. Clustering and Cell annotation
+We are going to perform the downstream analysis of single cell transcriptomics mainly with R package Seurat (https://satijalab.org/seurat/). The version 4 was used instead of the 5 due to version compatibility problems with other methods needed downstream. 
+
+
+
+
+## Import libraries
+
+```{r Import libraries}
+
+.libPaths("/home/albax/miniforge3/envs/seurat_v4/lib/R/library")
+
+if(.Platform$OS.type == "linux") Sys.setenv(PATH= paste("/home/albax/miniforge3/envs/seurat_v4/lib",Sys.getenv()["PATH"],sep=";"))
+
+library(reticulate)
+
+use_condaenv("/home/albax/miniforge3/envs/seurat_v4", required = TRUE)
+py_config()
+
+import("numpy")
+import("leidenalg")
+import("pandas")
+
+suppressMessages(library(Seurat))
+suppressMessages(library(dplyr))
+suppressMessages(library(DropletUtils)) #QC filtering
+suppressMessages(library(ggplot2))
+suppressMessages(library(plotly))
+suppressMessages(library(SingleCellExperiment))
+suppressMessages(library(clustree))
+suppressMessages(library(httpgd))
+suppressMessages(library(patchwork))
+# suppressMessages(library(BPCells)) # for on-disk memory
+
+
+suppressMessages(library(future))
+suppressMessages(library(future.apply))
+suppressMessages(library(BiocParallel))
+
+
+# For data management
+suppressMessages(library(tidyverse))
+suppressMessages(library(Matrix))
+suppressMessages(library(gtools))
+suppressMessages(library(R.utils))
+
+# For plotting
+suppressMessages(library(RColorBrewer))
+suppressMessages(library(viridis))
+suppressMessages(library(gplots))
+suppressMessages(library(gridExtra))
+suppressMessages(library(ggrepel))
+suppressMessages(library(ggridges))
+
+# for matrix 
+library(Matrix)
+library(Matrix.utils)
+
+color.list <- RColorBrewer::brewer.pal(12,"Paired")
+color.list <- c(color.list,RColorBrewer::brewer.pal(12,"Set3"))
+
+# Palette from orange to violet
+palette <- scale_color_viridis_c(option = "plasma", direction = -1) # continue colors palette
+palette_d <- scale_color_viridis_d(option = "turbo", direction = 1) # discrete colors palette
+
+name_order <- c("SIGAF6_Epi", "SIGAG6_Epi", "SIGAH6_Epi", "SIGAD8_Epi", "SIGAE8_Epi", "SIGAF8_Epi", "SIGAH8_Epi", "SIGAG8_Epi") # fixed order to plot the results
+
+setwd("/home/albax/mcGinn_2021")
+
+```
+
+
+## Load data
+First, we load our rds object, and we get only the data from the assay "gene". Note that we have different rds objects, each of them contains different step versions (non-filtered, filtered, annotated), in order to maintain consistency and avoid errors and accidental deletes. 
+
+```{r Load_data}
+
+# Esoph <- readRDS(file = "./results/esoph_star_filtfixed_mm10.rds") # this is with mm10 alignment
+Esoph # 57186 genes genes accross 46321 cells
+# An object of class Seurat 
+# 171558 features across 46321 samples within 3 assays 
+# Active assay: gene (57186 features, 0 variable features)
+#  2 layers present: counts, data
+#  2 other assays present: spliced, unspliced
+
+# Esoph_clusts <- readRDS(file = "./output/esoph_star_clusts_mm10.rds") # after clustering, with PCA, tSNE, UMAP, etc. Without filtering. 
+
+# Esoph_filt <- readRDS(file = "./output/esoph_star_filtered_mm10_vep_annot.rds") # also load the already filtered seurat object (which doesnt contain clusters 4 and 7)
+Esoph_filt # 57186 genes genes accross 39763 cells
+# An object of class Seurat 
+# 250024 features across 39763 samples within 5 assays 
+# Active assay: RNA (57186 features, 0 variable features)
+#  2 layers present: counts, data
+#  4 other assays present: gene, spliced, unspliced, SCT
+#  3 dimensional reductions calculated: pca, tsne, umap
+
+Esoph_filt <- readRDS(file = "./output/esoph_star_filtered_mm10_vep_annot_rep.rds")
+Esoph_filt
+# An object of class Seurat 
+# 250024 features across 39763 samples within 5 assays 
+# Active assay: RNA (57186 features, 0 variable features)
+#  2 layers present: counts, data
+#  4 other assays present: gene, spliced, unspliced, SCT
+#  3 dimensional reductions calculated: pca, tsne, umap
+
+```
+
+The features(genes) are automatically collapsed -> there are no duplicated rows in any of the assays. 
+
+Look for duplicated genes:
+```{r, eval = FALSE}
+gene_features <- rownames(Esoph[["unspliced"]])
+duplicated_genes <- gene_features[duplicated(gene_features)]
+print("Duplicated genes in the 'gene' assay:")
+print(duplicated_genes)
+```
+
+
+## QC stats
+We are going to perform everything only in the "spliced" assay.
+
+```{r}
+DefaultAssay(Esoph) <- "spliced" # change active assay to spliced
+head(Esoph@meta.data, 5) #it contains nCount and nFeature for each assay
+```
+
+Typically, we want to filter: 
+- **Blood cells (erythrocites)**
+- The percentage of reads that map to the mitochondrial genome
+  -   Low-quality / dying cells often exhibit extensive mitochondrial contamination
+  -   We calculate mitochondrial QC metrics with the PercentageFeatureSet() function which calculates the percentage of counts originating from a set of features
+  -   We use the set of all genes starting with **MT-(^MT)** as a set of mitochondrial genes low quality barcodes (a treshold)
+
+- Empty barcodes (using a treshold) 
+-   The number of unique genes detected in each cell.
+    -   **Low-quality cells or empty droplets** will often have very few genes
+    -   Cell **doublets** or multiplets may exhibit an aberrantly high gene count
+-   Similarly, the total number of molecules detected within a cell (correlates strongly with unique genes)
+
+**We have already filtered our data with barcodes ranks, and now we are going to inspect the seurat object in order to decide how we filter it**
+spoiler: we end up filtering using the clusterization (7 clusters) shown in umap with resolution 0.3 (which we decide viewing clustree), where we are going to delete clusters 4 and 7, as they belong to fibroblasts (Vim marker) or have really high mt percent.
+
+### Detect MT genes
+
+```{r}
+head(row.names(Esoph)) # first genes
+Esoph[["percent.mt"]] <- PercentageFeatureSet(Esoph, assay = "spliced", pattern = "^mt-") # calculate mitochondrial percent
+head(Esoph@meta.data, 5)
+
+# we have NaN values in percent.mt because percentage is calculated by percentage is (x$nCount_RNA/x$percent.mt)*100  , and therefore there are 0 values for the nCount slot and 0 mitochondrial gene counts for the barcode. 
+
+# Delete barcodes
+# Esoph <- subset(Esoph, subset = !is.na("percent.mt")) # exclude NaN values
+
+```
+
+
+Visualize QC metrics
+```{r QC_plots, eval=FALSE}
+VlnPlot(Esoph, features = c("nFeature_spliced", "nCount_spliced", "nFeature_unspliced", "nCount_unspliced", "percent.mt"), ncol = 5)  
+# VlnPlot(Esoph, features =  "percent.mt", ncol = 1) +
+       scale_y_continuous(breaks = seq(0, 100, by = 5)) 
+# VlnPlot(Esoph, features =  "nFeature_spliced", ncol = 1) +
+       scale_y_continuous(breaks = seq(0, 10000, by = 500)) 
+# VlnPlot(Esoph, features =  "nCount_spliced", ncol = 1) +
+       scale_y_continuous(breaks = seq(0, 1000000, by = 10000))
+VlnPlot(Esoph, features =  "nFeature_spliced", split.by = "Sequencing_ID", ncol = 1) +
+       scale_y_continuous(breaks = seq(0, 10000, by = 500)) # frecuencia genes en cada sequencing
+
+# plot(density(Esoph$nFeature_spliced)) # kernel density plot (alternative to hist())
+# plot(density(Esoph$percent.mt)) # kernel density plot (alternative to hist())
+
+VlnPlot(Esoph_filt, features="nFeature_spliced", split.by="Sequencing_ID")
+
+```
+
+```{r, eval = FALSE}
+plot1 <- FeatureScatter(Esoph, feature1 = "nCount_spliced", feature2 = "percent.mt")
+plot2 <- FeatureScatter(Esoph, feature1 = "nCount_spliced", feature2 = "nFeature_spliced")
+plot3 <- FeatureScatter(Esoph, feature1 = "nCount_spliced", feature2 = "nCount_unspliced")
+plot1 + plot2 + plot3
+
+```
+
+According to the plots we have seen, we are going to filter the Esoph object (by eye). 
+
+The original paper filtered the cells according to:
+- Cells that have >15% mitochondrial counts
+- Cells that have unique feature counts less than 1200
+- Genes expressed in fewer than 3 cells
+But we are not going to do this. 
+
+
+
+```{r}
+## General statistics post-second filtering:
+# Proportion of UMIs that are from unspliced transcripts:
+# (kallisto | bus counts reads that are partially intronic and partially exonic as unspliced while velocyto throws away many reads, reason why it ends with smaller proportion - see https://github.com/velocyto-team/velocyto.py/issues/148)
+sum(Esoph$nCount_unspliced) / (sum(Esoph$nCount_spliced) + sum(Esoph$nCount_unspliced)) # 0.1198788 mm39
+# [1] 0.1281474 mm10
+
+# Most barcodes now have >> 0 or 1 UMIs detected:
+filt2_count <- Matrix::colSums(Esoph)
+summary(filt2_count) # median genes = 13632 mm39
+# median genes = 11900 mm10
+
+# Make a copy of spliced assay (for purpose of unambiguous exportation and interpretation in scvelo)
+Esoph[["RNA"]] <- Esoph[["spliced"]]
+Esoph # spliced assay keeps as default assay used as input for downstream normalization etc. (but not modified)
+```
+
+
+## Normalization, feature selection, scaling
+
+```{r SCTransform}
+Esoph <- SCTransform(Esoph, assay = "spliced", new.assay.name = "SCT")
+# creates SCT assay (that becomes default)
+
+# Highly-variable features (between cells):  # 3000 by default
+# Identify the 10 most highly variable genes
+top10 <- head(VariableFeatures(Esoph), 10)
+# Linear scaling is restricted to highly-variable features by default: Esoph[["SCT"]]@scale.data
+```
+
+```{r, eval = FALSE}
+# plot variable features with labels
+LabelPoints(plot = VariableFeaturePlot(object = Esoph[["SCT"]], selection.method = "sct"), points = top10, repel = TRUE, xnudge = 0, ynudge = 0)
+```
+
+
+### Dimensional reduction (PCA)
+Observation: Makes most sense to plot RNA velocity over cell embeddings from the SCT matrix (built from spliced, not unspliced counts; i.e. we seek arrows as predictions from CURRENT state)
+
+```{r}
+DefaultAssay(Esoph) <- "SCT" # already default, but just in case
+Esoph <- RunPCA(Esoph, verbose = FALSE) # by default, based on variable features
+```
+
+```{r}
+# Summary of genes defining most variability: (higher PCA score)
+print(Esoph[["pca"]], dims = 1:5, nfeatures = 5)
+VizDimLoadings(Esoph, dims = 1:2, reduction = "pca")
+
+# PCA plot:
+DimPlot(Esoph, dims = c(1,2), reduction = "pca", pt.size = 0.5) # change the dimensions as you want
+```
+
+Heatmap of genes and cells with highest PCA score (a quick supervised analysis of sources of variation)
+```{r}
+DimHeatmap(Esoph, dims = 1, cells = 500, balanced = TRUE) # picks 500 most extreme cells on each end of PCA1 spectrum for 15 top differentiating genes
+DimHeatmap(Esoph, dims = 1:15, cells = 500, balanced = TRUE)
+```
+
+```{r}
+# Set the threshold of significant dimensions based on conjunction of JackStraw, ElbowPlot and Supervised Heatmaps outcome before
+
+## Significant dimensions: determine most relevant sources of variability
+# Extensive technical noise is reduced when eliminating minor components, so top principal components represent a robust compression of the dataset.
+# ElbowPlot (heuristic; based on % variance explained by each PC component)
+ElbowPlot(Esoph) # use 17
+
+```
+
+
+
+### Non-linear dimensional representation
+Simplifies the complex manifold of the data in a super-reduced dimensional space for visualization. We should run this after PCA, in order to further reduce the dimensionality or our dataset. Later, we can run FindClusters() with whatever dimension we prefer. 
+
+```{r tsne}
+## tSNE
+Esoph <- RunTSNE(Esoph, dims = 1:17, verbose = FALSE)
+
+# saveRDS(Esoph, file = "./output/esoph_star_tsne_mm10.rds")
+
+tsne_plot_15 <- DimPlot(Esoph, reduction = "tsne", pt.size = 0.5) # _ clusters
+tsne_plot_15
+```
+
+Be careful when running this chunk, as umap can consume a lot of cpu: 
+```{r UMAP}
+## UMAP
+Esoph <- RunUMAP(Esoph, reduction = "pca", dims = 1:17)
+# saveRDS(Esoph, file = "./output/esoph_star_clusts_mm10.rds") # contains also FindNeighbours()
+
+```
+
+```{r}
+umap_plot_15 <- DimPlot(Esoph, reduction = "umap", pt.size = 0.5, label=TRUE)
+umap_plot_15
+```
+
+```{r}
+unique_names <- sapply(strsplit(colnames(Esoph), "-"), function(x) paste(x[2], x[3], sep = "-"))
+# Add this information as metadata
+Esoph$unique_name <- unique_names
+
+# Create a DimPlot colored by the unique names
+DimPlot(Esoph, reduction = "umap", pt.size = 0.5, label=FALSE, group.by = 'unique_name') # group by a column from metadata
+
+```
+
+
+### Clustering (graph-based)
+1. Cellular distance metric: euclidean distance (on PCAs)
+2. Embedding cells in a graph structure - for example a K-nearest neighbor (KNN) graph, with edges drawn between cells with similar feature expression patterns
+
+#### Find Neighbours (KNN)
+```{r KNN}
+Esoph <- FindNeighbors(Esoph, reduction = "pca", dims = 1:17) # dims based on first N components (from pca reduction)
+
+```
+
+
+## Find Clusters
+Algorithm for modularity optimization (1 = original Louvain algorithm; 2 = Louvain algorithm with multilevel refinement; 3 = SLM algorithm; 4 = Leiden algorithm). Leiden requires the leidenalg python.
+  - Louvain algorithm: Partitioning into highly interconnected ‘quasi-cliques’ or ‘communities’, optimizing a modularity target function. It may yield arbitrarily badly connected communities. In the worst case, communities may even be disconnected, especially when running the algorithm iteratively.
+  - Leiden algorithm: when applied iteratively, it converges to a partition in which all subsets of all communities are locally optimally assigned. Furthermore, by relying on a fast local move approach, the Leiden algorithm runs faster than the Louvain algorithm.
+
+We will use Leiden algorith (algorithm = 4, method = "igraph") https://www.nature.com/articles/s41598-019-41695-z
+
+```{r FindClusters}
+# Esoph <- FindClusters(Esoph, resolution = seq(0.2, 1.2, by = 0.2), algorithm = 4) # this consumed too much memory...
+
+Esoph <- FindClusters(Esoph, resolution = 0.1, algorithm = 4, method = "igraph") 
+Esoph <- FindClusters(Esoph, resolution = 0.2, algorithm = 4, method = "igraph") 
+Esoph <- FindClusters(Esoph, resolution = 0.3, algorithm = 4, method = "igraph") 
+Esoph <- FindClusters(Esoph, resolution = 0.4, algorithm = 4, method = "igraph") 
+Esoph <- FindClusters(Esoph, resolution = 0.6, algorithm = 4, method = "igraph") 
+Esoph <- FindClusters(Esoph, resolution = 0.8, algorithm = 4, method = "igraph") 
+Esoph <- FindClusters(Esoph, resolution = 1.0, algorithm = 4, method = "igraph") 
+Esoph <- FindClusters(Esoph, resolution = 1.2, algorithm = 4, method = "igraph") 
+
+```
+
+```{r}
+# To decide how many clusters we should annotate, with the signatures we decide
+clustree(Esoph, prefix = "SCT_snn_res.") # we are going to use resolution 0.2 for Esoph in mm10
+```
+
+```{r}
+# Idents() contains cluster info
+head(Idents(Esoph), 10) # looks at cluster IDs of the first 10 cells
+
+```
+
+
+```{r DimPlots_res}
+DimPlot(Esoph, group.by = "SCT_snn_res.0.2") & palette_d
+DimPlot(Esoph, group.by = "SCT_snn_res.0.3") & palette_d
+DimPlot(Esoph, group.by = "SCT_snn_res.0.4") & palette_d
+
+DimPlot(Esoph, group.by = "SCT_snn_res.0.2", split.by = "condition") & palette_d
+
+```
+
+Finding different cell types that may not be epithelial, due to contamination, experiment design, whatever...
+
+Cell markers (they may vary between mouse/human):
+- Hematopoetic cells -> Cd34
+- Fibroblasts -> Vim
+
+```{r FeaturePlots_markers}
+FeaturePlot(Esoph, features = "Cd34") & palette # marker for hematopoietic stem cells (immune)
+FeaturePlot(Esoph, features = "Vim") & palette # marker for fibroblasts
+
+```
+
+Thanks to the plots above, we can clearly see that we have fibroblast cells that belong to cluster number 7 (when using resolution 0.2).
+
+Quality control plots with umap:
+
+```{r}
+# number of genes per cell
+FeaturePlot(Esoph, features = "nFeature_spliced") & palette # no huge heterogeneities
+FeaturePlot(Esoph, features = "percent.mt") & palette 
+
+```
+
+We an see that the top "leaf" of our umap has low-quality cells, with few genes, and very high MT%. These cells belong to cluster 4 (when using resolution 0.2). 
+
+```{r}
+# Select resolution for Seurat Clusters:
+Idents(Esoph) = Esoph$SCT_snn_res.0.2
+Esoph$seurat_clusters = Esoph$SCT_snn_res.0.2
+```
+
+
+```{r, eval = FALSE}
+## Remaining annotation using top markers for every cluster compared to all remaining ones, reporting only the positive ones
+# Esoph.markers <- FindAllMarkers(Esoph, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25) # restrict to features with a min of 0.25 logFC
+
+# write.table(Esoph.markers, file = './output/Esoph_markers.txt', col.names = TRUE, row.names = TRUE, sep = '\t')
+
+```
+
+
+RESULTS:
+
+When we plot the UMAP, we can see that there are:
+- Region with high MT proportion (belongs to cluster 4)
+- Two regions that seem to be different type of cells.
+  - The region from the upper-left seems to be fibroblasts, bc if we run DimPlot(Esoph, features = features = c("Vim")), it colours. Vim(vimentin) is a typical fibroblast marker.
+  - The other region must be further investigated to detect what is it.
+- Also, the cluster 4 looks like a "batch" that represents the whole data
+- Cluster 6 is specific of sample Old_DEN, which could be biological evidences!!
+
+After annotating and saving the preliminar results, we proceed by deleting the cluster number 4, as it is very heterogenous and somehow represents all the clusters in the data.
+
+We also delete cluster number 7, as they are fibroblasts.
+
+Delete cluster 4 and 7:
+```{r, eval = FALSE}
+Esoph_filt <- subset(x = Esoph, idents = c("4", "7"), invert = TRUE)
+# mm10
+# An object of class Seurat 
+# 250504 features across 39763 samples within 5 assays 
+# Active assay: SCT (21760 features, 3000 variable features)
+#  3 layers present: counts, data, scale.data
+#  4 other assays present: gene, spliced, unspliced, RNA
+#  3 dimensional reductions calculated: pca, tsne, umap
+
+```
+
+## Cell annotation
+```{r}
+Esoph.markers <- FindAllMarkers(Esoph_filt, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
+
+write.table(Esoph.markers, file = './output/Esoph_markers_clusts.txt', col.names = TRUE, row.names = TRUE, sep = '\t')
+
+TopMarkers <- Esoph.markers %>% 
+  group_by(cluster) %>% top_n(n = 5, wt = avg_log2FC) # show just top 5 per cluster
+
+
+TopMarkers %>% write.csv("./output/Esoph_TopMarkers.csv")
+cluster3_markers <- TopMarkers[TopMarkers$cluster == 3, ]  # Suprabasal
+cluster4_markers <- TopMarkers[TopMarkers$cluster == 4, ]  # Mito-rich
+cluster6_markers <- TopMarkers[TopMarkers$cluster == 6, ]  # Epi_DEN
+cluster7_markers <- TopMarkers[TopMarkers$cluster == 7, ]  # Fibroblasts
+```
+
+## Re-normalization and clustering of filtered object
+Repeat normalization, PCA, tSNE and umap:
+
+```{r, eval= FALSE}
+Esoph_filt <- SCTransform(Esoph_filt, assay = "spliced", new.assay.name = "SCT")
+DefaultAssay(Esoph_filt) <- "SCT" # already default, but just in case
+
+Esoph_filt <- RunPCA(Esoph_filt, verbose = FALSE)
+
+ElbowPlot(Esoph_filt) # 17 dimensions
+
+Esoph_filt <- RunTSNE(Esoph_filt, dims = 1:17, verbose = FALSE, reduction = "pca", reduction.name = "tsne", reduction.key = "tSNE")
+
+Esoph_filt <- RunUMAP(Esoph_filt, reduction = "pca", dims = 1:17, reduction.name = "umap")
+
+```
+
+
+```{r, eval = FALSE}
+Esoph_filt <- FindNeighbors(Esoph_filt, reduction = "pca", dims = 1:17)
+
+Esoph_filt <- FindClusters(Esoph_filt, resolution = 0.1, algorithm = 4, method = "igraph") 
+Esoph_filt <- FindClusters(Esoph_filt, resolution = 0.2, algorithm = 4, method = "igraph") 
+Esoph_filt <- FindClusters(Esoph_filt, resolution = 0.3, algorithm = 4, method = "igraph") 
+Esoph_filt <- FindClusters(Esoph_filt, resolution = 0.4, algorithm = 4, method = "igraph") 
+Esoph_filt <- FindClusters(Esoph_filt, resolution = 0.6, algorithm = 4, method = "igraph") 
+Esoph_filt <- FindClusters(Esoph_filt, resolution = 0.8, algorithm = 4, method = "igraph") 
+Esoph_filt <- FindClusters(Esoph_filt, resolution = 1.0, algorithm = 4, method = "igraph") 
+Esoph_filt <- FindClusters(Esoph_filt, resolution = 1.2, algorithm = 4, method = "igraph")
+
+```
+
+```{r}
+clustree(Esoph_filt, prefix = "SCT_snn_res.") # we are going to use resolution 0.2 for Esoph in mm10
+
+```
+
+```{r}
+DimPlot(Esoph_filt, group.by = "SCT_snn_res.0.2") & palette_d
+DimPlot(Esoph_filt, group.by = "SCT_snn_res.0.3") & palette_d
+DimPlot(Esoph_filt, group.by = "SCT_snn_res.0.4") & palette_d
+
+DimPlot(Esoph_filt, group.by = "SCT_snn_res.0.2", split.by = "condition") & palette_d
+
+```
+
+```{r}
+# number of genes per cell
+FeaturePlot(Esoph_filt, features = "nFeature_spliced") & palette # no huge heterogeneities
+FeaturePlot(Esoph_filt, features = "percent.mt") & palette 
+
+```
+
+Seeing again the plots after rerunning the analysis without the cells from clusters 4 and 7, we choose resolution 0.2 with 5 clusters.
+
+Also, very important: cluster 5 is specific to condition Old_DEN
+
+Now, we have 5 clusters in our data (resolution 0.2), which, after seeing their genes, could be annotated like:
+- Cluster 1: Basal (B)
+- Cluster 2 and 4: Basal prolifetaring (BP)
+- Cluster 3: differentiated (DIF)
+- Cluster 5: basal (B)
+
+This is a premature proposal, we will decide this later. 
+
+
+```{r}
+# We use resolution 0.2
+# Select resolution for Seurat Clusters:
+Idents(Esoph_filt) = Esoph_filt$SCT_snn_res.0.2
+Esoph_filt$seurat_clusters = Esoph_filt$SCT_snn_res.0.2
+
+```
+
+## Cell cycle scoring
+
+```{r, eval = FALSE}
+# Perform cell cycle scoring on Esoph_filt
+setwd("/home/albax/mcGinn_2021")
+exp.mat <- read.table(file = "./cell_cycle_vignette_files/nestorawa_forcellcycle_expressionMatrix.txt", header = TRUE, as.is = TRUE, row.names = 1)
+
+# A list of cell cycle markers, from Tirosh et al, 2015, is loaded with Seurat.  We can
+# segregate this list into markers of G2/M phase and markers of S phase
+s.genes <- cc.genes$s.genes
+g2m.genes <- cc.genes$g2m.genes
+
+Esoph_filt <- CellCycleScoring(Esoph_filt, s.features = s.genes, g2m.features = g2m.genes, set.ident = TRUE)
+
+```
+
+```{r}
+DimPlot(Esoph_filt, group.by = "Phase")
+```
+
+## Cluster annotation based on cellular composition, DGE, FeaturePlots...
+The mouse esophageal mucosa consists of three layers: stratified epithelium, lamina propia with connective tissue, and muscularis mucosa with smooth muscle. In our data, the authors peeled the muscle (the muscularis mucosa) from the esophagi. So, we should only have the stratified epithelium and maybe lamina propia. The epithelium, in the lumen, is keratinized in mice. 
+
+We are going to create different signatures depending on:
+1. Cell state (resting basal, cycling basal, differentiated) -> this is what the authors did in McGinn, 2021; or basal, differentiated, cell cycle
+    - Basal: Cdh3, Itgb1, Krt15, Krt14, Krt5, Col17a1, Sox2, Trp63, Itga6
+    - Cell cycle: Gmnn, Mcm6, Mcm2, Cdt1, Pcna, Ccne1, E2f1, Ccne1, Cdc6, Aurkb, Top2a, Ccnb2, Bub1, Ube2c, Aurka, Kif23, Ccnb1, Mki67, Mad2l1, Birc5
+    - Differentiating: Krt13, Klf4, Tgm3, Sbsn, Grhl3, Krt4, Notch3, Krtdap
+
+2. Structure of the epithelium:
+    Stratified epithelium:
+    Lumen
+      - Keratinized cells (final stage of granular): ; Lor, Ivl, Envoplakin, Periplakin, Sprr1a, Sprr1b, Sprr2a1, Sprr2a2, Sprr2a3, Sprr2b, Sprr2d, Sprr2e, Sprr2f, Sprr3; Lor, Flg, Tchp, Ivl, Capza1, S100A1, Sprr1a, Sprr1b, Sprr2a1, Sprr2a2, Sprr2a3, Sprr2b, Sprr2d, Sprr2e, Sprr2f, Sprr3
+      - Suprabasal cells -> differentiation
+          - Granular: Lor, Flg, Ivl; Tgm3, Krt1, Krt2e, Krt9, Krt10, Dsg1, Dsc1
+          - Spinous: Krt10, Krt1, Tgm1, Tgm5; Tgm1, Tgm5, Dsg2, Dsg3, Dsg4
+      - Basal cells (can be differentiating or be progenitor cells) -> proliferation, p63+,krt5+,krt7-; Bmi1 progenitor cells, Krt5, Krt14, Krt15; Krt5, Krt14, Tgm2, Bpag1; Itgb1, Trp63, Krt5, Krt14, Krt15; Krt5, Krt14, Bpag1, Tgm2
+      - Basal lamina: Lama5, Itga6, Itgb4, Bpag2
+    Basal
+
+    Disclaimer: keratinized cells and granular cells could be grouped in one category, the cornified envelope. 
+
+    Summarised by taking the genes in common from the literature: 
+    Lumen
+      - Keratinized cells (final stage of granular): Lor, Ivl, Sprr1a, Sprr1b, Sprr2a1, Sprr2a2, Sprr2a3, Sprr2b, Sprr2d, Sprr2e, Sprr2f, Sprr3, Tchp, Capza1, S100A1, Evpl, Ppl
+      - Suprabasal cells -> differentiation
+          - Granular: Tgm3, Krt1, Krt2e, Krt9, Krt10, Dsg1, Dsc1
+          - Spinous: Krt10, Krt1, Tgm1, Tgm5, Dsg2, Dsg3, Dsg4
+      - Basal cells (can be differentiating or be progenitor cells) -> proliferation: Krt5, Krt14, Krt15, Tgm2, Bpag1, Tp63, Itgb1
+      - Basal lamina: Lama5, Itga6, Itgb4
+    Basal
+
+
+```{r}
+# Taking into account the different sub-levels of the oesophagus epithelium; from Figure S1 Mendeley and Candi E, 2005 (The cornified envelope: a model of cell death in the skin):
+
+# Lumen
+# Keratinized cells (final stage of granular) :
+# FeaturePlot(Esoph_filt, features = c("Sprr1a", "Sprr1b", "Sprr3", "Evpl", "Ppl")) & palette & plot_annotation(title = "Keratinization markers") & theme(plot.title = element_text(size = 15, face = "bold", hjust = 0.5))
+
+# Differentiation markers:
+FeaturePlot(Esoph_filt, features = c("Krt13",  "Tgm3", "Grhl3", "Krt4", "Notch3", "Klf4", "Sbsn", "Krtdap")) & palette & plot_annotation(title = "Differentiation markers") & theme(plot.title = element_text(size = 15, face = "bold", hjust = 0.5))
+
+# Suprabasal cell markers
+# FeaturePlot(Esoph_filt, features = c("Krt15", "Trp63", "Krt5", "Krt14")) & palette & plot_annotation(title = "Suprabasal cell markers") & theme(plot.title = element_text(size = 15, face = "bold", hjust = 0.5))
+
+# Basal cell markers (can be proliferating or be progenitor cells):
+FeaturePlot(Esoph_filt, features = c("Krt5", "Krt14", "Krt15", "Trp63", "Itgb1", "Itgb4", "Col17a1")) & plot_annotation(title = "Basal cell markers") &
+  theme(plot.title = element_text(size = 15, face = "bold", hjust = 0.5)) & palette #Mki67 are proliferating cells!!!!!
+
+FeaturePlot(Esoph_filt, features = c("Mki67", "Cenpf", "Cenpa")) & plot_annotation(title = "Proliferating basal cell markers") & theme(plot.title = element_text(size = 15, face = "bold", hjust = 0.5)) & palette #Mki67 are proliferating cells!!!!!
+
+# Basal lamina cell markers
+# FeaturePlot(Esoph_filt, features = c("Lama5", "Itga6", "Itgb4")) + plot_annotation(title = "Basal lamina cell markers") &
+#  theme(plot.title = element_text(size = 15, face = "bold", hjust = 0.5)) & palette
+
+```
+
+
+```{r}
+# Taking into account the three clusters from McGinn et al 2021 (CB, RB and DIF):
+
+# Cycling basal markers(CB), cells that have high expression of cell cycle genes:
+FeaturePlot(Esoph, features = c("Gmnn", "Mcm6", "Mcm2", "Cdt1", "Pcna", "Ccne1", "E2f1", "Cdc6", "Aurkb", "Top2a", "Ccnb2", "Bub1", "Ube2c", "Aurka", "Kif23", "Ccnb1", "Mki67", "Mad2l1", "Birc5")) & plot_annotation(title = "Cycling basal markers(CB)") & theme(plot.title = element_text(size = 15, face = "bold", hjust = 0.5)) & palette
+
+# Resting basal markers (RB):
+FeaturePlot(Esoph_filt, features = c("Col17a1", "Trp63", "Krt14", "Itga6", "Itgb1")) & plot_annotation(title = "Resting basal markers (RB)") & theme(plot.title = element_text(size = 15, face = "bold", hjust = 0.5)) & palette
+
+# Differentiation markers (DIF):
+FeaturePlot(Esoph_filt, features = c("Tgm3", "Krt13", "Grhl3", "Krt4", "Notch3", "Klf4", "Sbsn", "Krtdap")) & plot_annotation(title = "Differentiation markers (DIF)") & theme(plot.title = element_text(size = 15, face = "bold", hjust = 0.5)) & palette
+
+```
+
+```{r}
+## Dot plot of some characteristic markers:
+DotPlot(Esoph, features = c("Mki67","Krt14","Col17a1","Krt5","Sbsn","Krtdap"), cols = c("grey", "red"),dot.scale = 10) + RotatedAxis()
+
+```
+
+
+## SComatic preparation
+SComatic needs a TSV metadata file that relates each cell barcode with each "Cell type" annotation. The annotation will depend on how much granularity we need or is adequate to cal lsomatic variants from single cell transcriptomics. Here, the library design plays a very important role. Due to that, in our case, we have 8 libraries, that are truly 16 as they are double-sequenced. Each of the library contains 3 mice, and, we are not interested in finding intra-cell-type in the esophagus epithelium, also, all of the cells are epihtelial, so we don't have the possibility of cross-relating detected variants across different cell types of other lineages. That's why we have decided to annotate all the cell barcodes as "Epithelial". 
+
+![Library design](https://github.com/alba179/master-thesis-bioinfo/main/pics/library_design_mouse.png)
+
+![Cancer cell fraction relation](https://github.com/alba179/master-thesis-bioinfo/main/pics/cCF_mouse.png)
+
+
+### Save cell barcodes with cell types in TSV format (SComatic)
+For SComatic, save cell barcodes with cell types:
+(first column is barcode and second column is cell type)
+```{r, eval = FALSE}
+# colnames <- c("Index","Cell_type")
+
+#df <- data.frame(Index = Cells(Esoph_filt), Cell_type = Esoph_filt@meta.data$cellType)
+
+# delete suffix??
+# df$"Index" <- sapply(strsplit(df$"Index", "-"), `[`, 1)
+
+# write.table(df, file = './output/esoph_celltype.tsv', col.names = TRUE, row.names = FALSE, sep = '\t')
+
+```
+
+## Annotation of clusters (based on known canonical markers of each cluster)
+
+Annotate each mouse .tsv "Cell_type" as: Epi; so that in Step 3 of SComatic we obtain a .tsv with 1 "cluster"
+
+```{r, eval = FALSE}
+ ## Rearrange cluster order to follow differentiation axis (for visualization purposes) # 9 clusters
+levels(Esoph_filt) <- c(2,4,1,3,5) # from less differentiated to most (basal to luminal)
+
+# we have 5 clusters in Esoph_filt
+# now, we want to just annotate Epi (all the cells in our Esoph_filt are Epithelial)
+new.cluster.id <- c("Epi", "Epi", "Epi", "Epi", "Epi")
+
+names(new.cluster.id) <- levels(Esoph_filt)
+Esoph_filt <- RenameIdents(Esoph_filt, new.cluster.id)
+
+Esoph_filt[["cellType"]] <- Idents(Esoph_filt) # include it in the metadata
+
+# Create a new meta.data column named cellType_B that adds _SIGAF6 if the library_ID is SIGAF6, and adds _SIGAD8 if the Library_ID is SIGAD8
+Esoph_filt$cellType_B <- paste0(Esoph_filt$Library_ID, "_", Esoph_filt$cellType)
+Esoph_filt$cellType_B <- as.factor(Esoph_filt$cellType_B)
+
+```
+
+
+```{r, eval = FALSE}
+# Get the unique sample IDs
+sample_names <- unique(Esoph_filt@meta.data$Sample_name)
+
+# Create the .tsv files for each sample (we will have 16 different tsv files, one for each .bam)
+tsv_file <- function(seurat_obj, sample_names) {
+  for (sample in sample_names) {
+    # Filter the data for the current sample
+    sample_data <- seurat_obj@meta.data %>%
+      filter(Sample_name == sample)
+    
+    # Add the Index column with the correct rownames and apply the transformation
+    sample_data$Index <- sapply(strsplit(rownames(sample_data), "-"), `[`, 1)
+    
+    # Select the required columns
+    sample_data <- sample_data %>%
+      select(Index, Cell_type = cellType_B) # Cell_type is a meta.data feature like "cellType_B"
+    
+    # Define the file name
+    sample_parts <- strsplit(sample, "_")[[1]]
+    file_name <- paste0("./output/esoph_markers_scomatic_", sample_parts[2], "_", sample_parts[1], ".tsv")
+    
+    # Write the data to a .tsv file
+    write.table(sample_data, file = file_name, sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
+  }
+}
+
+tsv_file(Esoph_filt, sample_names)
+
+```
+
+
+```{r, eval=FALSE}
+# Check if we have taken all the rows:
+output_dir <- "./output/"
+
+# Get a list of all .tsv files in the directory
+tsv_files <- list.files(path = output_dir, pattern = "^esoph_markers_scomatic_.*\\.tsv$", full.names = TRUE)
+
+# Initialize a data frame to store the file names and row counts
+row_counts <- data.frame(File = character(), Rows = integer(), stringsAsFactors = FALSE)
+
+# Loop through each file, read the data, and count the rows
+for (file in tsv_files) {
+  # Read the data from the .tsv file
+  data <- read.table(file, sep = "\t", header = TRUE)
+  
+  # Get the number of rows
+  num_rows <- nrow(data)
+  
+  # Add the file name and row count to the data frame
+  row_counts <- row_counts %>%
+    add_row(File = basename(file), Rows = num_rows)
+}
+
+total_rows <- sum(row_counts$Rows)
+total_rows
+
+dim(Esoph_filt)
+```
+
+
+## scVelo preparation
+
+### Cluster annotation for scvelo
+Looking at our umap, with resolution 0.2, we will take 3 clusters (Basal, Suprabasal, Epi_DEN), but annotated differently, in 5 names:
+- Cluster 1: "Basal 1"
+- Cluster 2: "Basal 2"
+- Cluster 3: "Suprabasal"
+- Cluster 4: "Basal 3"
+- Cluster 5: "Epithelial_DEN"
+
+```{r}
+DimPlot(Esoph_filt, group.by = "SCT_snn_res.0.2") & palette_d
+
+```
+
+```{r, eval=FALSE}
+# make sure we are using the idents we want right now:
+Idents(Esoph_filt) <- Esoph_filt$SCT_snn_res.0.2
+Esoph_filt$seurat_clusters <- Esoph_filt$SCT_snn_res.0.2
+
+## Rearrange cluster order to follow differentiation axis (for visualization purposes) 
+levels(Esoph_filt) <- c(1, 2, 4, 3, 5) # from less differentiated to most (basal to luminal)
+# clusters 1 2 and 4 are basal (red, orange and blue)
+# cluster 3 (green) is suprabasal
+# cluster 5 is specific of condition sample_DEN 
+
+new.cluster.ids <- c("Basal_1", "Basal_2", "Basal_3", "Suprabasal", "Epithelial_DEN") # 1, 2, 4, 3, 5
+names(new.cluster.ids) <- levels(Esoph_filt)
+Esoph_filt <- RenameIdents(Esoph_filt, new.cluster.ids)
+
+```
+
+```{r}
+Idents(Esoph_filt) <- Esoph_filt$annot_scvelo
+
+# Annotated PCA and UMAP plots:
+DimPlot(Esoph_filt, reduction = "pca", label = TRUE, pt.size = 0.5) + NoLegend() & palette_d
+
+DimPlot(Esoph_filt, reduction = "umap", label = TRUE, pt.size = 0.5) & palette_d
+
+```
+
+```{r}
+DimPlot(Esoph_filt, reduction = "umap", label = TRUE, pt.size = 0.5, split.by = "condition") & palette_d
+```
+
+```{r, eval = FALSE}
+## Remaining annotation using top markers for every cluster compared to all remaining ones, reporting only the positive ones
+Esoph_filt.markers <- FindAllMarkers(Esoph_filt, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25) # restrict to features with a min of 0.25 logFC
+# write.table(Esoph_filt.markers, file = './output/Esoph_markers_filt.txt', col.names = TRUE, row.names = TRUE, sep = '\t')
+Esoph_filt.markers <- read.csv("./output/Esoph_markers_filt.txt", sep = "\t")
+
+TopMarkers <- Esoph_filt.markers %>% group_by(cluster) %>% top_n(n = 25, wt = avg_log2FC) # show just top 25 per cluster
+
+TopMarkers %>% write.csv("/home/albax/mcGinn_2021/output/Esoph_TopMarkers.csv")
+clusterB1_markers <- TopMarkers[TopMarkers$cluster == "Basal_1", ]  # Basal_1
+clusterB2_markers <- TopMarkers[TopMarkers$cluster == "Basal_2", ]  # Basal_2
+clusterB3_markers <- TopMarkers[TopMarkers$cluster == "Basal_3", ]  # Basal_3
+clusterSB_markers <- TopMarkers[TopMarkers$cluster == "Suprabasal", ]  # Suprabasal
+clusterEpDEN_markers <- TopMarkers[TopMarkers$cluster == "Epithelial_DEN", ]  # Epithelial_DEN
+
+```
+
+```{r}
+Esoph_filt.markers <- read.csv("./output/Esoph_markers_clusts.txt", sep = "\t")
+
+TopMarkers <- Esoph_filt.markers %>% group_by(cluster) %>% top_n(n = 25, wt = avg_log2FC) # show just top 25 per cluster
+
+B1_markers <- TopMarkers[TopMarkers$cluster == 'Basal_1', ]
+B2_markers <- TopMarkers[TopMarkers$cluster == 'Basal_2', ]
+B3_markers <- TopMarkers[TopMarkers$cluster == 'Basal_3', ]
+DEN_markers <- TopMarkers[TopMarkers$cluster == 'Epithelial_DEN', ]
+suprabasal_markers <- TopMarkers[TopMarkers$cluster == 'Suprabasal', ]
+
+```
+
+
+### Conversion into h5ad object (export to scvelo)
+
+```{r, eval = FALSE}
+.libPaths("/home/albax/miniforge3/envs/seuratdisk/lib/R/library")
+
+# Esoph_filt@meta.data$annot_scvelo <- as.factor(Esoph_filt@meta.data$annot_scvelo)
+
+library(SeuratDisk) # facilitates conversion between h5Seurat and AnnData objects, i.e. interoperability between Seurat and Scanpy
+
+# Make RNA assay (raw counts, which is a copy of spliced assay) default:
+DefaultAssay(Esoph_filt) <- "RNA"
+
+remove_scaledata <- function(assay) {
+    assay@scale.data <- matrix(nrow = 0, ncol = 0)
+    return(assay)
+}
+
+counts_to_integer <- function(assay) {
+    assay@counts@x <- as.integer(assay@counts@x)
+    return(assay)
+}
+
+remove_normalization <- function(assay) {
+    assay@data <- assay@counts
+    return(assay)
+}
+
+Esoph_filt@assays <- lapply(Esoph_filt@assays, remove_scaledata)
+Esoph_filt@assays <- lapply(Esoph_filt@assays, counts_to_integer)
+Esoph_filt@assays <- lapply(Esoph_filt@assays, remove_normalization)
+
+# Add a new metadata column so that cell types are stored as strings, and not as numbers in the anndata
+Esoph_filt@meta.data$annot_scvelo_names <- as.character(Esoph_filt@meta.data$annot_scvelo)
+
+# File conversion:
+SaveH5Seurat(Esoph_filt, filename = "Esoph.h5Seurat", overwrite=TRUE)
+Convert("Esoph.h5Seurat", dest = "h5ad", overwrite=TRUE)
+
+```
+
+Save seurat object:
+```{r, eval = FALSE}
+saveRDS(Esoph_filt, file = "./output/esoph_star_filtered_mm10.rds")
+```
+
+
+## Normalization of counts
+We are going to normalize the data by total counts (in each library-Sequencing ID). For that, we have to sum all the columns.
+
+```{r}
+levels(Esoph_filt@meta.data$Sample_name)
+summary(Esoph_filt[,Esoph_filt@meta.data$Sample_name == 'SIGAD8_SLX-17937']@meta.data$Sample_name)
+
+results_df <- data.frame(Sample_name = character(), Sum_nCount_gene = numeric(), Sum_nFeature_gene = numeric(), stringsAsFactors = FALSE)
+cell_counts_per_sample <- table(Esoph_filt@meta.data$Sample_name) # number of cells per sample_name
+ 
+# suma de los nCount_gene para cada Sample_name
+for (i in unique(Esoph_filt$Sample_name)) {
+  # Subset the data based on the current sample name and calculate the sum of nCount_gene
+  sum_count <- sum(Esoph_filt[, Esoph_filt$Sample_name == i]$nCount_gene)
+  sum_feature <- sum(Esoph_filt[, Esoph_filt$Sample_name == i]$nFeature_gene)
+  num_cells <- cell_counts_per_sample[i]
+
+  # Append the results to the results_df
+  results_df <- rbind(results_df, data.frame(Sample_name = i, Sum_nCount_gene = sum_count, Num_cells = num_cells, Sum_nFeature_gene = sum_feature, Num_reads_per_cell = sum_count/num_cells, Num_genes_per_cell = sum_feature/num_cells ))
+}
+numeric_medians <- apply(results_df[, -1], 2, median)
+median_row <- c(Sample_name = "Median", numeric_medians)
+results_df <- rbind(results_df, median_row)
+
+write.csv(results_df, "nCounts_per_Sample_name_Esophfilt.csv", row.names = FALSE)
+
+```
+
+
+
+**Supplementary table from the original paper**
+nCount total is going to ve similar to column 4 * column 6 
+
+Supplementary Table 1 - QC Statistics of scRNAseq data (https://www.nature.com/articles/s41556-021-00679-w#Sec31)
+
+| Stage | Replicate no. | Batch no. | Number of cells | Median genes/cell | Median UMIs/cell | Total genes detected | Median % mito counts/cell |
+|-------|----------------|-----------|------------------|--------------------|-------------------|------------------------|-----------------------------|
+| Adult | 1              | 1         | 2796             | 5153               | 30737             | 17419                 | 3.66549437744719                        |
+| Adult | 2              | 1         | 3344             | 5232               | 32745.5           | 17574                 | 3.76114454638533                        |
+| Adult | 3              | 1         | 4059             | 5070               | 29744             | 17843                 | 4.14769410907473                        |
+| Adult | 1              | 2         | 1230             | 5215               | 33187.5           | 16440                 | 3.63571622273852                        |
+| Adult | 2              | 2         | 2614             | 5219               | 33970             | 17191                 | 3.25793271016975                        |
+| Adult | 3              | 2         | *676*            | 5438               | *36246.5*         | 15707                 | 3.5389684657119                        |
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Disclaimer Box</title>
+  <style>
+    .disclaimer-box {
+      border: 1px solid #ccc;
+      background-color: #f9f9f9;
+      color: #333;
+      padding: 16px;
+      margin: 20px 0;
+      border-left: 5px solid #f39c12; /* orange accent */
+      font-size: 14px;
+      font-family: Arial, sans-serif;
+    }
+
+    .disclaimer-title {
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="disclaimer-box">
+    <div class="disclaimer-title">Disclaimer:</div>
+    <p>SCTransform corrects the counts from your equivalent RNA assay and creates a new assay (typically SCT) where the counts slot is a corrected counts, data is a log transformation of corrected counts+1 and the scale.data are pearson residuals. Typically, the scale.data slot is only generated for the features listed in VariableFeatures(your_object) which is why it's usually smaller than your SCT data slot. You can tell SCTransform to scale all genes, but whether that's something you need or not is up to you.</p>
+  </div>
+
+</body>
+</html>
+
+## Do we find barcodes from Epi_DEN shared in other clusters?
+- Is each clone contained completely inside the Epithelial_DEN cluster?("Epi_DEN_cells")
+- How are these clones shared with other clusters? How many cells of the clone fall inside Epi_DEN_cells cluster?
+- 
+```{r}
+epi_den_CBs <- WhichCells(Esoph_filt, idents = "Epithelial_DEN")
+write.csv(epi_den_CBs, "Epithelial_DEN_CBS.txt", row.names = FALSE)
+
+metadata <- data.frame(Esoph_filt@meta.data)
+metadata_cols <- metadata[,c("clones", "annot_scvelo"), drop = FALSE]
+write.csv(metadata_cols, "clones_clusters.csv", row.names = TRUE)
+
+clones_data <- metadata[epi_den_CBs, c("clones", "annot_scvelo"), drop = FALSE]
+
+clones_in_Epi_DEN <- as.character(clones_data[["clones"]])
+clones_in_Epi_DEN <- unique(unlist(strsplit(clones_in_Epi_DEN, ",")))
+
+```
+
+

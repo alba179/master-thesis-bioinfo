@@ -1,0 +1,261 @@
+
+
+
+```{python}
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Dec 16 13:05:47 2024
+
+@author: gpiedrafita
+"""
+
+import numpy as np
+import pandas as pd
+
+myfile = 'single_cell_genotype_filtered_aggregated_donors.filtered.human.vep.vcf'
+
+# def identify_subclones(myfile, ShowCognateToo=True):
+
+ShowCognateToo = False # option to include features of linked clones too (even if they don't fulfill minShared cond):
+
+### OPEN VCF FILE WITH ALTERED VARIANTS:
+fh = open(myfile)
+
+### EXTRACT SERIES OF {oldCLONEIDs & CBs & SAMPLES & LIBRARIES}:
+Chrs = []
+Posits = []
+oldCloneIDs = []
+CBs = []
+Samples = []
+Libraries = []
+Regions = []
+for line in fh: # there are no headers to skip in the file (data appears from the very beginning)
+    # we extract one CB & one oldCloneID & corresponding sample & library
+    Chr = line.split("\t")[0]
+    Posit = line.split("\t")[1]
+    oldCloneID = ""
+    CB = ""
+    Sample = ""
+    Library = ""
+    Region = ""
+    lineData = line.split("\t")[7].split(";")
+    for dato in lineData:
+        if dato.startswith("Clone="):
+            oldCloneID = dato.split("=")[1] # it is NOT numeric
+            Sample = oldCloneID.split("_")[0]
+        elif dato.startswith("CB_seurat="):
+            CB = dato.split("=")[1]
+            Library = CB.split("-")[2]
+        elif dato.startswith("Cell_type="):
+            Region = dato.split("=")[1]
+    Chrs.append(Chr)
+    Posits.append(Posit)
+    oldCloneIDs.append(oldCloneID)
+    CBs.append(CB)
+    Samples.append(Sample)
+    Libraries.append(Library)
+    Regions.append(Region)
+    
+fh.close()
+
+
+
+
+## Generate new CloneIDs: forcing same variant in different libraries from same donor to adopt same clone ID:
+SampleVariants = []
+CloneIDs = []
+countclone = 1
+for i in range(len(CBs)):
+    locvariant = Chrs[i] + "_" + Posits[i] + "_" + Samples[i]
+    if not locvariant in SampleVariants:
+        CloneIDs.append(countclone)
+        countclone += 1
+    else:
+        preIdx = SampleVariants.index(locvariant)
+        CloneIDs.append(CloneIDs[preIdx])
+    SampleVariants.append(locvariant)
+
+## Integrate CBs & CloneIDs & Samples & Libraries & Regions & (SampleVariants) in a data-frame:
+d = {'oldCloneIDs': oldCloneIDs, 'CloneIDs': CloneIDs, 
+     'CBs': CBs, 'Samples': Samples, 'Libraries': Libraries, 'Regions': Regions,
+     'ChrLocSamples': SampleVariants} # as a dictionary
+df = pd.DataFrame(data=d)
+
+# List all (unique) clones:
+uniqClones = list(set(CloneIDs)) # non-repetitive elements
+# Check no. of clones:
+print("No. Filtered Clones: \t", len(uniqClones))
+
+
+
+### EXTRACT FOR EACH CLONE (x-coor) THE Nº SHARED CELLS WITH ANY OTHER CLONE (y-coor):
+CommonCells = np.zeros([len(uniqClones), len(uniqClones)]) # empty matrix
+uniqClonesSamples = []
+uniqClonesRegions = []
+idx_X = 0
+for clone_X in uniqClones:
+    # Save sample associated to the given clone:
+    if len(set(df[ df["CloneIDs"] == clone_X ]["Samples"])) == 1: # check only 1 sample associates with given clone
+        sample = list(df[ df["CloneIDs"] == clone_X ]["Samples"])[0] # (as a unique element)
+    else: break
+    uniqClonesSamples.append( sample )
+    # Save (multi)region associated to the given clone:
+    if len(set(df[ df["CloneIDs"] == clone_X ]["Regions"])) == 1: # check only 1 (multi)region associates with given clone
+        region = list(df[ df["CloneIDs"] == clone_X ]["Regions"])[0] # (as a unique element)
+    else: break
+    uniqClonesRegions.append( region )
+    # Get all barcodes associated to the given clone:
+    CB_X = df[ df["CloneIDs"] == clone_X ]["CBs"]
+    for CB in CB_X:
+        # Extract all unique clones that share the given barcode:
+        Clones_Y = df[ df["CBs"] == CB ]["CloneIDs"]
+        for clone_Y in Clones_Y:
+            # Use each unique clone index to update position in the similarity matrix:
+            idx_Y = uniqClones.index(clone_Y)
+            CommonCells[idx_X, idx_Y] += 1 # sum one shared cell between clone_X (x-axis) and clone_Y (y-axis)
+    idx_X += 1
+    print(idx_X)
+
+# Check the trace matches the total nº of mutant cells:
+print("Diagonal recaps nº mutant cells?: \t", np.trace(CommonCells) == len(CloneIDs))
+# Check largest clone size:
+print("Largest Clone Size: \t", max(np.diag(CommonCells)))
+
+
+
+### EXTRACT FOR EACH PAIR OF CLONES THE % OVERLAPPING CELLS BETWEEN THEM:
+OverlapFrac = np.zeros([len(uniqClones), len(uniqClones)])
+for i in range(len(uniqClones)):
+    for j in range(len(uniqClones)):
+        if CommonCells[i,j] != 0:
+            OverlapFrac[i,j] = CommonCells[i,j] / min([CommonCells[i,i], CommonCells[j,j]])
+
+
+
+### RESTRICT SIMILARITY & OVERLAP MATRICES TO CLONES SHARING AT LEAST minShared CELLS:
+minShared = 2 # minimum nº of shared cells
+# ShowCognateToo = True # option to include features of linked clones too (even if they don't fulfill minShared cond):
+# Save indexes and names (and samples and (multi)regions) of cell-sharing clones:
+idx_share = []
+CloneIDs_share = []
+Samples_share = []
+Regions_share = []
+supercis = []
+cloneclusters = {}
+cloneclustersRegion = {}
+clusterID = 0
+for iter in range(len(uniqClones)):
+    # Save given cluster of cell-sharing clones:
+    if len(supercis)>1:
+        print([uniqClones[x] for x in supercis])
+        cloneclusters[clusterID] = [uniqClones[x] for x in supercis]
+        cloneclustersRegion[clusterID] = [uniqClonesRegions[x] for x in supercis]
+        clusterID += 1
+    # Update (initialization) of clone index search (in search of new cluster):
+    supercis = [iter]
+    # Search within the same cluster of cell-sharing clones:
+    for i in supercis:
+        if sum(CommonCells[i,:]) >= (CommonCells[i,i]+minShared):
+            if not i in idx_share:
+                idx_share.append(i)
+                CloneIDs_share.append(str(uniqClones[i]))
+                Samples_share.append(uniqClonesSamples[i])
+                Regions_share.append(uniqClonesRegions[i])
+            # Extract indexes of linked clones to prioritize their exploration in the immediate next iterations:
+            cis = [idx for idx, val in enumerate(CommonCells[i,:]) if val > 0] 
+            for ci in cis:
+                if not ci in idx_share:
+                    if ShowCognateToo:
+                        # Include features of linked clones too (no matter if they don't fulfill minShared cond):
+                        idx_share.append(ci)
+                        CloneIDs_share.append(str(uniqClones[ci]))
+                        Samples_share.append(uniqClonesSamples[ci])
+                        Regions_share.append(uniqClonesRegions[ci])
+                    supercis.append(ci)
+                    #print([uniqClones[x] for x in supercis])
+
+# saving last superclone:
+if len(supercis)>1:
+    cloneclusters[clusterID] = [uniqClones[x] for x in supercis]
+    cloneclustersRegion[clusterID] = [uniqClonesRegions[x] for x in supercis]
+
+
+# Save submatrices:
+subCommonCells = []
+subOverlapFrac = []
+for j in idx_share:
+    subcommon = []
+    suboverlap = []
+    for k in idx_share:
+        subcommon.append(CommonCells[j,k])
+        suboverlap.append(OverlapFrac[j,k])
+    subCommonCells.append(subcommon)
+    subOverlapFrac.append(suboverlap)
+subCommonCells = np.array(subCommonCells)
+subOverlapFrac = np.array(subOverlapFrac)
+```
+
+
+```{python}
+df
+```
+
+
+```{python}
+import pandas as pd
+
+# Load your lookup DataFrame
+chr_loc_to_cloneid = dict(zip(df['ChrLocSamples'], df['CloneIDs']))
+
+# Input/output files
+path = "/storage/2019.12.31_Meyer/singlecell/scomatic/SingleCellGenotype/data/"
+vcf_in = path + 'SingleCellGenotype_mutated_clones_human.filtered.vep.vcf'
+vcf_out = path + 'SingleCellGenotype_mutated_clones_human.filtered.vep.updated.vcf'
+
+with open(vcf_in, 'r') as fin, open(vcf_out, 'w') as fout:
+    for line in fin:
+        if line.startswith('#'):
+            fout.write(line)
+            continue
+
+        parts = line.strip().split('\t')
+        chrom, pos, info_field = parts[0], parts[1], parts[7]
+
+        # Parse the INFO field into key-value pairs
+        info_items = info_field.split(';')
+        info_dict = dict(item.split('=') for item in info_items if '=' in item)
+
+        donor = None
+        if 'Clone' in info_dict:
+            clone_val = info_dict['Clone']
+            donor = clone_val.split('_')[0]
+            chr_loc_sample = f"{chrom}_{pos}_{donor}"
+
+            # If match found, replace Clone value
+            if chr_loc_sample in chr_loc_to_cloneid:
+                new_clone = "clone_" + str(chr_loc_to_cloneid[chr_loc_sample])
+                info_dict['Clone'] = new_clone
+
+                # Reassemble the INFO field
+                updated_info = ';'.join(f"{k}={v}" for k, v in info_dict.items())
+                parts[7] = updated_info
+
+        if donor:
+                # Insert Donor into the dictionary before CSQ
+                if 'CSQ' in info_dict:
+                    # Create a new dict with 'Donor' inserted before 'CSQ'
+                    new_info_dict = {}
+                    for key, value in info_dict.items():
+                        if key == 'CSQ':
+                            new_info_dict['Donor'] = donor  # Add Donor before CSQ
+                        new_info_dict[key] = value
+
+                    # Now that Donor is inserted, reconstruct the INFO field
+                    updated_info = ';'.join(f"{k}={v}" for k, v in new_info_dict.items())
+                    parts[7] = updated_info  # Update the INFO field in the VCF line
+
+            # Write the updated line to the output file
+        fout.write('\t'.join(parts) + '\n')
+
+```

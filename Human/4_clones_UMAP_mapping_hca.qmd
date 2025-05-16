@@ -1,0 +1,298 @@
+---
+title: "1 - Inspection of HCA seurat object"
+format:
+  html:
+    toc: true
+jupyter:
+  kernel: python3
+fig-show: hold
+execute:
+  eval: false
+author: Alba Mendez Alejandre
+date: 02-2025
+---
+
+# Import libraries
+```{r}
+
+.libPaths("/home/albax/miniforge3/envs/seurat_v4/lib/R/library")
+
+if(.Platform$OS.type == "linux") Sys.setenv(PATH= paste("/home/albax/miniforge3/envs/seurat_v4/lib",Sys.getenv()["PATH"],sep=";"))
+
+library(reticulate)
+
+use_condaenv("/home/albax/miniforge3/envs/seurat_v4", required = TRUE)
+py_config()
+
+import("numpy")
+import("leidenalg")
+import("pandas")
+
+library(Seurat) 
+library(dplyr) 
+library(ggplot2) 
+library(plotly) 
+library(SingleCellExperiment) 
+# library(httpgd) 
+library(patchwork)
+library(dplyr)
+library(tidyverse)
+library(tibble)
+library(future)
+plan("sequential")
+options(future.globals.maxSize = 2000 * 1024^2)
+
+color.list <- RColorBrewer::brewer.pal(12,"Paired")
+color.list <- c(color.list,RColorBrewer::brewer.pal(12,"Set3"))
+
+# Palette from orange to violet
+palette <- scale_color_viridis_c(option = "plasma", direction = -1) # continue colors palette
+palette_d <- scale_color_viridis_d(option = "turbo", direction = -1) # discrete colors palette
+
+projectPath <- setwd("/home/albax/human_esophagus") # where we are
+
+```
+
+
+```{r}
+hca_esoph <- readRDS(file = "./data/hca_esoph_with_annotations.rds")
+hca_esoph_upt <- UpdateSeuratObject(hca_esoph)
+hca_esoph
+# An object of class Seurat 
+# 24245 features across 87947 samples within 1 assay 
+# Active assay: RNA (24245 features, 0 variable features)
+#  3 layers present: counts, data, scale.data
+#  2 dimensional reductions calculated: pca, umap
+DefaultAssay(hca_esoph) <- "RNA"
+unique(Idents(hca_esoph))
+# Idents(hca_esoph) <- "Celltypes_updated_July_2020"
+```
+
+
+```{r}
+umap_df <- as.data.frame(Embeddings(hca_esoph[["umap"]]))
+umap_df$ident <- Idents(hca_esoph)
+umap_df$cell_id <- rownames(umap_df)
+# rownames(umap_df) <- umap_df$cell_id
+
+```
+
+# A. Plot mutated gene
+
+```{r}
+
+plot_cells_w_mutated_gene <- function(seurat_obj, list_gene_names, split.by, output_dir) {
+
+    gene_cells_list <- list()
+
+    for (gene_name in list_gene_names) {
+
+    pattern <- paste0(gene_name, "(,|$)") # pattern for grep
+    
+    # Identify cells with the specified mutated gene
+    gene_cells <- Cells(seurat_obj)[grep(pattern, seurat_obj$SYMBOL)]
+    
+    # Append the gene_cells to the list
+    gene_cells_list[[gene_name]] <- gene_cells
+
+    # new metadata column in the Seurat object
+    seurat_obj$gene_name <- ifelse(Cells(seurat_obj) %in% gene_cells, gene_name, paste0("Not_", gene_name))
+
+  }
+  
+    color_vector <- palette_d$palette(length(unique(list_gene_names)))
+
+  
+  # UMAP to show presence of the mutated gene  
+    p <- DimPlot(seurat_obj, cells.highlight =  gene_cells_list, split.by = split.by, cols.highlight = color_vector, sizes.highlight = 1.5) + labs(title = paste("UMAP of cells with mutated gene/s: "))
+
+    file_name_png <- paste0(output_dir, paste(list_gene_names, collapse = "_"), ".png")
+    # ggsave(filename = file_name_png, plot = p, width = 20, height = 8, dpi = 400)
+    file_name_pdf <- paste0(output_dir, paste(list_gene_names, collapse = "_"), ".pdf")
+    # ggsave(filename = file_name_pdf, plot = p, width = 20, height = 8)
+
+  return(p)
+}
+
+```
+
+
+```{r}
+plot_cells_w_mutated_gene(hca_esoph, c("GJB2"), split.by = NULL, output_dir = NULL)
+plot_cells_w_mutated_gene(hca_esoph, c("Arhgef12"), split.by = NULL, output_dir = NULL)
+plot_cells_w_mutated_gene(hca_esoph, c("Fgfr2"), split.by = "cellType_B", output_dir = NULL)
+
+```
+
+```{r}
+plot_cells_w_mutated_gene_df <- function(seurat_obj, list_gene_names, umap_df, output_dir = NULL) {
+  gene_cells_list <- list()
+
+  for (gene_name in list_gene_names) {
+    pattern <- paste0(gene_name, "(,|$)")  # Match full gene name
+
+    # Find cells with this mutated gene
+    gene_cells <- Cells(seurat_obj)[grep(pattern, seurat_obj$SYMBOL)]
+    gene_cells_list[[gene_name]] <- gene_cells
+  }
+
+  # Flatten cell list and label
+  umap_df$gene_label <- "Unselected"
+  for (gene_name in list_gene_names) {
+    umap_df$gene_label[rownames(umap_df) %in% gene_cells_list[[gene_name]]] <- gene_name
+  }
+
+  # Color 
+  gene_labels <- unique(umap_df$gene_label)
+  color_vector <- setNames(
+    rep("lightgray", length(gene_labels)),
+    gene_labels
+  )
+  color_vector[list_gene_names] <- "red"
+
+  umap_df$point_size <- ifelse(umap_df$gene_label == "Unselected", 0.3, 0.6)
+
+  # Plot with ggplot2
+  df_unselected <- umap_df[umap_df$gene_label == "Unselected", ]
+  df_selected   <- umap_df[umap_df$gene_label != "Unselected", ]
+  
+  p <- ggplot() +
+    geom_point(data = df_unselected, aes(x = UMAP_1, y = UMAP_2),
+              color = "lightgray", size = 0.3, alpha = 0.6) +
+    geom_point(data = df_selected, aes(x = UMAP_1, y = UMAP_2),
+              color = "red", size = 0.9, alpha = 0.8) +
+    theme_minimal() +
+    labs(title = paste("UMAP of cells with mutated gene(s):", paste(list_gene_names, collapse = ", "))) + 
+    theme(legend.position = "right")
+
+
+  # Save if output_dir provided
+  if (!is.null(output_dir)) {
+    file_base <- file.path(output_dir, paste0("UMAP_", paste(list_gene_names, collapse = "_")))
+    ggsave(paste0(file_base, ".png"), plot = p, width = 10, height = 8, dpi = 300)
+    ggsave(paste0(file_base, ".pdf"), plot = p, width = 10, height = 8)
+  }
+
+  return(p)
+}
+```
+
+```{r}
+p <- plot_cells_w_mutated_gene_df(hca_esoph, c("GJB2"), umap_df, output_dir = "clone_umap/")
+plot_cells_w_mutated_gene_df(hca_esoph, c("NOTCH3"), umap_df, output_dir = "clone_umap/")
+plot_cells_w_mutated_gene_df(hca_esoph, c("LAMP2"), umap_df, output_dir = "clone_umap/")
+plot_cells_w_mutated_gene_df(hca_esoph, c("KRAS"), umap_df, output_dir = "clone_umap/")
+
+```
+
+
+# B. Plot clone
+
+```{r}
+plot_cells_w_mutated_clone_df <- function(seurat_obj, clone_name, umap_df, output_dir = NULL) {
+
+  pattern <- paste0(gene_name, "(,|$)")  # Match full gene name
+
+  # Find cells with this mutated gene
+  gene_cells <- Cells(seurat_obj)[grep(pattern, seurat_obj$SYMBOL)]
+  gene_cells_list[[gene_name]] <- gene_cells
+
+  # Flatten cell list and label
+  umap_df$gene_label <- "Unselected"
+  umap_df$gene_label[rownames(umap_df) %in% gene_cells_list[[gene_name]]] <- gene_name
+
+  # Color 
+  gene_labels <- unique(umap_df$gene_label)
+  color_vector <- setNames(
+    rep("lightgray", length(gene_labels)),
+    gene_labels
+  )
+  color_vector[list_gene_names] <- "red"
+
+  umap_df$point_size <- ifelse(umap_df$gene_label == "Unselected", 0.3, 0.6)
+
+  # Plot with ggplot2
+  df_unselected <- umap_df[umap_df$gene_label == "Unselected", ]
+  df_selected   <- umap_df[umap_df$gene_label != "Unselected", ]
+  
+  p <- ggplot() +
+    geom_point(data = df_unselected, aes(x = UMAP_1, y = UMAP_2),
+              color = "lightgray", size = 0.3, alpha = 0.6) +
+    geom_point(data = df_selected, aes(x = UMAP_1, y = UMAP_2),
+              color = "red", size = 0.9, alpha = 0.8) +
+    theme_minimal() +
+    labs(title = paste("UMAP of cells with clone:", paste(clone_name))) + 
+    theme(legend.position = "right")
+
+  # Save if output_dir provided
+  if (!is.null(output_dir)) {
+    file_base <- file.path(output_dir, paste0(paste(clone_name)))
+    ggsave(paste0(file_base, ".png"), plot = p, width = 10, height = 8, dpi = 300)
+    ggsave(paste0(file_base, ".pdf"), plot = p, width = 10, height = 8)
+  }
+
+  return(p)
+}
+```
+
+```{r}
+plot_cells_w_mutated_clone_df <- function(seurat_obj, clone_name, umap_df, output_dir = NULL) {
+
+  # Identify cells associated with the mutated clone
+  # Assuming `Clone` is a column in the Seurat metadata that identifies the mutated clone for each cell
+  mutated_cells <- Cells(seurat_obj)[seurat_obj$ClusterCloneIDs == clone_name]  # Get cells with the specified mutated clone
+  
+  # Flatten cell list and label for the UMAP plot
+  umap_df$clone_label <- "Unselected"  # Default label for non-clone cells
+  umap_df$clone_label[rownames(umap_df) %in% mutated_cells] <- clone_name  # Mark cells belonging to the clone
+
+  # Set color scheme (gray for unselected, red for the mutated clone)
+  clone_labels <- unique(umap_df$clone_label)
+  color_vector <- setNames(
+    rep("lightgray", length(clone_labels)),  # Default color for unselected cells
+    clone_labels
+  )
+  color_vector[clone_name] <- "red"  # Highlight mutated clone cells in red
+
+  # Point size adjustment for visibility
+  umap_df$point_size <- ifelse(umap_df$clone_label == "Unselected", 0.3, 0.6)
+
+  # Plot with ggplot2
+  df_unselected <- umap_df[umap_df$clone_label == "Unselected", ]
+  df_selected   <- umap_df[umap_df$clone_label != "Unselected", ]
+  
+  p <- ggplot() +
+    geom_point(data = df_unselected, aes(x = UMAP_1, y = UMAP_2),
+               color = "lightgray", size = 0.3, alpha = 0.6) +
+    geom_point(data = df_selected, aes(x = UMAP_1, y = UMAP_2),
+               color = "red", size = 0.9, alpha = 0.8) +
+    theme_minimal() +
+    labs(title = paste("UMAP of cells with clone:", clone_name)) + 
+    theme(legend.position = "right")
+
+  # Save the plot if an output directory is provided
+  if (!is.null(output_dir)) {
+    file_base <- file.path(output_dir, paste0(clone_name))
+    ggsave(paste0(file_base, ".png"), plot = p, width = 10, height = 8, dpi = 300)
+    ggsave(paste0(file_base, ".pdf"), plot = p, width = 10, height = 8)
+  }
+
+  # return(p)
+}
+```
+
+```{r}
+plot_cells_w_mutated_clone_df(seurat_obj = hca_esoph, clone_name = "clone_479", umap_df = umap_df, output_dir = "clone_umap")
+
+```
+
+```{r}
+clone_ids <- hca_esoph@meta.data$ClusterCloneIDs
+clone_ids <- clone_ids[!is.na(clone_ids)]
+unique_clones <- unique(unlist(strsplit(clone_ids, ","))) # 1604 clones
+
+for (clone in unique_clones) {
+    plot_cells_w_mutated_clone_df(seurat_obj = hca_esoph, clone_name = clone, umap_df = umap_df, output_dir = "clone_umap")
+}
+
+```

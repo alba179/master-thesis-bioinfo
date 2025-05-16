@@ -1,5 +1,20 @@
+---
+title: "Mouse and Human SComatic analysis"
+author: "Alba Méndez Alejandre"
+date: "2025-05-16"
+format:
+  html: default
+  pdf: default
+---
+
 # Preface {.unnumbered}
 
-This is a Quarto book.
+This document presents a comprehensive analysis of single-cell transcriptomics somatic mutations in mouse and human datasets, covering:
 
-To learn more about Quarto books visit <https://quarto.org/docs/books>.
+- Preprocessing of single-cell RNA-seq data
+- Clustering and annotation of cell types
+- RNA velocity inference to understand cellular dynamics
+- Somatic variant calling using SComatic
+- Functional annotation and interpretation of variants
+
+
