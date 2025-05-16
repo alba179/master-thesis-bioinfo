@@ -6,8 +6,8 @@ book:
   subtitle: "Single-cell transcriptomics analysis of mutant competition during field cancerization in mouse esophagus" 
   author: "Alba Méndez Alejandre"
   date: last-modified
-  date-format: "DD/MM/YYYY, HH:mm:ss"
-  search: true
+  date-format: "DD/MM/YYYY"
+  search: false
   repo-url: https://github.com/alba179/master-thesis-bioinfo
   sidebar:
     style: floating
@@ -38,9 +38,9 @@ format:
     theme:
       - cosmo
       - brand
-    number-sections: true        # adds numbered section headers
-    code-fold: true              # collapsible code blocks
-    toc: true                    # floating table of contents
+    number-sections: false       
+    code-fold: true              
+    toc: true                    
     toc-depth: 5
     toc-expand: 3
     toc-location: right

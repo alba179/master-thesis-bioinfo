@@ -2,7 +2,6 @@
 We are going to perform somatic variant calling with the novel algorithm from Muyas et.al (2024) doi: https://doi.org/10.1038/s41587-023-01863-z
 
 
-
 ## 3.1. Script to call somatic variants
 - min_ac_cells = 2 (value by default); in HCA was used 1
 - min_cell_types = 2
@@ -29,7 +28,7 @@ cd /home/alba/scripts/scomatic
 
 SCOMATIC=~/bin/SComatic-main
 
-run_names=("SLX-17937" "SLX-18123") # list of runs
+run_names=("run1" "run1") # list of runs
 
 REF=/media/storage/reference_genomes/Mus_musculus.GRCm38.dna.primary_assembly.fa
 meta_dir=/media/storage/mcGinn_2021/scomatic/markers
@@ -50,7 +49,7 @@ do
 	
 	
 	for bam in $(ls -d $output_dir1/*bam);do  
-    		cell_type=$(basename $bam | awk -F'.' '{print $(NF-1)}') # SIGAD8_Epi for example
+    		cell_type=$(basename $bam | awk -F'.' '{print $(NF-1)}')
     
    		temp=$output_dir7/temp_${cell_type}
     		mkdir -p $temp
@@ -97,28 +96,24 @@ bedtools intersect -v -a mm10_genes.bed -b mm10_RepeatMasker.bed > UCSC.m10.with
 ```{bash}
 conda activate SComatic
 SCOMATIC=~/bin/SComatic-main
-output_dir4=/media/storage/mcGinn_2021/scomatic/output/SLX-17937/Step4_VariantCalling
+output_dir4=/media/storage/mcGinn_2021/scomatic/output/run1/Step4_VariantCalling
 
-bedtools intersect -header -a ${output_dir4}/SLX-17937.calling.step2.tsv -b $SCOMATIC/bed_files_of_interest/UCSC.mm10.without.repeatmasker.bed | awk '$1 ~ /^#/ || $6 == "PASS"' > ${output_dir4}/SLX-17937.calling.step2.pass.tsv
+bedtools intersect -header -a ${output_dir4}/run1.calling.step2.tsv -b $SCOMATIC/bed_files_of_interest/UCSC.mm10.without.repeatmasker.bed | awk '$1 ~ /^#/ || $6 == "PASS"' > ${output_dir4}/run1.calling.step2.pass.tsv
 
-output_dir4=/media/storage/mcGinn_2021/scomatic/output/SLX-18123/Step4_VariantCalling
+output_dir4=/media/storage/mcGinn_2021/scomatic/output/run2/Step4_VariantCalling
 
-bedtools intersect -header -a ${output_dir4}/SLX-18123.calling.step2.tsv -b $SCOMATIC/bed_files_of_interest/UCSC.mm10.without.repeatmasker.bed | awk '$1 ~ /^#/ || $6 == "PASS"' > ${output_dir4}/SLX-18123.calling.step2.pass.tsv
+bedtools intersect -header -a ${output_dir4}/run2.calling.step2.tsv -b $SCOMATIC/bed_files_of_interest/UCSC.mm10.without.repeatmasker.bed | awk '$1 ~ /^#/ || $6 == "PASS"' > ${output_dir4}/run2.calling.step2.pass.tsv
 ```
 
 Disclaimer: *calling.step2.pass.tsv files contain only FILTER = PASS variants that don't fall in repetitive regions
 
-## 3.4. Analysis of SComatic output
-
-
-
-### 
+## 3.4. Filtering of TSVs
 
 ### Filter the TSVs with only PASS in FILTER column
 
 ```{bash}
 
-seq_ids=("SLX-17937" "SLX-18123")
+seq_ids=("run1" "run2")
 wd="/media/storage/mcGinn_2021/scomatic/output/"
 
 for seq in "${seq_ids[@]}"; do
@@ -137,7 +132,7 @@ In order to analyze the variants that are arked solely as "Multiple_cell_types",
 
 ```{bash}
 
-seq_ids=("SLX-17937" "SLX-18123")
+seq_ids=("run1" "run2")
 wd="/media/storage/mcGinn_2021/scomatic/output/"
 
 for seq in "${seq_ids[@]}"; do
@@ -153,15 +148,15 @@ Disclaimer: *_mult.calling.step2.tsv files contain only FILTER = PASS|Multiple_c
 # [matterhorn]
 conda activate SComatic
 SCOMATIC=~/bin/SComatic-main
-output_dir4=/media/storage/mcGinn_2021/scomatic/output/SLX-17937/Step4_VariantCalling
+output_dir4=/media/storage/mcGinn_2021/scomatic/output/run1/Step4_VariantCalling
 
 # for multiple_cell type
-bedtools intersect -header -a ${output_dir4}/SLX-17937_mult.calling.step2.tsv -b $SCOMATIC/bed_files_of_interest/UCSC.mm10.withouvt.repeatmasker.bed | awk '$1 ~ /^#/ || $6 == "PASS"' > ${output_dir4}/SLX-17937_mult.calling.step2.pass.tsv
+bedtools intersect -header -a ${output_dir4}/run1_mult.calling.step2.tsv -b $SCOMATIC/bed_files_of_interest/UCSC.mm10.withouvt.repeatmasker.bed | awk '$1 ~ /^#/ || $6 == "PASS"' > ${output_dir4}/run1_mult.calling.step2.pass.tsv
 
-output_dir4=/media/storage/mcGinn_2021/scomatic/output/SLX-18123/Step4_VariantCalling
+output_dir4=/media/storage/mcGinn_2021/scomatic/output/run2/Step4_VariantCalling
 
 # for multiple_cell type
-bedtools intersect -header -a ${output_dir4}/SLX-18123_mult.calling.step2.tsv -b $SCOMATIC/bed_files_of_interest/UCSC.mm10.without.repeatmasker.bed | awk '$1 ~ /^#/ || $6 == "PASS"' > ${output_dir4}/SLX-18123_mult.calling.step2.pass.tsv
+bedtools intersect -header -a ${output_dir4}/run2_mult.calling.step2.tsv -b $SCOMATIC/bed_files_of_interest/UCSC.mm10.without.repeatmasker.bed | awk '$1 ~ /^#/ || $6 == "PASS"' > ${output_dir4}/run2_mult.calling.step2.pass.tsv
 
 ```
 
@@ -169,47 +164,19 @@ Disclaimer: *_mult.calling.step2.pass.tsv files contain only FILTER = PASS|Multi
 
 
 ## 3.5. Convert the TSV files to VCF
-SComatic outputs its files in a custom TSV format which makes it very complex to analyze in standard pipelines from variant calling. Thus, we are going to convert it to the standard format file for variant calling in bioinformatics, the VCFv4.3 (https://samtools.github.io/hts-specs/VCFv4.3.pdf). For that, we generated a custom script "3-5_TSVtoVCF.py".
+The program outputs its files in a custom TSV format which makes it very complex to analyze in standard pipelines from variant calling. Thus, we are going to convert it to the standard format file for variant calling in bioinformatics, the VCFv4.3 (https://samtools.github.io/hts-specs/VCFv4.3.pdf). For that, we generated a custom script "3-5_TSVtoVCF.py".
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Disclaimer Box</title>
-  <style>
-    .disclaimer-box {
-      border: 1px solid #ccc;
-      background-color: #f9f9f9;
-      color: #333;
-      padding: 16px;
-      margin: 20px 0;
-      border-left: 5px solid #f39c12; /* orange accent */
-      font-size: 14px;
-      font-family: Arial, sans-serif;
-    }
-
-    .disclaimer-title {
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
-  </style>
-</head>
-<body>
-
-  <div class="disclaimer-box">
-    <div class="disclaimer-title">What is a VCF?</div>
-    <p>VCF is a text file format (most likely stored in a compressed manner). It contains meta-information lines (prefixed with “##”), a header line (prefixed with “#”), and data lines each containing information about a position in the genome and genotype information on samples for each position (text fields separated by tabs). Zero length fields are not allowed, a dot (“.”) must be used instead. In order to ensure interoperability across platforms, VCF compliant implementations must support both LF (“\n”) and CR+LF (“\r\n”) newline conventions.</p>
-  </div>
-
-</body>
-</html>
+:::{.callout-note}
+## What is a VCF?
+VCF is a text file format (most likely stored in a compressed manner). It contains meta-information lines (prefixed with “##”), a header line (prefixed with “#”), and data lines each containing information about a position in the genome and genotype information on samples for each position (text fields separated by tabs). Zero length fields are not allowed, a dot (“.”) must be used instead. In order to ensure interoperability across platforms, VCF compliant implementations must support both LF (“\n”) and CR+LF (“\r\n”) newline conventions.
+:::
 
 ```{bash}
 cd /media/storage/mcGinn_2021/scomatic
 conda activate d_vep
 
-python 3-5_TSVtoVCF.py --add-info --add-celltypes output/SLX-17937/Step4_VariantCalling/SLX-17937.calling.step2.tsv output/SLX-17937/Step4_VariantCalling/SLX-17937.calling.step2.vcf
-python 3-5_TSVtoVCF.py --add-info --add-celltypes output/SLX-18123/Step4_VariantCalling/SLX-18123.calling.step2.tsv output/SLX-18123/Step4_VariantCalling/SLX-18123.calling.step2.vcf
+python 3-5_TSVtoVCF.py --add-info --add-celltypes output/run1/Step4_VariantCalling/run1.calling.step2.tsv output/run1/Step4_VariantCalling/run1.calling.step2.vcf
+python 3-5_TSVtoVCF.py --add-info --add-celltypes output/run2/Step4_VariantCalling/run2.calling.step2.tsv output/run2/Step4_VariantCalling/run2.calling.step2.vcf
 ```
 
 
@@ -228,11 +195,11 @@ gatk CreateSequenceDictionary -R Mus_musculus.GRCm39.dna.primary_assembly.fa
 
 REF=~/bin/SComatic-main/reference_genomes/Mus_musculus.GRCm38.dna.primary_assembly.fa 
 
-gatk ValidateVariants -V output/SLX-17937/Step4_VariantCalling/SLX-17937_filtered.calling.step2.vcf -R $REF --validation-type-to-exclude ALLELES
-gatk ValidateVariants -V output/SLX-18123/Step4_VariantCalling/SLX-18123_filtered.calling.step2.vcf -R $REF --validation-type-to-exclude ALLELES
+gatk ValidateVariants -V output/run1/Step4_VariantCalling/run1_filtered.calling.step2.vcf -R $REF --validation-type-to-exclude ALLELES
+gatk ValidateVariants -V output/run2/Step4_VariantCalling/run2_filtered.calling.step2.vcf -R $REF --validation-type-to-exclude ALLELES
 
-vcf_validator -i output/SLX-17937/Step4_VariantCalling/SLX-17937_filtered.calling.step2.vcf -r summary,text,database
-vcf_validator -i output/SLX-18123/Step4_VariantCalling/SLX-18123_filtered.calling.step2.vcf -r summary,text,database
+vcf_validator -i output/run1/Step4_VariantCalling/run1_filtered.calling.step2.vcf -r summary,text,database
+vcf_validator -i output/run2/Step4_VariantCalling/run2_filtered.calling.step2.vcf -r summary,text,database
 ```
 
 Both files are OK!!!
