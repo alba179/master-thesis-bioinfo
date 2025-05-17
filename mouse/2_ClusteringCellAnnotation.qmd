@@ -2,11 +2,9 @@
 We are going to perform the downstream analysis of single cell transcriptomics mainly with R package Seurat (https://satijalab.org/seurat/). The version 4 was used instead of the 5 due to version compatibility problems with other methods needed downstream. 
 
 
-
-
 ## Import libraries
 
-```{r Import libraries}
+```{r Import libraries, eval=FALSE}
 
 .libPaths("/home/albax/miniforge3/envs/seurat_v4/lib/R/library")
 
@@ -73,7 +71,7 @@ setwd("/home/albax/mcGinn_2021")
 ## Load data
 First, we load our rds object, and we get only the data from the assay "gene". Note that we have different rds objects, each of them contains different step versions (non-filtered, filtered, annotated), in order to maintain consistency and avoid errors and accidental deletes. 
 
-```{r Load_data}
+```{r Load_data, eval=FALSE}
 
 # Esoph <- readRDS(file = "./results/esoph_star_filtfixed_mm10.rds") # this is with mm10 alignment
 Esoph # 57186 genes genes accross 46321 cells
@@ -119,7 +117,7 @@ print(duplicated_genes)
 ## QC stats
 We are going to perform everything only in the "spliced" assay.
 
-```{r}
+```{r, eval=FALSE}
 DefaultAssay(Esoph) <- "spliced" # change active assay to spliced
 head(Esoph@meta.data, 5) #it contains nCount and nFeature for each assay
 ```
@@ -142,7 +140,7 @@ spoiler: we end up filtering using the clusterization (7 clusters) shown in umap
 
 ### Detect MT genes
 
-```{r}
+```{r, eval=FALSE}
 head(row.names(Esoph)) # first genes
 Esoph[["percent.mt"]] <- PercentageFeatureSet(Esoph, assay = "spliced", pattern = "^mt-") # calculate mitochondrial percent
 head(Esoph@meta.data, 5)
@@ -191,8 +189,7 @@ The original paper filtered the cells according to:
 But we are not going to do this. 
 
 
-
-```{r}
+```{r, eval=FALSE}
 ## General statistics post-second filtering:
 # Proportion of UMIs that are from unspliced transcripts:
 # (kallisto | bus counts reads that are partially intronic and partially exonic as unspliced while velocyto throws away many reads, reason why it ends with smaller proportion - see https://github.com/velocyto-team/velocyto.py/issues/148)
@@ -212,7 +209,7 @@ Esoph # spliced assay keeps as default assay used as input for downstream normal
 
 ## Normalization, feature selection, scaling
 
-```{r SCTransform}
+```{r SCTransform, eval=FALSE}
 Esoph <- SCTransform(Esoph, assay = "spliced", new.assay.name = "SCT")
 # creates SCT assay (that becomes default)
 
@@ -231,12 +228,12 @@ LabelPoints(plot = VariableFeaturePlot(object = Esoph[["SCT"]], selection.method
 ### Dimensional reduction (PCA)
 Observation: Makes most sense to plot RNA velocity over cell embeddings from the SCT matrix (built from spliced, not unspliced counts; i.e. we seek arrows as predictions from CURRENT state)
 
-```{r}
+```{r, eval=FALSE}
 DefaultAssay(Esoph) <- "SCT" # already default, but just in case
 Esoph <- RunPCA(Esoph, verbose = FALSE) # by default, based on variable features
 ```
 
-```{r}
+```{r, eval=FALSE}
 # Summary of genes defining most variability: (higher PCA score)
 print(Esoph[["pca"]], dims = 1:5, nfeatures = 5)
 VizDimLoadings(Esoph, dims = 1:2, reduction = "pca")
@@ -246,12 +243,12 @@ DimPlot(Esoph, dims = c(1,2), reduction = "pca", pt.size = 0.5) # change the dim
 ```
 
 Heatmap of genes and cells with highest PCA score (a quick supervised analysis of sources of variation)
-```{r}
+```{r, eval=FALSE}
 DimHeatmap(Esoph, dims = 1, cells = 500, balanced = TRUE) # picks 500 most extreme cells on each end of PCA1 spectrum for 15 top differentiating genes
 DimHeatmap(Esoph, dims = 1:15, cells = 500, balanced = TRUE)
 ```
 
-```{r}
+```{r, eval=FALSE}
 # Set the threshold of significant dimensions based on conjunction of JackStraw, ElbowPlot and Supervised Heatmaps outcome before
 
 ## Significant dimensions: determine most relevant sources of variability
@@ -262,11 +259,10 @@ ElbowPlot(Esoph) # use 17
 ```
 
 
-
 ### Non-linear dimensional representation
 Simplifies the complex manifold of the data in a super-reduced dimensional space for visualization. We should run this after PCA, in order to further reduce the dimensionality or our dataset. Later, we can run FindClusters() with whatever dimension we prefer. 
 
-```{r tsne}
+```{r tsne, eval=FALSE}
 ## tSNE
 Esoph <- RunTSNE(Esoph, dims = 1:17, verbose = FALSE)
 
@@ -277,19 +273,19 @@ tsne_plot_15
 ```
 
 Be careful when running this chunk, as umap can consume a lot of cpu: 
-```{r UMAP}
+```{r UMAP, eval=FALSE}
 ## UMAP
 Esoph <- RunUMAP(Esoph, reduction = "pca", dims = 1:17)
 # saveRDS(Esoph, file = "./output/esoph_star_clusts_mm10.rds") # contains also FindNeighbours()
 
 ```
 
-```{r}
+```{r, eval=FALSE}
 umap_plot_15 <- DimPlot(Esoph, reduction = "umap", pt.size = 0.5, label=TRUE)
 umap_plot_15
 ```
 
-```{r}
+```{r, eval=FALSE}
 unique_names <- sapply(strsplit(colnames(Esoph), "-"), function(x) paste(x[2], x[3], sep = "-"))
 # Add this information as metadata
 Esoph$unique_name <- unique_names
@@ -305,7 +301,7 @@ DimPlot(Esoph, reduction = "umap", pt.size = 0.5, label=FALSE, group.by = 'uniqu
 2. Embedding cells in a graph structure - for example a K-nearest neighbor (KNN) graph, with edges drawn between cells with similar feature expression patterns
 
 #### Find Neighbours (KNN)
-```{r KNN}
+```{r KNN, eval = FALSE}
 Esoph <- FindNeighbors(Esoph, reduction = "pca", dims = 1:17) # dims based on first N components (from pca reduction)
 
 ```
@@ -318,7 +314,7 @@ Algorithm for modularity optimization (1 = original Louvain algorithm; 2 = Louva
 
 We will use Leiden algorith (algorithm = 4, method = "igraph") https://www.nature.com/articles/s41598-019-41695-z
 
-```{r FindClusters}
+```{r FindClusters, eval = FALSE}
 # Esoph <- FindClusters(Esoph, resolution = seq(0.2, 1.2, by = 0.2), algorithm = 4) # this consumed too much memory...
 
 Esoph <- FindClusters(Esoph, resolution = 0.1, algorithm = 4, method = "igraph") 
@@ -332,19 +328,19 @@ Esoph <- FindClusters(Esoph, resolution = 1.2, algorithm = 4, method = "igraph")
 
 ```
 
-```{r}
+```{r, eval=FALSE}
 # To decide how many clusters we should annotate, with the signatures we decide
 clustree(Esoph, prefix = "SCT_snn_res.") # we are going to use resolution 0.2 for Esoph in mm10
 ```
 
-```{r}
+```{r, eval=FALSE}
 # Idents() contains cluster info
 head(Idents(Esoph), 10) # looks at cluster IDs of the first 10 cells
 
 ```
 
 
-```{r DimPlots_res}
+```{r DimPlots_res, eval = FALSE}
 DimPlot(Esoph, group.by = "SCT_snn_res.0.2") & palette_d
 DimPlot(Esoph, group.by = "SCT_snn_res.0.3") & palette_d
 DimPlot(Esoph, group.by = "SCT_snn_res.0.4") & palette_d
@@ -359,7 +355,7 @@ Cell markers (they may vary between mouse/human):
 - Hematopoetic cells -> Cd34
 - Fibroblasts -> Vim
 
-```{r FeaturePlots_markers}
+```{r FeaturePlots_markers, eval = FALSE}
 FeaturePlot(Esoph, features = "Cd34") & palette # marker for hematopoietic stem cells (immune)
 FeaturePlot(Esoph, features = "Vim") & palette # marker for fibroblasts
 
@@ -369,7 +365,7 @@ Thanks to the plots above, we can clearly see that we have fibroblast cells that
 
 Quality control plots with umap:
 
-```{r}
+```{r, eval=FALSE}
 # number of genes per cell
 FeaturePlot(Esoph, features = "nFeature_spliced") & palette # no huge heterogeneities
 FeaturePlot(Esoph, features = "percent.mt") & palette 
@@ -378,7 +374,7 @@ FeaturePlot(Esoph, features = "percent.mt") & palette
 
 We an see that the top "leaf" of our umap has low-quality cells, with few genes, and very high MT%. These cells belong to cluster 4 (when using resolution 0.2). 
 
-```{r}
+```{r, eval=FALSE}
 # Select resolution for Seurat Clusters:
 Idents(Esoph) = Esoph$SCT_snn_res.0.2
 Esoph$seurat_clusters = Esoph$SCT_snn_res.0.2
@@ -422,7 +418,7 @@ Esoph_filt <- subset(x = Esoph, idents = c("4", "7"), invert = TRUE)
 ```
 
 ## Cell annotation
-```{r}
+```{r, eval=FALSE}
 Esoph.markers <- FindAllMarkers(Esoph_filt, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
 
 write.table(Esoph.markers, file = './output/Esoph_markers_clusts.txt', col.names = TRUE, row.names = TRUE, sep = '\t')
@@ -470,12 +466,12 @@ Esoph_filt <- FindClusters(Esoph_filt, resolution = 1.2, algorithm = 4, method =
 
 ```
 
-```{r}
+```{r, eval=FALSE}
 clustree(Esoph_filt, prefix = "SCT_snn_res.") # we are going to use resolution 0.2 for Esoph in mm10
 
 ```
 
-```{r}
+```{r, eval=FALSE}
 DimPlot(Esoph_filt, group.by = "SCT_snn_res.0.2") & palette_d
 DimPlot(Esoph_filt, group.by = "SCT_snn_res.0.3") & palette_d
 DimPlot(Esoph_filt, group.by = "SCT_snn_res.0.4") & palette_d
@@ -484,7 +480,7 @@ DimPlot(Esoph_filt, group.by = "SCT_snn_res.0.2", split.by = "condition") & pale
 
 ```
 
-```{r}
+```{r, eval=FALSE}
 # number of genes per cell
 FeaturePlot(Esoph_filt, features = "nFeature_spliced") & palette # no huge heterogeneities
 FeaturePlot(Esoph_filt, features = "percent.mt") & palette 
@@ -504,7 +500,7 @@ Now, we have 5 clusters in our data (resolution 0.2), which, after seeing their 
 This is a premature proposal, we will decide this later. 
 
 
-```{r}
+```{r, eval=FALSE}
 # We use resolution 0.2
 # Select resolution for Seurat Clusters:
 Idents(Esoph_filt) = Esoph_filt$SCT_snn_res.0.2
@@ -528,7 +524,7 @@ Esoph_filt <- CellCycleScoring(Esoph_filt, s.features = s.genes, g2m.features = 
 
 ```
 
-```{r}
+```{r, eval=FALSE}
 DimPlot(Esoph_filt, group.by = "Phase")
 ```
 
@@ -565,7 +561,7 @@ We are going to create different signatures depending on:
     Basal
 
 
-```{r}
+```{r, eval=FALSE}
 # Taking into account the different sub-levels of the oesophagus epithelium; from Figure S1 Mendeley and Candi E, 2005 (The cornified envelope: a model of cell death in the skin):
 
 # Lumen
@@ -591,7 +587,7 @@ FeaturePlot(Esoph_filt, features = c("Mki67", "Cenpf", "Cenpa")) & plot_annotati
 ```
 
 
-```{r}
+```{r, eval=FALSE}
 # Taking into account the three clusters from McGinn et al 2021 (CB, RB and DIF):
 
 # Cycling basal markers(CB), cells that have high expression of cell cycle genes:
@@ -605,7 +601,7 @@ FeaturePlot(Esoph_filt, features = c("Tgm3", "Krt13", "Grhl3", "Krt4", "Notch3",
 
 ```
 
-```{r}
+```{r, eval=FALSE}
 ## Dot plot of some characteristic markers:
 DotPlot(Esoph, features = c("Mki67","Krt14","Col17a1","Krt5","Sbsn","Krtdap"), cols = c("grey", "red"),dot.scale = 10) + RotatedAxis()
 
@@ -613,11 +609,11 @@ DotPlot(Esoph, features = c("Mki67","Krt14","Col17a1","Krt5","Sbsn","Krtdap"), c
 
 
 ## SComatic preparation
-SComatic needs a TSV metadata file that relates each cell barcode with each "Cell type" annotation. The annotation will depend on how much granularity we need or is adequate to cal lsomatic variants from single cell transcriptomics. Here, the library design plays a very important role. Due to that, in our case, we have 8 libraries, that are truly 16 as they are double-sequenced. Each of the library contains 3 mice, and, we are not interested in finding intra-cell-type in the esophagus epithelium, also, all of the cells are epihtelial, so we don't have the possibility of cross-relating detected variants across different cell types of other lineages. That's why we have decided to annotate all the cell barcodes as "Epithelial". 
+SComatic needs a TSV metadata file that relates each cell barcode with each "Cell type" annotation. The annotation will depend on how much granularity we need or is adequate to cal lsomatic variants from single cell transcriptomics. Here, the library design plays a very important role.
 
 ![Library design](https://github.com/alba179/master-thesis-bioinfo/main/pics/library_design_mouse.png)
 
-![Cancer cell fraction relation](https://github.com/alba179/master-thesis-bioinfo/main/pics/cCF_mouse.png)
+![Cancer cell fraction relation](https://github.com/alba179/master-thesis-bioinfo/main/pics/CCF_mouse.png)
 
 
 ### Save cell barcodes with cell types in TSV format (SComatic)
@@ -731,7 +727,7 @@ Looking at our umap, with resolution 0.2, we will take 3 clusters (Basal, Suprab
 - Cluster 4: "Basal 3"
 - Cluster 5: "Epithelial_DEN"
 
-```{r}
+```{r, eval=FALSE}
 DimPlot(Esoph_filt, group.by = "SCT_snn_res.0.2") & palette_d
 
 ```
@@ -753,7 +749,7 @@ Esoph_filt <- RenameIdents(Esoph_filt, new.cluster.ids)
 
 ```
 
-```{r}
+```{r, eval=FALSE}
 Idents(Esoph_filt) <- Esoph_filt$annot_scvelo
 
 # Annotated PCA and UMAP plots:
@@ -763,7 +759,7 @@ DimPlot(Esoph_filt, reduction = "umap", label = TRUE, pt.size = 0.5) & palette_d
 
 ```
 
-```{r}
+```{r, eval=FALSE}
 DimPlot(Esoph_filt, reduction = "umap", label = TRUE, pt.size = 0.5, split.by = "condition") & palette_d
 ```
 
@@ -784,7 +780,7 @@ clusterEpDEN_markers <- TopMarkers[TopMarkers$cluster == "Epithelial_DEN", ]  # 
 
 ```
 
-```{r}
+```{r, eval=FALSE}
 Esoph_filt.markers <- read.csv("./output/Esoph_markers_clusts.txt", sep = "\t")
 
 TopMarkers <- Esoph_filt.markers %>% group_by(cluster) %>% top_n(n = 25, wt = avg_log2FC) # show just top 25 per cluster
@@ -847,7 +843,7 @@ saveRDS(Esoph_filt, file = "./output/esoph_star_filtered_mm10.rds")
 ## Normalization of counts
 We are going to normalize the data by total counts (in each library-Sequencing ID). For that, we have to sum all the columns.
 
-```{r}
+```{r, eval=FALSE}
 levels(Esoph_filt@meta.data$Sample_name)
 summary(Esoph_filt[,Esoph_filt@meta.data$Sample_name == 'SIGAD8_SLX-17937']@meta.data$Sample_name)
 
@@ -889,44 +885,17 @@ Supplementary Table 1 - QC Statistics of scRNAseq data (https://www.nature.com/a
 | Adult | 3              | 2         | *676*            | 5438               | *36246.5*         | 15707                 | 3.5389684657119                        |
 
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Disclaimer Box</title>
-  <style>
-    .disclaimer-box {
-      border: 1px solid #ccc;
-      background-color: #f9f9f9;
-      color: #333;
-      padding: 16px;
-      margin: 20px 0;
-      border-left: 5px solid #f39c12; /* orange accent */
-      font-size: 14px;
-      font-family: Arial, sans-serif;
-    }
+:::{.callout-warning appearance="minimal"}
+## Warning:
+SCTransform corrects the counts from your equivalent RNA assay and creates a new assay (typically SCT) where the counts slot is a corrected counts, data is a log transformation of corrected counts+1 and the scale.data are pearson residuals. Typically, the scale.data slot is only generated for the features listed in VariableFeatures(your_object) which is why it's usually smaller than your SCT data slot. You can tell SCTransform to scale all genes, but whether that's something you need or not is up to you.
+:::
 
-    .disclaimer-title {
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
-  </style>
-</head>
-<body>
-
-  <div class="disclaimer-box">
-    <div class="disclaimer-title">Disclaimer:</div>
-    <p>SCTransform corrects the counts from your equivalent RNA assay and creates a new assay (typically SCT) where the counts slot is a corrected counts, data is a log transformation of corrected counts+1 and the scale.data are pearson residuals. Typically, the scale.data slot is only generated for the features listed in VariableFeatures(your_object) which is why it's usually smaller than your SCT data slot. You can tell SCTransform to scale all genes, but whether that's something you need or not is up to you.</p>
-  </div>
-
-</body>
-</html>
 
 ## Do we find barcodes from Epi_DEN shared in other clusters?
 - Is each clone contained completely inside the Epithelial_DEN cluster?("Epi_DEN_cells")
 - How are these clones shared with other clusters? How many cells of the clone fall inside Epi_DEN_cells cluster?
 - 
-```{r}
+```{r, eval=FALSE}
 epi_den_CBs <- WhichCells(Esoph_filt, idents = "Epithelial_DEN")
 write.csv(epi_den_CBs, "Epithelial_DEN_CBS.txt", row.names = FALSE)
 

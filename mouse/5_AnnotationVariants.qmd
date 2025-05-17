@@ -1,3 +1,31 @@
-# 3. Annotation of variants
+# 5. Functional annotation of variants
+We are going to perfom functional annotation of variants with Ensembl's VEP (variant effect predictor).
+
+```{bash}
+# [folia]
+cd ~/scripts/variant_annotation
+
+./annotate_vep.sh 102 mus_musculus ~/mcGinn_2021/mcGinn_2021_files_for_vep.fofn
+```
 
 
+
+## 5.1. Analysis of annotations
+We are going to view the genes that are drivers, as well as those that are found in the 192 gene panel from Colom 2021 and in the WES data from 9-18 weeks tumos from DEN mice from the same paper.
+
+Also, we would like to view if the filtering of repetitive regions filters out variants that have low impact.
+
+The list of genes of the 192 mouse gene panel is:
+Abcb11,Abcc2,Adam10,Adam29,Adcy10,Aff3,Ajuba,Akap9,Akt1,Akt2,Apob,Arid1a,Arid2,Arid5b,Asxl1,Atm,Atp2a2,Atrx,Aurka,B2m,Bbs9,Bcas3,Bcl11b,Bcr,Braf,Brca2,C1s,Cacna1d,Card11,Casp8,Ccnd1,Cdc16,Cdh1,Cdkn2a,Chuk,Clgn,Cnot1,Cntnap4,Cobll1,Col12a1,Copb2,Cr2,Crebbp,Csmd2,Ctcf,Cul3,Cyld,Cyp2b13,Dclk1,Dclre1a,Ddr2,Dicer1,Dmxl2,Dnm2,Dnmt3a,Dst,Egfr,Eif2d,Ep300,Epha2,Erbb2,Erbb3,Erbb4,Ezh2,Fat1,Fat4,Fbn2,Fbxo21,Fbxw7,Fgfr1,Fgfr2,Fgfr3,Flg2,Flt3,Fn1,Gcn1l1,Grin2a,Grm3,Gtf3c5,Hist1h2bm,Hmcn1,Hras,Huwe1,Hydin,Igsf1,Insrr,Iqgap1,Irf6,Kcnh5,Kdm5b,Kdm6a,Kdr,Keap1,Kit,Klrc3,Kmt2c,Kmt2d,Kras,Krt5,Krtap4-9,Loxhd1,Lrp1,Lrp1b,Lrp2,Ltf,Maml1,Mcm7,Met,Mrgprb4,Mtor,Myof,Nf1,Nf2,Nfe2l2,Nfkb1,Nlrp12,Notch1,Notch2,Notch3,Notch4,Nras,Nsd1,Nup214,Opn3,Pard3,Pcdha5,Pced1b,Pde4dip,Peg10,Pign,Pik3ca,Pkhd1,Plcb1,Prex2,Psme4,Ptch1,Pten,Ptprt,Rac1,Rasa1,Rb1,Rbm46,Rhbdf2,Ripk2,Ripk4,Ros1,Rpgrip1,Rpl10,Ryr2,Sall1,Scn10a,Scn11a,Scn1a,Scn3a,Setd2,Setx,Sgk3,Sis,Slc13a1,Smad4,Smarca4,Smo,Snx25,Soat2,Sox2,Spen,St18,Sufu,Synm,Taf2,Tas2r102,Tet2,Tnr,Trp53,Trp63,Trrap,Tsc1,Ttc27,Usp24,Usp26,Usp9x,Vhl,Vmn2r81,Vps13b,Wnk1,Zan,Zfhx3,Zfp39,Zfp457,Zfp521,Zfp644,Zfp750
+
+- The list of genes in WES is much bigger, there are 31284 genes.
+- intogen human drivers need to be converted with BioMart from mouse to human genes previously. 
+
+:::{.callout-warning appearance="minimal"}
+## Warning! this is the structure of the CSQ value from INFO column:
+Allele|Consequence|IMPACT|SYMBOL|Gene|Feature_type|Feature|BIOTYPE|EXON|INTRON|HGVSc|HGVSp|cDNA_position|CDS_position|Protein_position|Amino_acids|Codons|Existing_variation|DISTANCE|STRAND|FLAGS|VARIANT_CLASS|SYMBOL_SOURCE|HGNC_ID|CANONICAL|MANE|TSL|APPRIS|CCDS|ENSP|SWISSPROT|TREMBL|UNIPARC|UNIPROT_ISOFORM|GENE_PHENO|SIFT|DOMAINS|miRNA|AF|AFR_AF|AMR_AF|EAS_AF|EUR_AF|SAS_AF|AA_AF|EA_AF|gnomAD_AF|gnomAD_AFR_AF|gnomAD_AMR_AF|gnomAD_ASJ_AF|gnomAD_EAS_AF|gnomAD_FIN_AF|gnomAD_NFE_AF|gnomAD_OTH_AF|gnomAD_SAS_AF|MAX_AF|MAX_AF_POPS|CLIN_SIG|SOMATIC|PHENO|PUBMED|MOTIF_NAME|MOTIF_POS|HIGH_INF_POS|MOTIF_SCORE_CHANGE|TRANSCRIPTION_FACTORS
+:::
+
+```{bash}
+
+```

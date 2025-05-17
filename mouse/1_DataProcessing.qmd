@@ -7,14 +7,14 @@
 
 https://www.ebi.ac.uk/biostudies/arrayexpress/studies/E-MTAB-8662
 
-```{bash}
+```{=bash}
 #!/bin/bash
 # [matterhorn]
 # AUTHOR: Alba Mendez Alejandre
 # DESCRIPTION: Download the raw fastQ via ftp from ENA. The metadata is stored in the downloaded csv. 
 # DATE: 10/06/2024
 
-seq_ids=("SLX_17937" "SLX-18123")
+seq_ids=("run1" "run2")
 
 for seq_number in "${seq_ids[@]}"; do
 
@@ -22,7 +22,7 @@ for seq_number in "${seq_ids[@]}"; do
     CSV_FILE="/mnt/D/mcGinn_2021/data_info/${seq_number}_download.csv"
 
     # Directory where we are going to download the data (bam and fastq)
-    DOWNLOAD_DIR="./${seq_number}_SLX_17937/${seq_number}_adult_P70"
+    DOWNLOAD_DIR="./${seq_number}_run1/${seq_number}_adult_P70"
 
     # Create the directory if it doesn't exist
     mkdir -p "$DOWNLOAD_DIR"
@@ -71,6 +71,10 @@ for seq_number in "${seq_ids[@]}"; do
     }
 done
 
+```
+
+```{bash}
+./
 ```
 
 After the download of fastQ files, they were concatenated in order to obtain 
@@ -184,4 +188,6 @@ mkdir logs
 
 The next step is to create the seurat object with the count matrices obtained from STARsolo, with spliced, unspliced and gene matrices.
 
-[The file is named "1-4_merge_seurat_fixedrank.R"]
+:::{.callout-note}
+## [The file is named "1-4_merge_seurat_fixedrank.R"]
+:::
