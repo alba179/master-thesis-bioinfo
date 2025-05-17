@@ -1,9 +1,8 @@
 #!/bin/bash
-# Script with bams separated by run (SLX-17923 vs SLX-18123). Each run bams are analyzed in a scomatic pipeline. This means, the output of this script will give two final .tsv: one for the run of SLX-17923, and another one for the run of SLX-18123. Each of these runs/.tsv, will have 8 samples: sample1_Epi, samp2_Epi, samp3_Epi, samp4_Epi, samp5_Epi, samp6_Epi, samp7_Epi, samp8_Epi. 
-# There are 6 sample which are control adult, + one sample is old CTL, and + one sample is old DEN. 
+# Script with bams separated by run (SLX-17923 vs SLX-18123). 
 # Each of the sample has the key like "SIGAD8", "SIGAG6", etc. 
 # DISCLAIMER: ALWAYS USE THE SAME REFERENCE GENOME!!! If you have aligned you rreads with mm10, scomatic will have to be ran with mm10. No coordinates' change with bedtools nor similar strange things. 
-# SComatic nowadays has only panel of normales (PON) and editing sites (A-to-I events) for: GRCh38 and mm10. There aren't PON nor editing sites for mouse assembly mm39. 
+# SComatic nowadays has only panel of normals (PON) and editing sites (A-to-I events) for: GRCh38 and mm10. There aren't PON nor editing sites for mouse assembly mm39. 
 # The PON for human has been made with GATK data 1000 genomes project. No info of how they did it.
 # The PON for mouse mm10 was done in July 20, using mm10 Tabula muris data. No info of how exactly they did it. 
 
