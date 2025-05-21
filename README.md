@@ -2,11 +2,7 @@
 
 This is the repository for my Master's Thesis in **Bioinformatics and Computational Biology** at the Universidad Autónoma de Madrid (UAM), course 2024/25. It contains the code used. 
 
-## 👩‍💻 Author
-
-**Alba Méndez Alejandre**  
-Master's in Bioinformatics and Computational Biology  
-Universidad Autónoma de Madrid (2024/25)
+**👩‍💻 Author**: **Alba Méndez Alejandre**  
 
 ## 🧬 Brief description
 This thesis applies variant calling from **scRNA-seq** to link genetic mutations to cellular phenotypes, using a **customized pipeline** on mouse and human esophageal data. It highlights the importance of experimental design and filtering for reliable mutation detection.
