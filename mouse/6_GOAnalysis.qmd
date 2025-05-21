@@ -1,0 +1,33 @@
+# 4. Functional Analysis
+
+```{r}
+gene_list <- read_tsv("mutated_genes_mouse.tsv")
+
+# RANK LIST
+gene_list$all_donors <- rowSums(gene_list[,c(2,3,4,5,6,7)], na.rm = TRUE)
+gene_list_all <- gene_list[, c(1,8)]
+gene_list_all <- gene_list_all[gene_list_all$gene_symbol != "Unknown",]
+
+#GO
+#lista con los genes de gene_list_all
+go_genes <- as.character(gene_list_all$gene_symbol)
+
+# Crear el vector all_genes con los símbolos de todos los human genes para "universe"
+all_genes <- keys(org.Mm.eg.db, keytype = "SYMBOL")
+
+#enrichment analyis con ontologia BIOPROCESES
+
+all_donors_GO <- enrichGO(gene = go_genes,
+                          universe = all_genes,
+                          keyType = "SYMBOL",
+                          OrgDb = org.Mm.eg.db,
+                          ont = "BP",
+                          pAdjustMethod = "BH",
+                          qvalueCutoff = 0.05,
+                          readable = FALSE)
+
+pdf("dotplot_GOmouse.pdf", height = 9)
+dotplot(all_donors_GO, showCategory=20, font.size = 8, title= "")
+dev.off()
+
+```

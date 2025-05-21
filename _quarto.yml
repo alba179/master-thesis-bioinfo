@@ -1,5 +1,7 @@
 project:
   type: book
+  # output-dir: _book
+  output-dir: docs
 
 book:
   title: "Master thesis in Bioinformatics and Computational Biology"
@@ -35,9 +37,7 @@ execute:
 
 format:
   html:
-    theme:
-      - cosmo
-      - brand
+    theme: cosmo
     number-sections: false       
     code-fold: true              
     toc: true                    
@@ -45,3 +45,6 @@ format:
     toc-expand: 3
     toc-location: right
     toc-title: "Index"
+  pdf:
+    toc: true
+    documentclass: scrreprt
