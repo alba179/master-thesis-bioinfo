@@ -1,0 +1,440 @@
+# 3. SComatic calling
+We are going to perform somatic variant calling with the novel algorithm from Muyas et.al (2024) doi: https://doi.org/10.1038/s41587-023-01863-z
+
+
+## 3.1. Script to call somatic variants
+- min_ac_cells = 2 (value by default); in HCA was used 1
+- min_cell_types = 2
+- max_cell_types = 1
+
+
+```{bash}
+#!/bin/bash
+# Script with bams separated by run (run1 vs run2). Each run bams are analyzed in a scomatic pipeline. This means, the output of this script will give two final .tsv: one for the run of run1, and another one for the run of run2. Each of these runs/.tsv, will have 8 samples: sample1_Epi, samp2_Epi, samp3_Epi, samp4_Epi, samp5_Epi, samp6_Epi, samp7_Epi, samp8_Epi. 
+# There are 6 sample which are control adult, + one sample is old CTL, and + one sample is old DEN. 
+# Each of the sample has the key like "sample1_Epi", "samp2_Epi", etc. 
+# DISCLAIMER: ALWAYS USE THE SAME REFERENCE GENOME!!! If you have aligned you rreads with mm10, scomatic will have to be ran with mm10. No coordinates' change with bedtools nor similar strange things. 
+# SComatic nowadays has only panel of normales (PON) and editing sites (A-to-I events) for: GRCh38 and mm10. There aren't PON nor editing sites for mouse assembly mm39. 
+# The PON for human has been made with GATK data 1000 genomes project. No info of how they did it.
+# The PON for mouse mm10 was done in July 20, using mm10 Tabula muris data. No info of how exactly they did it. 
+
+# Run this script in a environment with scomatic installed. 
+
+SCOMATIC=~/bin/SComatic-main
+
+run_names=("run1" "run2") # list of runs
+
+echo "Starting Scomatic analysis."
+
+
+i=0
+for run in "${run_names[@]}";
+do
+	i=$((i + 1)) 
+
+  # iterate though each bam in the directory where they are located
+  bam_dir="/media/storage/mcGinn_2021/STARalignment/bam/${run}"
+  output_dir="/media/storage/mcGinn_2021/scomatic/output/${run}"
+
+  mkdir -p $output_dir
+
+  logfile="$output_dir/scomatic_log.txt"
+  mkdir -p "$(dirname "$logfile")"
+
+  log_message() {
+      local log_time
+      log_time=$(date +"%Y-%m-%d %H:%M:%S")
+      local message="[$log_time] $1"
+      echo "$message" >> "$logfile"
+      echo "$message"
+  }
+
+  # Initialize log file
+  echo "### Scomatic Pipeline Log ###" > "$logfile"
+  log_message "Running scomatic pipeline for run: ${run}"
+
+
+  # Step 1: Splitting alignment file in cell type specific bams
+  log_message "Step 1: Splitting alignment file in cell type specific bams..."
+
+  output_dir1=$output_dir/Step1_BamCellTypes
+  mkdir -p $output_dir1
+  meta_dir="/media/storage/mcGinn_2021/scomatic/markers"
+
+  # Iterate through each BAM file in the bam_dir
+  for bam_file in "$bam_dir"/*.bam
+  do
+      # Extract the sample name from the file name
+      base_name=$(basename "$bam_file" Aligned.sortedByCoord.out.bam) # run1_lib1
+      sample=${base_name#*_} # remove the prefix up to '_', so that we get only lib1
+
+      echo "Started sample: $sample"
+
+      meta_file="$meta_dir/${run}/esoph_markers_scomatic_${base_name}.tsv"
+      
+      # Run the Python script with the appropriate arguments
+      python $SCOMATIC/scripts/SplitBam/SplitBamCellTypes.py --bam "$bam_file" \
+          --meta "$meta_file" \
+          --id "$sample" \
+          --n_trim 5 \
+          --max_nM 5 \
+          --max_NH 1 \
+          --outdir "$output_dir1"
+
+      log_message "Finished sample: $sample"
+
+      sample_list+=("$sample")
+  done
+
+  # Now, we have each .bam file for each sample located in =$output_dir/Step1_BamCellTypes. In total, 16 .tsv
+  # The bam file will be like: run1_lib1.lib1_Epi.bam
+
+
+  #######################################
+  # Step 2: Collecting base count information
+  
+  REF=/media/storage/reference_genomes/Mus_musculus.GRCm38.dna.primary_assembly.fa
+
+  output_dir2=$output_dir/Step2_BaseCellCounts
+  mkdir -p $output_dir2
+
+  for bam in "$output_dir1"/*.bam
+  do
+    
+    # Cell type, which will be lib1 in this case
+    cell_type=$(basename $bam | awk -F'.' '{print $(NF-1)}') # this takes the cell_type from the bam name (the second field to last by separating by '.')
+
+    # Temp folder
+    temp=$output_dir2/temp_${cell_type}
+    mkdir -p $temp
+
+    log_message "Processing base counts for cell type: $cell_type"
+
+    # Command line to submit to cluster
+    python $SCOMATIC/scripts/BaseCellCounter/BaseCellCounter.py --bam $bam \
+      --ref $REF \
+      --chrom all \
+      --out_folder $output_dir2 \
+      --min_bq 30 \
+      --tmp_dir $temp \
+      --nprocs 10
+
+    rm -rf $temp
+
+    log_message "Finished base count processing for cell type: $cell_type"
+  done
+
+  log_message "Listing files in $output_dir2 before renaming:"
+  ls "$output_dir2"
+  # Now, we have each .tsv for each sample in output_dir2=$output_dir/Step2_BaseCellCounts
+  # We are going to move both .tsv from the same sample to a new folder inside output_dir2, named after the sample name.
+
+  # echo "Organizing .tsv files into sample-specific folders..."
+  log_message "Renaming .tsv files..."
+
+
+  for tsv in "$output_dir2"/*.tsv
+  do
+      # Create a new directory for the sample
+      # Move the .tsv files corresponding to the sample into the sample directory
+ 
+      base_name=$(basename "$tsv")
+      
+      # lib1.lib1_Epi.tsv ; we want lib1.tsv -> this will be our unique "cell types"
+    
+      # Extract run name, and spec cell
+      sample_run=$(echo "$base_name" | awk -F'.' '{print $1}') # extracts lib1
+      spec_cell=$(echo "$base_name" | awk -F'_' '{print $2}') # extracts Epi.tsv
+
+      new_filename="${output_dir2}/${sample_run}_${spec_cell}" # lib1_Epi.tsv
+
+      # Change each name of the .tsv files by adding its run
+      # mv "$output_dir2/${sample_name}"*.tsv "$sample_dir/${run_name}${sample_name}"*.tsv
+      mv "$tsv" "$new_filename"
+
+      # echo "Moved .tsv files for sample: $sample to $sample_dir"
+      log_message "Renamed $tsv to $new_filename"
+  done
+
+  log_message "Listing files in $output_dir2 after renaming:"
+  ls "$output_dir2"
+
+  # echo "Moved the files successfully!"
+  log_message "Renamed the files successfully!"
+
+  #######################################
+  # Step 3: Merging base count matrices
+  log_message "Step 3: Merging base count matrices..."
+
+  output_dir3=$output_dir/Step3_BaseCellCountsMerged
+  mkdir -p $output_dir3
+
+  log_message "Merging base count matrices into a single .tsv file..."
+
+  python $SCOMATIC/scripts/MergeCounts/MergeBaseCellCounts.py \
+    --tsv_folder ${output_dir2} \
+    --outfile ${output_dir3}/${run}.BaseCellCounts.AllCellTypes.tsv
+
+
+  #######################################
+  # Step 4: Detection of somatic mutations
+  log_message "Step 4: Detection of somatic mutations..."
+
+  # Step 4.1
+  log_message "Step 4.1: Variant calling..."
+  output_dir4=$output_dir/Step4_VariantCalling
+  mkdir -p $output_dir4
+
+  python $SCOMATIC/scripts/BaseCellCalling/BaseCellCalling.step1.py \
+            --infile ${output_dir3}/${run}.BaseCellCounts.AllCellTypes.tsv \
+            --outfile ${output_dir4}/${run} \
+	    --max_cell_types 1 \
+	    --min_cell_types 2 \
+            --ref $REF
+
+
+  # Step 4.2
+  log_message "Step 4.2: Somatic mutation detection..."
+  editing=$SCOMATIC/RNAediting/AllEditingSites.mm10.txt
+  PON=$SCOMATIC/PoNs/PoN.scRNAseq.mm10.tsv
+
+  python $SCOMATIC/scripts/BaseCellCalling/BaseCellCalling.step2.py \
+            --infile ${output_dir4}/${run}.calling.step1.tsv \
+            --outfile ${output_dir4}/${run}.calling.step2.tsv \
+            --editing $editing \
+            --pon $PON
+
+  # extra step: Intersection with bed file
+  log_message "Extra step: Intersection with bed file..."
+  bedtools intersect -header -a ${output_dir4}/${run}.calling.step2.tsv -b $SCOMATIC/bed_files_of_interest/UCSC.mm10.without.repeatmasker.bed | awk '$1 ~ /^#/ || $6 == "PASS"' > ${output_dir4}/${run}.calling.step2.pass.tsv
+
+  log_message "Finished scomatic pipeline for ${run} successfully!"
+
+done
+
+log_message "Pipeline completed successfully for both runs!"
+
+# Display log file
+echo "Log file saved to: $logfile"
+cat "$logfile"
+
+
+```
+
+Execute:
+```{bash}
+# [matterhorn]
+./SComatic_mouse.sh
+
+```
+
+
+## 3.2. SingleCellGenotype calling to obtain mutated cell barcodes
+
+```{bash}
+#!/bin/bash
+# SComatic extra functionality: Computing the genotype for each cell at the variant sites
+# 01/10/2024
+# Author: Alba Méndez Alejandre
+# This is going to allow us to map each variant in the UMAP
+
+SCOMATIC=~/bin/SComatic-main
+
+run_names=("run1" "run1") # list of runs
+
+REF=/media/storage/reference_genomes/Mus_musculus.GRCm38.dna.primary_assembly.fa
+meta_dir=/media/storage/mcGinn_2021/scomatic/markers
+
+i=0
+for run in "${run_names[@]}";
+do
+	i=$((i + 1))
+
+	output_dir="/media/storage/mcGinn_2021/scomatic/output/${run}"
+	output_dir1=$output_dir/Step1_BamCellTypes
+	output_dir4=$output_dir/Step4_VariantCalling
+
+	STEP4_2_pass=${output_dir4}/${run}_modif.calling.step2.pass.tsv # modified chr1 to 1 tsv file
+
+	output_dir7=$output_dir/SingleCellAlleles
+	mkdir -p $output_dir7
+	
+	
+	for bam in $(ls -d $output_dir1/*bam);do  
+    		cell_type=$(basename $bam | awk -F'.' '{print $(NF-1)}')
+    
+   		temp=$output_dir7/temp_${cell_type}
+    		mkdir -p $temp
+
+		meta_file="$meta_dir/${run}/esoph_markers_scomatic_${run}_${cell_type}.tsv"
+		
+    		python $SCOMATIC/scripts/SingleCellGenotype/SingleCellGenotype.py --bam $bam  \
+        		--infile ${STEP4_2_pass}   \
+        		--nprocs 10   \
+        		--meta $meta_file   \
+        		--outfile ${output_dir7}/${run}_${cell_type}.single_cell_genotype.tsv \
+        		--tmp_dir $temp  \
+        		--ref $REF \
+			--alt_flag All
+		
+		echo "bam file is: $bam, Infile is: ${STEP4_2_pass}, meta file is $meta_file and outfile is ${output_dir7}/${cell_type}.single_cell_genotype.tsv"
+
+    		rm -rf $temp
+		done
+done
+```
+
+
+```{bash}
+# [matterhorn]
+cd /home/alba/scripts/scomatic
+
+./variants_mapping.sh
+```
+
+
+## 3.3. Discard variants falling in repetitive regions 
+Creation of bed file with regions overlapping with repetitive ones, in order to remove variants falling in repetitive regions.
+
+```{bash}
+bedtools intersect -v -a mm10_genes.bed -b mm10_RepeatMasker.bed > UCSC.m10.without.repeatmasker.bed
+
+```
+
+
+### Filter SComatic output to discard variants falling in repetitive regions
+
+```{bash}
+conda activate SComatic
+SCOMATIC=~/bin/SComatic-main
+output_dir4=/media/storage/mcGinn_2021/scomatic/output/run1/Step4_VariantCalling
+
+bedtools intersect -header -a ${output_dir4}/run1.calling.step2.tsv -b $SCOMATIC/bed_files_of_interest/UCSC.mm10.without.repeatmasker.bed | awk '$1 ~ /^#/ || $6 == "PASS"' > ${output_dir4}/run1.calling.step2.pass.tsv
+
+output_dir4=/media/storage/mcGinn_2021/scomatic/output/run2/Step4_VariantCalling
+
+bedtools intersect -header -a ${output_dir4}/run2.calling.step2.tsv -b $SCOMATIC/bed_files_of_interest/UCSC.mm10.without.repeatmasker.bed | awk '$1 ~ /^#/ || $6 == "PASS"' > ${output_dir4}/run2.calling.step2.pass.tsv
+```
+
+::: {.callout-note}
+## Note:
+*calling.step2.pass.tsv files contain only FILTER = PASS variants that don't fall in repetitive regions
+:::
+
+
+## 3.4. Filtering of TSVs
+
+### Filter the TSVs with only PASS in FILTER column
+
+```{bash}
+
+seq_ids=("run1" "run2")
+wd="/media/storage/mcGinn_2021/scomatic/output/"
+
+for seq in "${seq_ids[@]}"; do
+   
+    awk 'BEGIN {FS="\t"; OFS="\t"} NR <= 29 || ($6 == "PASS" && !/^#/) {print}' "${wd}/${seq}/Step4_VariantCalling/${seq}.calling.step2.tsv" > "${wd}/${seq}/Step4_VariantCalling/${seq}_filtered.calling.step2.tsv"
+
+done
+
+```
+
+::: {.callout-note}
+## Note:
+*_filtered.calling.step2.tsv files contain only FILTER = PASS variants, including variants that fall in repetitive regions.
+:::
+
+
+### Filter the TSVs with PASS or Multiple_cell_types in FILTER column
+In order to analyze the variants that are arked solely as "Multiple_cell_types", we obtain them via an awk command.
+
+```{bash}
+
+seq_ids=("run1" "run2")
+wd="/media/storage/mcGinn_2021/scomatic/output/"
+
+for seq in "${seq_ids[@]}"; do
+
+    awk 'BEGIN {FS="\t"; OFS="\t"} NR <= 29 || ($6 == "PASS" || $6 == "Multiple_cell_types") && !/^#/ {print}' "${wd}/${seq}/Step4_VariantCalling/${seq}.calling.step2.tsv" > "${wd}/${seq}/Step4_VariantCalling/${seq}_mult.calling.step2.tsv"
+done
+
+```
+
+::: {.callout-note}
+## Note:
+*_mult.calling.step2.tsv files contain only FILTER = PASS|Multiple_cell_types variants, including variants that fall in repetitive regions.
+:::
+
+
+```{bash}
+# [matterhorn]
+conda activate SComatic
+SCOMATIC=~/bin/SComatic-main
+output_dir4=/media/storage/mcGinn_2021/scomatic/output/run1/Step4_VariantCalling
+
+# for multiple_cell type
+bedtools intersect -header -a ${output_dir4}/run1_mult.calling.step2.tsv -b $SCOMATIC/bed_files_of_interest/UCSC.mm10.withouvt.repeatmasker.bed | awk '$1 ~ /^#/ || $6 == "PASS"' > ${output_dir4}/run1_mult.calling.step2.pass.tsv
+
+output_dir4=/media/storage/mcGinn_2021/scomatic/output/run2/Step4_VariantCalling
+
+# for multiple_cell type
+bedtools intersect -header -a ${output_dir4}/run2_mult.calling.step2.tsv -b $SCOMATIC/bed_files_of_interest/UCSC.mm10.without.repeatmasker.bed | awk '$1 ~ /^#/ || $6 == "PASS"' > ${output_dir4}/run2_mult.calling.step2.pass.tsv
+
+```
+
+::: {.callout-note}
+## Note:
+*_mult.calling.step2.pass.tsv files contain only FILTER = PASS|Multiple_cell_types variants that don't fall in repetitive regions
+:::
+
+
+
+## 3.5. Convert the TSV files to VCF
+The program outputs its files in a custom TSV format which makes it very complex to analyze in standard pipelines from variant calling. Thus, we are going to convert it to the standard format file for variant calling in bioinformatics, the VCFv4.3 (https://samtools.github.io/hts-specs/VCFv4.3.pdf). For that, we generated a custom script "3-5_TSVtoVCF.py".
+
+:::{.callout-note}
+## What is a VCF?
+VCF is a text file format (most likely stored in a compressed manner). It contains meta-information lines (prefixed with “##”), a header line (prefixed with “#”), and data lines each containing information about a position in the genome and genotype information on samples for each position (text fields separated by tabs). Zero length fields are not allowed, a dot (“.”) must be used instead. In order to ensure interoperability across platforms, VCF compliant implementations must support both LF (“\n”) and CR+LF (“\r\n”) newline conventions.
+:::
+
+```{bash}
+cd /media/storage/mcGinn_2021/scomatic
+conda activate d_vep
+
+python 3-5_TSVtoVCF.py --add-info --add-celltypes output/run1/Step4_VariantCalling/run1.calling.step2.tsv output/run1/Step4_VariantCalling/run1.calling.step2.vcf
+python 3-5_TSVtoVCF.py --add-info --add-celltypes output/run2/Step4_VariantCalling/run2.calling.step2.tsv output/run2/Step4_VariantCalling/run2.calling.step2.vcf
+```
+
+
+### Check VCF files' integrity
+
+We created a VCF file from the filtered SComatic output. Then, we confirmed that the file is properly formatted using both GATK4 and the EBI VCF validator. However, neither tool currently supports VCF version 4.4, they only support up to version 4.3.
+
+```{bash}
+# [matterhorn]
+conda activate samtools
+samtools faidx Mus_musculus.GRCm39.dna.primary_assembly.faidx
+
+conda activate d_gatk
+
+gatk CreateSequenceDictionary -R Mus_musculus.GRCm39.dna.primary_assembly.fa 
+
+REF=~/bin/SComatic-main/reference_genomes/Mus_musculus.GRCm38.dna.primary_assembly.fa 
+
+gatk ValidateVariants -V output/run1/Step4_VariantCalling/run1_filtered.calling.step2.vcf -R $REF --validation-type-to-exclude ALLELES
+gatk ValidateVariants -V output/run2/Step4_VariantCalling/run2_filtered.calling.step2.vcf -R $REF --validation-type-to-exclude ALLELES
+
+vcf_validator -i output/run1/Step4_VariantCalling/run1_filtered.calling.step2.vcf -r summary,text,database
+vcf_validator -i output/run2/Step4_VariantCalling/run2_filtered.calling.step2.vcf -r summary,text,database
+```
+
+Both files are OK!!!
+
+📁 Generated files:
+
+- gatk ValidateVariants
+    - Standard output message
+- vcf_validator
+    - Standard output message
+
+It seems that both tools say the converted files are OK, as long as the files are marked as VCFv4.3, because they both don't support VCFv4.4.

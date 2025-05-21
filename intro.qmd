@@ -1,2 +1,93 @@
 # Introduction
 
+This repository aims to be a log of the overall __ i did for my master's thesis. 
+
+
+## Computers
+I used mainly two computers for all the calculations, though the HCA dataset was in a third one, so i had to use it sporadically. 
+
+- **matterhorn:** main computer. Mainly used for storage and explorative analysis.
+- **folia:** small computing server. Used for clusterization, alignment, etc. 
+
+All code was executed in computers running Ubuntu 22.04.4 LTS.
+
+## Conda environments
+
+Most of the software was installed using mamba/conda environments when possible. 
+
+```{bash}
+mamba config --add channels bioconda
+mamba config --add channels conda-forge
+```
+
+### d_rstudio
+**State:** active
+**Computer:** nuptse, folia, matterhorn
+**Purpose:** to have a functional RStudio/VSCode installation along with the packages for the kallisto-bustools velocity workflow.
+**Creation:** run the following commands to install RStudio along with the packages needed for data analysis.
+
+```{bash}
+mamba create -n d_rstudio -c conda-forge rstudio-desktop jupyter r-seurat
+
+conda activate d_rstudio
+
+mamba install r-devtools r-tidyverse r-zeallot r-ggally bioconductor-bsgenome.mmusculus.ucsc.mm10 bioconductor-dropletutils bioconductor-annotationhub bioconductor-singler
+
+# Install packages from source
+R
+
+# Hard-code the commit for reproducibility
+devtools::install_github("satijalab/seurat-wrappers@73466e361ee759c6b1add58faa3bc4e7a2ee5753")
+
+q()
+
+# Posterior installations
+mamba install r-velocyto.r
+mamba install -c bioconda bioconductor-slingshot
+mamba install leidenalg # for clustering
+mamba install numpy pandas
+mamba install -c conda-forge r-clustree
+mamba install -c conda-forge r-svglite
+
+# Installing packages to convert to H5AD data
+R
+
+# Hard-code commit for future reproducibility. Skip updates when asked
+devtools::install_github("mojaveazure/seurat-disk@877d4e18ab38c686f5db54f8cd290274ccdbe295")
+
+
+mamba install -c conda-forge plotly python-kaleido
+mamba install -c plotly plotly-orca
+mamba install -c conda-forge r-processx
+mamba install -c conda-forge r-pals
+mamba install -c conda-forge r-ggvenn r-ggvenndiagram r-venn r-venndiagram
+
+```
+
+### SComatic
+**State:** active
+**Computer:** nuptse, folia, matterhorn
+**Purpose:**  to have an isolated environment with SComatic for scRNA-seq mutation calling
+
+```{bash}
+mamba create -n d_scomatic -c bioconda python=3.7 r-base=3.6.1 samtools datamash bedtools
+
+# You can download a zip file with the repository "Code" button in the web
+# Or you can do the same thing in the linux terminal
+# For future reproducibility
+wget -P /home/dario/bin/ https://github.com/cortes-ciriano-lab/SComatic/archive/f515f4ee3e7c128600215d21992c051c16e0a03f.zip
+# To grab the latest branch
+wget -P /home/dario/bin/ https://github.com/cortes-ciriano-lab/SComatic/archive/main.zip
+
+unzip *zip
+mv SComatic-main SComatic
+
+# You could also clone the repository to keep the files up to date if needed
+git clone --single-branch https://github.com/cortes-ciriano-lab/SComatic.git /path/to/dir/
+
+# I install the remaining dependencies as instructed, using the “requirements.txt” file in the repository.
+mamba activate d_scomatic
+
+pip install -r requirements.txt
+```
+

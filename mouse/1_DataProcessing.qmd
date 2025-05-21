@@ -1,13 +1,12 @@
 # 1. Data Pre-processing
 
-[summary]
-
+This notebook contains the bash scripts used to download the fastq, quality control with fastQC and multiQC and alignment of the sequences.
 
 ## 1.1. Download fastQ files from ENA
 
 https://www.ebi.ac.uk/biostudies/arrayexpress/studies/E-MTAB-8662
 
-```{=bash}
+```{bash}
 #!/bin/bash
 # [matterhorn]
 # AUTHOR: Alba Mendez Alejandre
@@ -89,9 +88,6 @@ After the download of fastQ files, they were concatenated in order to obtain
 ```
 
 
-
-
-
 ## 1.3. STAR aligment
 
 Separate scripts were used for each sequencing session (names as run1 and run2 for simplification).
@@ -108,7 +104,7 @@ MATTERHORN_BASE="/media/storage/mcGinn_2021"
 CONCATENATED_RUNS_DIR="${MATTERHORN_BASE}/concatenated_runs/sample_concatenated"
 
 
-SAMPLE_NAMES=("SIGAD8" "SIGAE8" "SIGAF6" "SIGAF8" "SIGAG6" "SIGAG8" "SIGAH6" "SIGAH8") # list of samples to proccess
+SAMPLE_NAMES=("lib1" "lib2" "lib3" "lib4" "lib5" "lib6" "lib7" "lib8") # list of samples to proccess
 
 i=0
 for SAMPLE in "${SAMPLE_NAMES[@]}"; 

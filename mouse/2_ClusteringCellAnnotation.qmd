@@ -1,5 +1,7 @@
 # 2. Clustering and Cell annotation
-We are going to perform the downstream analysis of single cell transcriptomics mainly with R package Seurat (https://satijalab.org/seurat/). The version 4 was used instead of the 5 due to version compatibility problems with other methods needed downstream. 
+We are going to perform the downstream analysis of single cell transcriptomics mainly with R package Seurat (https://satijalab.org/seurat/). 
+
+The version 4 was used instead of the 5 due to version compatibility problems with other methods needed downstream. 
 
 
 ## Import libraries
@@ -61,7 +63,7 @@ color.list <- c(color.list,RColorBrewer::brewer.pal(12,"Set3"))
 palette <- scale_color_viridis_c(option = "plasma", direction = -1) # continue colors palette
 palette_d <- scale_color_viridis_d(option = "turbo", direction = 1) # discrete colors palette
 
-name_order <- c("SIGAF6_Epi", "SIGAG6_Epi", "SIGAH6_Epi", "SIGAD8_Epi", "SIGAE8_Epi", "SIGAF8_Epi", "SIGAH8_Epi", "SIGAG8_Epi") # fixed order to plot the results
+name_order <- c("lib1", "lib2", "lib3", "lib4", "lib5", "lib6", "lib6", "lib7") # fixed library order to plot the results
 
 setwd("/home/albax/mcGinn_2021")
 
@@ -92,7 +94,7 @@ Esoph_filt # 57186 genes genes accross 39763 cells
 #  4 other assays present: gene, spliced, unspliced, SCT
 #  3 dimensional reductions calculated: pca, tsne, umap
 
-Esoph_filt <- readRDS(file = "./output/esoph_star_filtered_mm10_vep_annot_rep.rds")
+Esoph_filt <- readRDS(file = "./output/esoph_star_filtered_mm10_vep_annot_rep.rds") # seurat object with annotated clones and additional info
 Esoph_filt
 # An object of class Seurat 
 # 250024 features across 39763 samples within 5 assays 
@@ -648,7 +650,7 @@ Esoph_filt <- RenameIdents(Esoph_filt, new.cluster.id)
 
 Esoph_filt[["cellType"]] <- Idents(Esoph_filt) # include it in the metadata
 
-# Create a new meta.data column named cellType_B that adds _SIGAF6 if the library_ID is SIGAF6, and adds _SIGAD8 if the Library_ID is SIGAD8
+# Create a new meta.data column named cellType_B that adds _lib1 if the library_ID is llib1, and adds _lib4 if the Library_ID is lib2
 Esoph_filt$cellType_B <- paste0(Esoph_filt$Library_ID, "_", Esoph_filt$cellType)
 Esoph_filt$cellType_B <- as.factor(Esoph_filt$cellType_B)
 
@@ -845,7 +847,7 @@ We are going to normalize the data by total counts (in each library-Sequencing I
 
 ```{r, eval=FALSE}
 levels(Esoph_filt@meta.data$Sample_name)
-summary(Esoph_filt[,Esoph_filt@meta.data$Sample_name == 'SIGAD8_SLX-17937']@meta.data$Sample_name)
+summary(Esoph_filt[,Esoph_filt@meta.data$Sample_name == 'lib2_run1']@meta.data$Sample_name)
 
 results_df <- data.frame(Sample_name = character(), Sum_nCount_gene = numeric(), Sum_nFeature_gene = numeric(), stringsAsFactors = FALSE)
 cell_counts_per_sample <- table(Esoph_filt@meta.data$Sample_name) # number of cells per sample_name

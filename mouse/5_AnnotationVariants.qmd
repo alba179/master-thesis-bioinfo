@@ -10,7 +10,7 @@ cd ~/scripts/variant_annotation
 
 
 
-## 5.1. Analysis of annotations
+# 5.1. Analysis of annotations
 We are going to view the genes that are drivers, as well as those that are found in the 192 gene panel from Colom 2021 and in the WES data from 9-18 weeks tumos from DEN mice from the same paper.
 
 Also, we would like to view if the filtering of repetitive regions filters out variants that have low impact.
@@ -27,5 +27,32 @@ Allele|Consequence|IMPACT|SYMBOL|Gene|Feature_type|Feature|BIOTYPE|EXON|INTRON|H
 :::
 
 ```{bash}
+
+```
+
+
+# 5.2.  
+
+
+## Wordcloud of genes
+
+```{r}
+library("wordcloud")
+
+df <- read.table("/media/storage/Documents/scRNAseq/SComatic/TextMining/mutatedGenes_mouse.txt", header=TRUE)
+
+pdf('wordcloud_mutatedGenes_mouse.pdf')
+wordcloud(df$name, # terms
+	freq = log2(df$freq), # frequency
+	min.freq = 1, # minimum freq to plot
+	scale=c(2,0.1), # set max and min word size  (we set them to (4, 0.3) when not using log2)
+	max.words=nrow(df), # show top n words
+	random.order=FALSE, # words in decreasing freq
+	rot.per=0.35, # % of vertical words
+	use.r.layout=FALSE, # Use C++ collision detection
+	ordered.colors=TRUE, 
+	colors=brewer.pal(8, "Dark2")[factor(df$iscancer)]) # no. of different colors and palette
+legend("topright", legend = levels(factor(df$iscancer)), text.col=brewer.pal(8, "Dark2")[unique(factor(df$iscancer))])
+dev.off()
 
 ```
