@@ -5,7 +5,7 @@ This is the repository for my Master's Thesis in **Bioinformatics and Computatio
 **👩‍💻 Author**: **Alba Méndez Alejandre**  
 
 ## 🧬 Brief description
-This thesis applies variant calling from **scRNA-seq** to link genetic mutations to cellular phenotypes, using a **customized pipeline** on mouse and human esophageal data. It highlights the importance of experimental design and filtering for reliable mutation detection.
+This work applies variant calling from **scRNA-seq** to link genetic mutations to cellular phenotypes, using a **customized pipeline** on mouse and human esophageal data. It highlights the importance of experimental design and filtering for reliable mutation detection.
 
 ## 🎯 Objectives
 The main objective of this work is **to assess whether single-cell transcriptomics is suitable for reliable somatic variant detection in mouse esophageal epithelium, and to associate genotype-to-phenotype relations using single cell RNA-seq.**
@@ -29,18 +29,29 @@ Mouse data was taken from:
 ## 📁 Repository structure
 The repository holds independent scripts for each dataset: 
 ```
+└── Introduction.qmd # installations, brief explanation of configurations used
+│
 └── human/ # 🧍Human analysis
-├── 
-├── 
-└── 
+│ ├── 1_Inspection.qmd # preliminary inspection of the dataset
+│ ├── 2_GeneExpression.qmd # calculate average gene expression for sets of genes
+│ ├── 3_VennDiagrams.qmd # obtain venn diagrams for sets of genes or mutated genes of interest
+│ ├── 4_UMAP_mapping.qmd # map mutated cells in the umap
+│ └── mut_clones_analysis_hca.qmd # modifying seurat_obj@meta.data to add clones
 │
 ├── mouse/ # 🐭 Mouse analysis
-│ ├── 
-│ ├── 
-│ └── 
+│ ├── 1-4_merge_seurat_fixedrank.R # script to filter out droplets and doublets from the matrices
+│ ├── 1_DataProcessing.qmd #
+│ ├── 2_ClusteringCellAnnotation.qmd #
+│ ├── 3_Velocity_inference.qmd
+│ ├── 4_VariantCalling.qmd
+│ ├── 5_AnnotationVariants.qmd
+│ ├── 6_FunctionalAnalysis.qmd 
+│ ├── STAR_alignment.sh # script for scRNAseq mouse dataset alignment, with matrices for velocity inference
+│ ├── VariantCalling_mouse.sh # script to perform variant calling in the mouse dataset
+│ └──  download_fastq.sh # script to download data from repository
 │
-├── scripts/ # other general scripts
-│ └──  vep_annotation.sh # automated annotation with vep
+└──  scripts/ # other general scripts
+  └──  annotate_vep.sh # automated annotation with vep
 
 ```
 
