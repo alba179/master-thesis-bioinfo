@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999996 (TeX Live 2024) (preloaded format=xelatex 2024.5.1)  22 MAY 2025 12:17
+This is XeTeX, Version 3.141592653-2.6-0.999996 (TeX Live 2024) (preloaded format=xelatex 2024.5.1)  22 MAY 2025 16:05
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1198,50 +1198,341 @@ Class scrreprt Warning: \float@addtolists detected!
 
 ]
 chapter 2.
+Missing character: There is no 🎯 (U+1F3AF) in font [lmsans10-bold]:mapping=tex-text;!
 [5
-
-] [6] [7]
-part I.
-Package scrkbase Info: You've told me to use the font selection of the element
-(scrkbase)             `partprefix' that is an alias of element `partnumber'
-(scrkbase)              on input line 374.
-[8
 
 ]
 chapter 3.
+[6
+
+]
+chapter 4.
+[7
+
+]
+chapter 5.
+Missing character: There is no 📁 (U+1F4C1) in font [lmsans10-bold]:mapping=tex-text;!
+Missing character: There is no ├ (U+251C) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no ├ (U+251C) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no ├ (U+251C) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no ├ (U+251C) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no ├ (U+251C) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no ├ (U+251C) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no ├ (U+251C) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no 🧍 (U+1F9CD) in font [lmmono10-regular]:!
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no ├ (U+251C) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no ├ (U+251C) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+
+Overfull \hbox (2.40886pt too wide) in paragraph at lines 324--324
+[]\TU/lmtt/m/n/10.95 │ ├── 2_GeneExpression.qmd # calculate average gene expression for sets of genes[] 
+ []
+
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no ├ (U+251C) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+
+Overfull \hbox (82.89134pt too wide) in paragraph at lines 325--325
+[]\TU/lmtt/m/n/10.95 │ ├── 3_VennDiagrams.qmd # obtain venn diagrams for sets of genes or mutated genes of interest[] 
+ []
+
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no ├ (U+251C) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no └ (U+2514) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+
+Overfull \hbox (2.40884pt too wide) in paragraph at lines 327--327
+[]\TU/lmtt/m/n/10.95 │ └── mut_clones_analysis_hca.qmd # modifying seurat_obj@meta.data to add clones[] 
+ []
+
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no ├ (U+251C) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no ├ (U+251C) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no ├ (U+251C) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no 🐭 (U+1F42D) in font [lmmono10-regular]:!
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no ├ (U+251C) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no ├ (U+251C) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no └ (U+2514) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no ├ (U+251C) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+
+Overfull \hbox (100.13757pt too wide) in paragraph at lines 333--333
+[]\TU/lmtt/m/n/10.95 │ ├── 1-4_merge_seurat_fixedrank.R # script to filter out droplets and doublets from the matrices[] 
+ []
+
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no ├ (U+251C) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+
+Overfull \hbox (335.83629pt too wide) in paragraph at lines 334--334
+[]\TU/lmtt/m/n/10.95 │ ├── 1_DataProcessing.qmd # notebook which contains the bash scripts used to download the files, and oerform the alignment with STARsolo.[] 
+ []
+
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no ├ (U+251C) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+
+Overfull \hbox (77.14258pt too wide) in paragraph at lines 335--335
+[]\TU/lmtt/m/n/10.95 │ ├── 2_ClusteringCellAnnotation.qmd # seurat pipeline to cluster the cells and annotate them[] 
+ []
+
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no ├ (U+251C) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no ├ (U+251C) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+
+Overfull \hbox (261.10255pt too wide) in paragraph at lines 337--337
+[]\TU/lmtt/m/n/10.95 │ ├── 4_VariantCalling.qmd  # steps to perform variant calling and pre-filtering processing, as well as TSV to VCF conversion[] 
+ []
+
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no ├ (U+251C) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no └ (U+2514) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no │ (U+2502) in font [lmmono10-regular]:!
+Missing character: There is no └ (U+2514) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no └ (U+2514) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no └ (U+2514) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no └ (U+2514) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-regular]:!
+[8
+
+]
+chapter 6.
+LaTeX Font Info:    Font shape `TU/lmtt/bx/n' in size <10.95> not available
+(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 401.
 [9
 
-] [10] [11] [12] (c:/Users/albam/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/microtype/mt-TU-empty.cfg
-File: mt-TU-empty.cfg 2021/06/22 v1.1 microtype config. file: fonts with nonstandard glyph set (RS)
-) [13]
-chapter 4.
-LaTeX Font Info:    Font shape `TU/lmtt/bx/n' in size <10.95> not available
-(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 591.
-[14
+] [10] [11]
+part I.
+Package scrkbase Info: You've told me to use the font selection of the element
+(scrkbase)             `partprefix' that is an alias of element `partnumber'
+(scrkbase)              on input line 458.
+[12
 
-] [15] [16] [17] [18] [19] [20]
-Overfull \hbox (51.11671pt too wide) in paragraph at lines 974--976
+]
+chapter 7.
+[13
+
+] [14] [15] [16] (c:/Users/albam/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/microtype/mt-TU-empty.cfg
+File: mt-TU-empty.cfg 2021/06/22 v1.1 microtype config. file: fonts with nonstandard glyph set (RS)
+) [17]
+chapter 8.
+[18
+
+] [19] [20] [21] [22] [23] [24]
+Overfull \hbox (51.11671pt too wide) in paragraph at lines 1063--1065
 []\TU/lmr/m/n/10.95 We will use Leiden algorith (algorithm = 4, method = “igraph”) https://www.nature.com/articles/s41598-
  []
 
-[21] [22] [23] [24] [25]
-Underfull \hbox (badness 1655) in paragraph at lines 1264--1269
-[]\TU/lmr/m/n/10.95 Basal cells (can be differentiating or be progenitor cells) -> proliferation,
+[25] [26] [27] [28] [29] [30] [31] [32]
+Underfull \vbox (badness 2653) detected at line 1583
  []
 
-[26]
-! Unable to load picture or PDF file 'index_files/mediabag/library_design_mouse.png'.
-<to be read again> 
-                   }
-l.1360 ...files/mediabag/library_design_mouse.png}
-                                                   
-Here is how much of TeX's memory you used:
- 39055 strings out of 476697
- 804372 string characters out of 5797999
- 1937148 words of memory out of 5000000
- 60558 multiletter control sequences out of 15000+600000
- 561697 words of font info for 73 fonts, out of 8000000 for 9000
- 36 hyphenation exceptions out of 8191
- 108i,8n,121p,10900b,929s stack positions out of 10000i,1000n,20000p,200000b,200000s
+[33] [34] [35] [36]
+Overfull \hbox (23.53027pt too wide) in paragraph at lines 1752--1754
+[]\TU/lmr/m/n/10.95 Supplementary Table 1 - QC Statistics of scRNAseq data (https://www.nature.com/articles/s41556-
+ []
 
-Output written on index.pdf (26 pages).
+
+Overfull \hbox (8.5297pt too wide) in paragraph at lines 1766--1767
+[]\TU/lmr/m/n/10.95 Stage  
+ []
+
+
+Overfull \hbox (4.25319pt too wide) in paragraph at lines 1768--1769
+[]\TU/lmr/m/n/10.95 Replicate 
+ []
+
+
+Overfull \hbox (9.75609pt too wide) in paragraph at lines 1786--1786
+[]|\TU/lmr/m/n/10.95 Adult|  
+ []
+
+
+Overfull \hbox (12.10895pt too wide) in paragraph at lines 1786--1787
+[]|\TU/lmr/m/n/10.95 3.66549437744719|  
+ []
+
+
+Overfull \hbox (9.75609pt too wide) in paragraph at lines 1787--1787
+[]|\TU/lmr/m/n/10.95 Adult|  
+ []
+
+
+Overfull \hbox (12.10895pt too wide) in paragraph at lines 1787--1788
+[]|\TU/lmr/m/n/10.95 3.76114454638533|  
+ []
+
+
+Overfull \hbox (9.75609pt too wide) in paragraph at lines 1788--1788
+[]|\TU/lmr/m/n/10.95 Adult|  
+ []
+
+
+Overfull \hbox (12.10895pt too wide) in paragraph at lines 1788--1789
+[]|\TU/lmr/m/n/10.95 4.14769410907473|  
+ []
+
+
+Overfull \hbox (9.75609pt too wide) in paragraph at lines 1789--1789
+[]|\TU/lmr/m/n/10.95 Adult|  
+ []
+
+
+Overfull \hbox (12.10895pt too wide) in paragraph at lines 1789--1790
+[]|\TU/lmr/m/n/10.95 3.63571622273852|  
+ []
+
+
+Overfull \hbox (9.75609pt too wide) in paragraph at lines 1790--1790
+[]|\TU/lmr/m/n/10.95 Adult|  
+ []
+
+
+Overfull \hbox (12.10895pt too wide) in paragraph at lines 1790--1791
+[]|\TU/lmr/m/n/10.95 3.25793271016975|  
+ []
+
+
+Overfull \hbox (9.75609pt too wide) in paragraph at lines 1791--1791
+[]|\TU/lmr/m/n/10.95 Adult|  
+ []
+
+
+Overfull \hbox (6.63394pt too wide) in paragraph at lines 1792--1793
+[]|\TU/lmr/m/n/10.95 3.5389684657119|  
+ []
+
+
+Overfull \hbox (3.91881pt too wide) in paragraph at lines 1816--1819
+[]\TU/lmr/m/n/10.95 Is each clone contained completely inside the Epithelial_DEN cluster?(“Epi_DEN_cells”) 
+ []
+
+[37] [38]
+chapter 9.
+[39
+
+] [40] [41] [42] [43] [44] [45] [46] [47] [48] [49]
+chapter 10.
+[50
+
+]
+Underfull \vbox (badness 10000) detected at line 2594
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 2594
+ []
+
+[51]
+Underfull \vbox (badness 10000) detected at line 2594
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 2594
+ []
+
+[52]
+Underfull \vbox (badness 10000) detected at line 2594
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 2594
+ []
+
+[53]
+Underfull \vbox (badness 10000) detected at line 2594
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 2594
+ []
+
+[54] [55] [56] [57] [58]
+! Undefined control sequence.
+l.2806 support both LF (``\n
+                            '') and CR+LF (``\r\n'') newline conventions. 
+Here is how much of TeX's memory you used:
+ 39108 strings out of 476697
+ 804847 string characters out of 5797999
+ 1949148 words of memory out of 5000000
+ 60608 multiletter control sequences out of 15000+600000
+ 561705 words of font info for 74 fonts, out of 8000000 for 9000
+ 36 hyphenation exceptions out of 8191
+ 108i,8n,121p,10900b,935s stack positions out of 10000i,1000n,20000p,200000b,200000s
+
+Output written on index.pdf (58 pages).

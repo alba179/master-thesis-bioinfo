@@ -145,12 +145,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Mouse and Human SComatic analysis</span></a>
+  <a href="../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Introduction</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Introduction</span></a>
+  <a href="../intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Set-up and installations</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
@@ -255,8 +255,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/scripts/variant_annotation</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">./annotate_vep.sh</span> 102 mus_musculus ~/mcGinn_2021/mcGinn_2021_files_for_vep.fofn</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<section id="analysis-of-annotations" class="level1">
-<h1>5.1. Analysis of annotations</h1>
+<section id="analysis-of-annotations" class="level2">
+<h2 class="anchored" data-anchor-id="analysis-of-annotations">5.1. Analysis of annotations</h2>
 <p>We are going to view the genes that are drivers, as well as those that are found in the 192 gene panel from Colom 2021 and in the WES data from 9-18 weeks tumos from DEN mice from the same paper.</p>
 <p>Also, we would like to view if the filtering of repetitive regions filters out variants that have low impact.</p>
 <p>The list of genes of the 192 mouse gene panel is: Abcb11,Abcc2,Adam10,Adam29,Adcy10,Aff3,Ajuba,Akap9,Akt1,Akt2,Apob,Arid1a,Arid2,Arid5b,Asxl1,Atm,Atp2a2,Atrx,Aurka,B2m,Bbs9,Bcas3,Bcl11b,Bcr,Braf,Brca2,C1s,Cacna1d,Card11,Casp8,Ccnd1,Cdc16,Cdh1,Cdkn2a,Chuk,Clgn,Cnot1,Cntnap4,Cobll1,Col12a1,Copb2,Cr2,Crebbp,Csmd2,Ctcf,Cul3,Cyld,Cyp2b13,Dclk1,Dclre1a,Ddr2,Dicer1,Dmxl2,Dnm2,Dnmt3a,Dst,Egfr,Eif2d,Ep300,Epha2,Erbb2,Erbb3,Erbb4,Ezh2,Fat1,Fat4,Fbn2,Fbxo21,Fbxw7,Fgfr1,Fgfr2,Fgfr3,Flg2,Flt3,Fn1,Gcn1l1,Grin2a,Grm3,Gtf3c5,Hist1h2bm,Hmcn1,Hras,Huwe1,Hydin,Igsf1,Insrr,Iqgap1,Irf6,Kcnh5,Kdm5b,Kdm6a,Kdr,Keap1,Kit,Klrc3,Kmt2c,Kmt2d,Kras,Krt5,Krtap4-9,Loxhd1,Lrp1,Lrp1b,Lrp2,Ltf,Maml1,Mcm7,Met,Mrgprb4,Mtor,Myof,Nf1,Nf2,Nfe2l2,Nfkb1,Nlrp12,Notch1,Notch2,Notch3,Notch4,Nras,Nsd1,Nup214,Opn3,Pard3,Pcdha5,Pced1b,Pde4dip,Peg10,Pign,Pik3ca,Pkhd1,Plcb1,Prex2,Psme4,Ptch1,Pten,Ptprt,Rac1,Rasa1,Rb1,Rbm46,Rhbdf2,Ripk2,Ripk4,Ros1,Rpgrip1,Rpl10,Ryr2,Sall1,Scn10a,Scn11a,Scn1a,Scn3a,Setd2,Setx,Sgk3,Sis,Slc13a1,Smad4,Smarca4,Smo,Snx25,Soat2,Sox2,Spen,St18,Sufu,Synm,Taf2,Tas2r102,Tet2,Tnr,Trp53,Trp63,Trrap,Tsc1,Ttc27,Usp24,Usp26,Usp9x,Vhl,Vmn2r81,Vps13b,Wnk1,Zan,Zfhx3,Zfp39,Zfp457,Zfp521,Zfp644,Zfp750</p>
@@ -279,10 +279,10 @@ Warning! this is the structure of the CSQ value from INFO column:
 </div>
 <div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="section" class="level1">
-<h1>5.2.</h1>
-<section id="wordcloud-of-genes" class="level2">
-<h2 class="anchored" data-anchor-id="wordcloud-of-genes">Wordcloud of genes</h2>
+<section id="section" class="level2">
+<h2 class="anchored" data-anchor-id="section">5.2.</h2>
+<section id="wordcloud-of-genes" class="level3">
+<h3 class="anchored" data-anchor-id="wordcloud-of-genes">Wordcloud of genes</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"wordcloud"</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>

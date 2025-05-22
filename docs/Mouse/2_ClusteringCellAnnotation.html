@@ -145,12 +145,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Mouse and Human SComatic analysis</span></a>
+  <a href="../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Introduction</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Introduction</span></a>
+  <a href="../intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Set-up and installations</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
@@ -240,18 +240,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#re-normalization-and-clustering-of-filtered-object" id="toc-re-normalization-and-clustering-of-filtered-object" class="nav-link" data-scroll-target="#re-normalization-and-clustering-of-filtered-object">2.5. Re-normalization and clustering of filtered object</a></li>
   <li><a href="#cell-cycle-scoring" id="toc-cell-cycle-scoring" class="nav-link" data-scroll-target="#cell-cycle-scoring">2.6. Cell cycle scoring</a></li>
   <li><a href="#cluster-annotation-based-on-cellular-composition-dge-featureplots" id="toc-cluster-annotation-based-on-cellular-composition-dge-featureplots" class="nav-link" data-scroll-target="#cluster-annotation-based-on-cellular-composition-dge-featureplots">2.7. Cluster annotation based on cellular composition, DGE, FeaturePlots…</a></li>
-  <li><a href="#scomatic-preparation" id="toc-scomatic-preparation" class="nav-link" data-scroll-target="#scomatic-preparation">SComatic preparation</a>
+  <li><a href="#scomatic-preparation" id="toc-scomatic-preparation" class="nav-link" data-scroll-target="#scomatic-preparation">2.8. SComatic preparation</a>
   <ul>
   <li><a href="#save-cell-barcodes-with-cell-types-in-tsv-format-scomatic" id="toc-save-cell-barcodes-with-cell-types-in-tsv-format-scomatic" class="nav-link" data-scroll-target="#save-cell-barcodes-with-cell-types-in-tsv-format-scomatic">Save cell barcodes with cell types in TSV format (SComatic)</a></li>
   </ul></li>
-  <li><a href="#annotation-of-clusters-based-on-known-canonical-markers-of-each-cluster" id="toc-annotation-of-clusters-based-on-known-canonical-markers-of-each-cluster" class="nav-link" data-scroll-target="#annotation-of-clusters-based-on-known-canonical-markers-of-each-cluster">Annotation of clusters (based on known canonical markers of each cluster)</a></li>
-  <li><a href="#scvelo-preparation" id="toc-scvelo-preparation" class="nav-link" data-scroll-target="#scvelo-preparation">scVelo preparation</a>
+  <li><a href="#annotation-of-clusters-based-on-known-canonical-markers-of-each-cluster" id="toc-annotation-of-clusters-based-on-known-canonical-markers-of-each-cluster" class="nav-link" data-scroll-target="#annotation-of-clusters-based-on-known-canonical-markers-of-each-cluster">2.9. Annotation of clusters (based on known canonical markers of each cluster)</a></li>
+  <li><a href="#scvelo-preparation" id="toc-scvelo-preparation" class="nav-link" data-scroll-target="#scvelo-preparation">2.10. scVelo preparation</a>
   <ul>
   <li><a href="#cluster-annotation-for-scvelo" id="toc-cluster-annotation-for-scvelo" class="nav-link" data-scroll-target="#cluster-annotation-for-scvelo">Cluster annotation for scvelo</a></li>
   <li><a href="#conversion-into-h5ad-object-export-to-scvelo" id="toc-conversion-into-h5ad-object-export-to-scvelo" class="nav-link" data-scroll-target="#conversion-into-h5ad-object-export-to-scvelo">Conversion into h5ad object (export to scvelo)</a></li>
   </ul></li>
-  <li><a href="#normalization-of-counts" id="toc-normalization-of-counts" class="nav-link" data-scroll-target="#normalization-of-counts">Normalization of counts</a></li>
-  <li><a href="#do-we-find-barcodes-from-epi_den-shared-in-other-clusters" id="toc-do-we-find-barcodes-from-epi_den-shared-in-other-clusters" class="nav-link" data-scroll-target="#do-we-find-barcodes-from-epi_den-shared-in-other-clusters">Do we find barcodes from Epi_DEN shared in other clusters?</a></li>
+  <li><a href="#normalization-of-counts" id="toc-normalization-of-counts" class="nav-link" data-scroll-target="#normalization-of-counts">2.11. Normalization of counts</a></li>
+  <li><a href="#do-we-find-barcodes-from-epi_den-shared-in-other-clusters" id="toc-do-we-find-barcodes-from-epi_den-shared-in-other-clusters" class="nav-link" data-scroll-target="#do-we-find-barcodes-from-epi_den-shared-in-other-clusters">2.12. Do we find barcodes from Epi_DEN shared in other clusters?</a></li>
   </ul>
 </nav>
     </div>
@@ -802,20 +802,10 @@ Tip
 </div>
 </section>
 <section id="scomatic-preparation" class="level2">
-<h2 class="anchored" data-anchor-id="scomatic-preparation">SComatic preparation</h2>
+<h2 class="anchored" data-anchor-id="scomatic-preparation">2.8. SComatic preparation</h2>
 <p>SComatic needs a TSV metadata file that relates each cell barcode with each “Cell type” annotation. The annotation will depend on how much granularity we need or is adequate to cal lsomatic variants from single cell transcriptomics. Here, the library design plays a very important role.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="https://github.com/alba179/master-thesis-bioinfo/main/pics/library_design_mouse.png" class="img-fluid figure-img"></p>
-<figcaption>Library design</figcaption>
-</figure>
-</div>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="https://github.com/alba179/master-thesis-bioinfo/main/pics/CCF_mouse.png" class="img-fluid figure-img"></p>
-<figcaption>Cancer cell fraction relation</figcaption>
-</figure>
-</div>
+<!-- ![Library design](https://github.com/alba179/master-thesis-bioinfo/main/pics/library_design_mouse.png) -->
+<!-- ![Cancer cell fraction relation](https://github.com/alba179/master-thesis-bioinfo/main/pics/CCF_mouse.png) -->
 <section id="save-cell-barcodes-with-cell-types-in-tsv-format-scomatic" class="level3">
 <h3 class="anchored" data-anchor-id="save-cell-barcodes-with-cell-types-in-tsv-format-scomatic">Save cell barcodes with cell types in TSV format (SComatic)</h3>
 <p>For SComatic, save cell barcodes with cell types: (first column is barcode and second column is cell type)</p>
@@ -832,7 +822,7 @@ Tip
 </section>
 </section>
 <section id="annotation-of-clusters-based-on-known-canonical-markers-of-each-cluster" class="level2">
-<h2 class="anchored" data-anchor-id="annotation-of-clusters-based-on-known-canonical-markers-of-each-cluster">Annotation of clusters (based on known canonical markers of each cluster)</h2>
+<h2 class="anchored" data-anchor-id="annotation-of-clusters-based-on-known-canonical-markers-of-each-cluster">2.9. Annotation of clusters (based on known canonical markers of each cluster)</h2>
 <p>Annotate each mouse .tsv “Cell_type” as: Epi; so that in Step 3 of SComatic we obtain a .tsv with 1 “cluster”</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a> <span class="do">## Rearrange cluster order to follow differentiation axis (for visualization purposes) # 9 clusters</span></span>
@@ -910,7 +900,7 @@ Tip
 </div>
 </section>
 <section id="scvelo-preparation" class="level2">
-<h2 class="anchored" data-anchor-id="scvelo-preparation">scVelo preparation</h2>
+<h2 class="anchored" data-anchor-id="scvelo-preparation">2.10. scVelo preparation</h2>
 <section id="cluster-annotation-for-scvelo" class="level3">
 <h3 class="anchored" data-anchor-id="cluster-annotation-for-scvelo">Cluster annotation for scvelo</h3>
 <p>Looking at our umap, with resolution 0.2, we will take 3 clusters (Basal, Suprabasal, Epi_DEN), but annotated differently, in 5 names: - Cluster 1: “Basal 1” - Cluster 2: “Basal 2” - Cluster 3: “Suprabasal” - Cluster 4: “Basal 3” - Cluster 5: “Epithelial_DEN”</p>
@@ -1015,7 +1005,7 @@ Tip
 </section>
 </section>
 <section id="normalization-of-counts" class="level2">
-<h2 class="anchored" data-anchor-id="normalization-of-counts">Normalization of counts</h2>
+<h2 class="anchored" data-anchor-id="normalization-of-counts">2.11. Normalization of counts</h2>
 <p>We are going to normalize the data by total counts (in each library-Sequencing ID). For that, we have to sum all the columns.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(Esoph_filt<span class="sc">@</span>meta.data<span class="sc">$</span>Sample_name)</span>
@@ -1143,7 +1133,7 @@ Warning:
 </div>
 </section>
 <section id="do-we-find-barcodes-from-epi_den-shared-in-other-clusters" class="level2">
-<h2 class="anchored" data-anchor-id="do-we-find-barcodes-from-epi_den-shared-in-other-clusters">Do we find barcodes from Epi_DEN shared in other clusters?</h2>
+<h2 class="anchored" data-anchor-id="do-we-find-barcodes-from-epi_den-shared-in-other-clusters">2.12. Do we find barcodes from Epi_DEN shared in other clusters?</h2>
 <ul>
 <li>Is each clone contained completely inside the Epithelial_DEN cluster?(“Epi_DEN_cells”)</li>
 <li>How are these clones shared with other clusters? How many cells of the clone fall inside Epi_DEN_cells cluster?</li>

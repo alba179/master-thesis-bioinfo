@@ -1,4 +1,5 @@
 /.quarto/
+# activar lo de abajo cuando ya se haya hecho el commit "final", y despues hacer re-commit con la modificacion
 # /_quarto.yml
 # /index.aux
 # /index.log

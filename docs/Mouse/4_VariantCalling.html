@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>3. SComatic calling – Master's thesis in Bioinformatics and Computational Biology</title>
+<title>4. SComatic calling – Master's thesis in Bioinformatics and Computational Biology</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -145,12 +145,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Mouse and Human SComatic analysis</span></a>
+  <a href="../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Introduction</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Introduction</span></a>
+  <a href="../intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Set-up and installations</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
@@ -189,7 +189,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../Mouse/6_GOAnalysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">4. Functional Analysis</span></a>
+  <a href="../Mouse/6_GOAnalysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">6. Gene Ontology Analysis</span></a>
   </div>
 </li>
       </ul>
@@ -220,18 +220,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Index</h2>
    
   <ul>
-  <li><a href="#script-to-call-somatic-variants" id="toc-script-to-call-somatic-variants" class="nav-link active" data-scroll-target="#script-to-call-somatic-variants">3.1. Script to call somatic variants</a></li>
-  <li><a href="#singlecellgenotype-calling-to-obtain-mutated-cell-barcodes" id="toc-singlecellgenotype-calling-to-obtain-mutated-cell-barcodes" class="nav-link" data-scroll-target="#singlecellgenotype-calling-to-obtain-mutated-cell-barcodes">3.2. SingleCellGenotype calling to obtain mutated cell barcodes</a></li>
-  <li><a href="#discard-variants-falling-in-repetitive-regions" id="toc-discard-variants-falling-in-repetitive-regions" class="nav-link" data-scroll-target="#discard-variants-falling-in-repetitive-regions">3.3. Discard variants falling in repetitive regions</a>
+  <li><a href="#script-to-call-somatic-variants" id="toc-script-to-call-somatic-variants" class="nav-link active" data-scroll-target="#script-to-call-somatic-variants">4.1. Script to call somatic variants</a></li>
+  <li><a href="#singlecellgenotype-calling-to-obtain-mutated-cell-barcodes" id="toc-singlecellgenotype-calling-to-obtain-mutated-cell-barcodes" class="nav-link" data-scroll-target="#singlecellgenotype-calling-to-obtain-mutated-cell-barcodes">4.2. SingleCellGenotype calling to obtain mutated cell barcodes</a></li>
+  <li><a href="#discard-variants-falling-in-repetitive-regions" id="toc-discard-variants-falling-in-repetitive-regions" class="nav-link" data-scroll-target="#discard-variants-falling-in-repetitive-regions">4.3. Discard variants falling in repetitive regions</a>
   <ul>
   <li><a href="#filter-scomatic-output-to-discard-variants-falling-in-repetitive-regions" id="toc-filter-scomatic-output-to-discard-variants-falling-in-repetitive-regions" class="nav-link" data-scroll-target="#filter-scomatic-output-to-discard-variants-falling-in-repetitive-regions">Filter SComatic output to discard variants falling in repetitive regions</a></li>
   </ul></li>
-  <li><a href="#filtering-of-tsvs" id="toc-filtering-of-tsvs" class="nav-link" data-scroll-target="#filtering-of-tsvs">3.4. Filtering of TSVs</a>
+  <li><a href="#filtering-of-tsvs" id="toc-filtering-of-tsvs" class="nav-link" data-scroll-target="#filtering-of-tsvs">4.4. Filtering of TSVs</a>
   <ul>
   <li><a href="#filter-the-tsvs-with-only-pass-in-filter-column" id="toc-filter-the-tsvs-with-only-pass-in-filter-column" class="nav-link" data-scroll-target="#filter-the-tsvs-with-only-pass-in-filter-column">Filter the TSVs with only PASS in FILTER column</a></li>
   <li><a href="#filter-the-tsvs-with-pass-or-multiple_cell_types-in-filter-column" id="toc-filter-the-tsvs-with-pass-or-multiple_cell_types-in-filter-column" class="nav-link" data-scroll-target="#filter-the-tsvs-with-pass-or-multiple_cell_types-in-filter-column">Filter the TSVs with PASS or Multiple_cell_types in FILTER column</a></li>
   </ul></li>
-  <li><a href="#convert-the-tsv-files-to-vcf" id="toc-convert-the-tsv-files-to-vcf" class="nav-link" data-scroll-target="#convert-the-tsv-files-to-vcf">3.5. Convert the TSV files to VCF</a>
+  <li><a href="#convert-the-tsv-files-to-vcf" id="toc-convert-the-tsv-files-to-vcf" class="nav-link" data-scroll-target="#convert-the-tsv-files-to-vcf">4.5. Convert the TSV files to VCF</a>
   <ul>
   <li><a href="#check-vcf-files-integrity" id="toc-check-vcf-files-integrity" class="nav-link" data-scroll-target="#check-vcf-files-integrity">Check VCF files’ integrity</a></li>
   </ul></li>
@@ -243,7 +243,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Mouse/1_DataProcessing.html">Mouse analysis</a></li><li class="breadcrumb-item"><a href="../Mouse/4_VariantCalling.html"><span class="chapter-title">4. SComatic calling</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-title">3. SComatic calling</span></h1>
+<h1 class="title"><span class="chapter-title">4. SComatic calling</span></h1>
 </div>
 
 
@@ -262,7 +262,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <p>We are going to perform somatic variant calling with the novel algorithm from Muyas et.al (2024) doi: https://doi.org/10.1038/s41587-023-01863-z</p>
 <section id="script-to-call-somatic-variants" class="level2">
-<h2 class="anchored" data-anchor-id="script-to-call-somatic-variants">3.1. Script to call somatic variants</h2>
+<h2 class="anchored" data-anchor-id="script-to-call-somatic-variants">4.1. Script to call somatic variants</h2>
 <ul>
 <li>min_ac_cells = 2 (value by default); in HCA was used 1</li>
 <li>min_cell_types = 2</li>
@@ -482,7 +482,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">./SComatic_mouse.sh</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="singlecellgenotype-calling-to-obtain-mutated-cell-barcodes" class="level2">
-<h2 class="anchored" data-anchor-id="singlecellgenotype-calling-to-obtain-mutated-cell-barcodes">3.2. SingleCellGenotype calling to obtain mutated cell barcodes</h2>
+<h2 class="anchored" data-anchor-id="singlecellgenotype-calling-to-obtain-mutated-cell-barcodes">4.2. SingleCellGenotype calling to obtain mutated cell barcodes</h2>
 <div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># SComatic extra functionality: Computing the genotype for each cell at the variant sites</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 01/10/2024</span></span>
@@ -539,7 +539,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="ex">./variants_mapping.sh</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="discard-variants-falling-in-repetitive-regions" class="level2">
-<h2 class="anchored" data-anchor-id="discard-variants-falling-in-repetitive-regions">3.3. Discard variants falling in repetitive regions</h2>
+<h2 class="anchored" data-anchor-id="discard-variants-falling-in-repetitive-regions">4.3. Discard variants falling in repetitive regions</h2>
 <p>Creation of bed file with regions overlapping with repetitive ones, in order to remove variants falling in repetitive regions.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">bedtools</span> intersect <span class="at">-v</span> <span class="at">-a</span> mm10_genes.bed <span class="at">-b</span> mm10_RepeatMasker.bed <span class="op">&gt;</span> UCSC.m10.without.repeatmasker.bed</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <section id="filter-scomatic-output-to-discard-variants-falling-in-repetitive-regions" class="level3">
@@ -569,7 +569,7 @@ Note:
 </section>
 </section>
 <section id="filtering-of-tsvs" class="level2">
-<h2 class="anchored" data-anchor-id="filtering-of-tsvs">3.4. Filtering of TSVs</h2>
+<h2 class="anchored" data-anchor-id="filtering-of-tsvs">4.4. Filtering of TSVs</h2>
 <section id="filter-the-tsvs-with-only-pass-in-filter-column" class="level3">
 <h3 class="anchored" data-anchor-id="filter-the-tsvs-with-only-pass-in-filter-column">Filter the TSVs with only PASS in FILTER column</h3>
 <div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a></span>
@@ -647,7 +647,7 @@ Note:
 </section>
 </section>
 <section id="convert-the-tsv-files-to-vcf" class="level2">
-<h2 class="anchored" data-anchor-id="convert-the-tsv-files-to-vcf">3.5. Convert the TSV files to VCF</h2>
+<h2 class="anchored" data-anchor-id="convert-the-tsv-files-to-vcf">4.5. Convert the TSV files to VCF</h2>
 <p>The program outputs its files in a custom TSV format which makes it very complex to analyze in standard pipelines from variant calling. Thus, we are going to convert it to the standard format file for variant calling in bioinformatics, the VCFv4.3 (https://samtools.github.io/hts-specs/VCFv4.3.pdf). For that, we generated a custom script “3-5_TSVtoVCF.py”.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">

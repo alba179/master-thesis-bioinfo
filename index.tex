@@ -228,18 +228,17 @@
 
 \bookmarksetup{startatroot}
 
-\chapter{Mouse and Human SComatic
-analysis}\label{mouse-and-human-scomatic-analysis}
+\chapter{Introduction}\label{introduction}
 
 \bookmarksetup{startatroot}
 
-\chapter*{Preface}\label{preface}
-\addcontentsline{toc}{chapter}{Preface}
+\chapter*{Brief description}\label{brief-description}
+\addcontentsline{toc}{chapter}{Brief description}
 
-\markboth{Preface}{Preface}
+\markboth{Brief description}{Brief description}
 
-This document presents a comprehensive analysis of single-cell
-transcriptomics somatic mutations in mouse and human datasets, covering:
+This repository aims to be a log of the overall work i did for my
+master's thesis. It covers:
 
 \begin{itemize}
 \tightlist
@@ -255,12 +254,97 @@ transcriptomics somatic mutations in mouse and human datasets, covering:
   Functional annotation and interpretation of variants
 \end{itemize}
 
+This work applies variant calling from \textbf{scRNA-seq} to link
+genetic mutations to cellular phenotypes, using a \textbf{customized
+pipeline} on mouse and human esophageal data. It highlights the
+importance of experimental design and filtering for reliable mutation
+detection.
+
 \bookmarksetup{startatroot}
 
-\chapter{Introduction}\label{introduction}
+\chapter{🎯 Objectives}\label{objectives}
 
-This repository aims to be a log of the overall work i did for my
-master's thesis.
+The main objective of this work is \textbf{to assess whether single-cell
+transcriptomics is suitable for reliable somatic variant detection in
+mouse esophageal epithelium, and to associate genotype-to-phenotype
+relations using single cell RNA-seq.}
+
+\begin{itemize}
+\tightlist
+\item
+  Apply and customize variant caller for scRNA-seq in mouse and human
+  esophagus.
+\item
+  Characterize the diversity of transcriptomic states in the mouse
+  esophageal epithelium.
+\item
+  Map variants onto UMAP embeddings.
+\end{itemize}
+
+\bookmarksetup{startatroot}
+
+\chapter{Tools \& Technologies used}\label{tools-technologies-used}
+
+\begin{itemize}
+\tightlist
+\item
+  (variant caller)
+\item
+  \texttt{Seurat}, \texttt{scVelo}, \texttt{Slingshot} (transcriptomic
+  analysis \& trajectory inference)
+\item
+  \texttt{VEP} (variant annotation)
+\end{itemize}
+
+\bookmarksetup{startatroot}
+
+\chapter{Data}\label{data}
+
+We obtained the HCA data from previous work (González-Menéndez, 2024),
+originally taken from: \textgreater{} Madissoon, E., Wilbrey-Clark, A.,
+Miragaia, R.J. et al.~scRNA-seq assessment of the human lung, spleen,
+and esophagus tissue stability after cold preservation. Genome Biol 21,
+1 (2020). https://doi.org/10.1186/s13059-019-1906-x
+
+The mouse data was obtained from a publicly available dataset.
+
+\bookmarksetup{startatroot}
+
+\chapter{📁 Repository structure}\label{repository-structure}
+
+The repository holds independent scripts for each dataset:
+
+\begin{verbatim}
+├── docs/ # quarto book
+│
+├── Introduction.qmd # installations, brief explanation of configurations used
+│
+├── human/ # 🧍Human analysis
+│ ├── 1_Inspection.qmd # preliminary inspection of the dataset
+│ ├── 2_GeneExpression.qmd # calculate average gene expression for sets of genes
+│ ├── 3_VennDiagrams.qmd # obtain venn diagrams for sets of genes or mutated genes of interest
+│ ├── 4_UMAP_mapping.qmd # map mutated cells in the umap
+│ └── mut_clones_analysis_hca.qmd # modifying seurat_obj@meta.data to add clones
+│
+├── mouse/ # 🐭 Mouse analysis
+│ ├── fastQC/
+│ │   ├── run1/ # multiqc report for the first sequencing run
+│ │   └── run2/ # multiqc report for the second sequencing run
+│ ├── 1-4_merge_seurat_fixedrank.R # script to filter out droplets and doublets from the matrices
+│ ├── 1_DataProcessing.qmd # notebook which contains the bash scripts used to download the files, and oerform the alignment with STARsolo.
+│ ├── 2_ClusteringCellAnnotation.qmd # seurat pipeline to cluster the cells and annotate them
+│ ├── 3_Velocity_inference.qmd # infer velocity and pseudotime trajectory
+│ ├── 4_VariantCalling.qmd  # steps to perform variant calling and pre-filtering processing, as well as TSV to VCF conversion
+│ ├── 5_AnnotationVariants.qmd # exploration of the VEP output
+│ └── 6_GOAnalysis.qmd # GO analysis of the mutated genes
+│
+└──  scripts/ # other general scripts
+  └──  annotate_vep.sh # automated annotation with vep
+\end{verbatim}
+
+\bookmarksetup{startatroot}
+
+\chapter{Set-up and installations}\label{set-up-and-installations}
 
 \section{Computers}\label{computers}
 
@@ -289,8 +373,8 @@ possible.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{mamba config {-}{-}add channels bioconda}
-\NormalTok{mamba config {-}{-}add channels conda{-}forge}
+\ExtensionTok{mamba}\NormalTok{ config }\AttributeTok{{-}{-}add}\NormalTok{ channels bioconda}
+\ExtensionTok{mamba}\NormalTok{ config }\AttributeTok{{-}{-}add}\NormalTok{ channels conda{-}forge}
 \end{Highlighting}
 \end{Shaded}
 
@@ -304,40 +388,40 @@ with the packages needed for data analysis.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{mamba create {-}n d\_rstudio {-}c conda{-}forge rstudio{-}desktop jupyter r{-}seurat}
+\ExtensionTok{mamba}\NormalTok{ create }\AttributeTok{{-}n}\NormalTok{ d\_rstudio }\AttributeTok{{-}c}\NormalTok{ conda{-}forge rstudio{-}desktop jupyter r{-}seurat}
 
-\NormalTok{conda activate d\_rstudio}
+\ExtensionTok{conda}\NormalTok{ activate d\_rstudio}
 
-\NormalTok{mamba install r{-}devtools r{-}tidyverse r{-}zeallot r{-}ggally bioconductor{-}bsgenome.mmusculus.ucsc.mm10 bioconductor{-}dropletutils bioconductor{-}annotationhub bioconductor{-}singler}
+\ExtensionTok{mamba}\NormalTok{ install r{-}devtools r{-}tidyverse r{-}zeallot r{-}ggally bioconductor{-}bsgenome.mmusculus.ucsc.mm10 bioconductor{-}dropletutils bioconductor{-}annotationhub bioconductor{-}singler}
 
-\NormalTok{\# Install packages from source}
-\NormalTok{R}
+\CommentTok{\# Install packages from source}
+\ExtensionTok{R}
 
-\NormalTok{\# Hard{-}code the commit for reproducibility}
-\NormalTok{devtools::install\_github("satijalab/seurat{-}wrappers@73466e361ee759c6b1add58faa3bc4e7a2ee5753")}
+\CommentTok{\# Hard{-}code the commit for reproducibility}
+\ExtensionTok{devtools::install\_github}\ErrorTok{(}\StringTok{"satijalab/seurat{-}wrappers@73466e361ee759c6b1add58faa3bc4e7a2ee5753"}\KeywordTok{)}
 
-\NormalTok{q()}
+\FunctionTok{q()}
 
-\NormalTok{\# Posterior installations}
-\NormalTok{mamba install r{-}velocyto.r}
-\NormalTok{mamba install {-}c bioconda bioconductor{-}slingshot}
-\NormalTok{mamba install leidenalg \# for clustering}
-\NormalTok{mamba install numpy pandas}
-\NormalTok{mamba install {-}c conda{-}forge r{-}clustree}
-\NormalTok{mamba install {-}c conda{-}forge r{-}svglite}
+\CommentTok{\# Posterior installations}
+\ExtensionTok{mamba}\NormalTok{ install r{-}velocyto.r}
+\ExtensionTok{mamba}\NormalTok{ install }\AttributeTok{{-}c}\NormalTok{ bioconda bioconductor{-}slingshot}
+\ExtensionTok{mamba}\NormalTok{ install leidenalg }\CommentTok{\# for clustering}
+\ExtensionTok{mamba}\NormalTok{ install numpy pandas}
+\ExtensionTok{mamba}\NormalTok{ install }\AttributeTok{{-}c}\NormalTok{ conda{-}forge r{-}clustree}
+\ExtensionTok{mamba}\NormalTok{ install }\AttributeTok{{-}c}\NormalTok{ conda{-}forge r{-}svglite}
 
-\NormalTok{\# Installing packages to convert to H5AD data}
-\NormalTok{R}
+\CommentTok{\# Installing packages to convert to H5AD data}
+\ExtensionTok{R}
 
-\NormalTok{\# Hard{-}code commit for future reproducibility. Skip updates when asked}
-\NormalTok{devtools::install\_github("mojaveazure/seurat{-}disk@877d4e18ab38c686f5db54f8cd290274ccdbe295")}
+\CommentTok{\# Hard{-}code commit for future reproducibility. Skip updates when asked}
+\ExtensionTok{devtools::install\_github}\ErrorTok{(}\StringTok{"mojaveazure/seurat{-}disk@877d4e18ab38c686f5db54f8cd290274ccdbe295"}\KeywordTok{)}
 
 
-\NormalTok{mamba install {-}c conda{-}forge plotly python{-}kaleido}
-\NormalTok{mamba install {-}c plotly plotly{-}orca}
-\NormalTok{mamba install {-}c conda{-}forge r{-}processx}
-\NormalTok{mamba install {-}c conda{-}forge r{-}pals}
-\NormalTok{mamba install {-}c conda{-}forge r{-}ggvenn r{-}ggvenndiagram r{-}venn r{-}venndiagram}
+\ExtensionTok{mamba}\NormalTok{ install }\AttributeTok{{-}c}\NormalTok{ conda{-}forge plotly python{-}kaleido}
+\ExtensionTok{mamba}\NormalTok{ install }\AttributeTok{{-}c}\NormalTok{ plotly plotly{-}orca}
+\ExtensionTok{mamba}\NormalTok{ install }\AttributeTok{{-}c}\NormalTok{ conda{-}forge r{-}processx}
+\ExtensionTok{mamba}\NormalTok{ install }\AttributeTok{{-}c}\NormalTok{ conda{-}forge r{-}pals}
+\ExtensionTok{mamba}\NormalTok{ install }\AttributeTok{{-}c}\NormalTok{ conda{-}forge r{-}ggvenn r{-}ggvenndiagram r{-}venn r{-}venndiagram}
 \end{Highlighting}
 \end{Shaded}
 
@@ -349,25 +433,25 @@ scRNA-seq mutation calling
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{mamba create {-}n d\_scomatic {-}c bioconda python=3.7 r{-}base=3.6.1 samtools datamash bedtools}
+\ExtensionTok{mamba}\NormalTok{ create }\AttributeTok{{-}n}\NormalTok{ d\_scomatic }\AttributeTok{{-}c}\NormalTok{ bioconda python=3.7 r{-}base=3.6.1 samtools datamash bedtools}
 
-\NormalTok{\# You can download a zip file with the repository "Code" button in the web}
-\NormalTok{\# Or you can do the same thing in the linux terminal}
-\NormalTok{\# For future reproducibility}
-\NormalTok{wget {-}P /home/dario/bin/ https://github.com/cortes{-}ciriano{-}lab/SComatic/archive/f515f4ee3e7c128600215d21992c051c16e0a03f.zip}
-\NormalTok{\# To grab the latest branch}
-\NormalTok{wget {-}P /home/dario/bin/ https://github.com/cortes{-}ciriano{-}lab/SComatic/archive/main.zip}
+\CommentTok{\# You can download a zip file with the repository "Code" button in the web}
+\CommentTok{\# Or you can do the same thing in the linux terminal}
+\CommentTok{\# For future reproducibility}
+\FunctionTok{wget} \AttributeTok{{-}P}\NormalTok{ /home/dario/bin/ https://github.com/cortes{-}ciriano{-}lab/SComatic/archive/f515f4ee3e7c128600215d21992c051c16e0a03f.zip}
+\CommentTok{\# To grab the latest branch}
+\FunctionTok{wget} \AttributeTok{{-}P}\NormalTok{ /home/dario/bin/ https://github.com/cortes{-}ciriano{-}lab/SComatic/archive/main.zip}
 
-\NormalTok{unzip *zip}
-\NormalTok{mv SComatic{-}main SComatic}
+\FunctionTok{unzip} \PreprocessorTok{*}\NormalTok{zip}
+\FunctionTok{mv}\NormalTok{ SComatic{-}main SComatic}
 
-\NormalTok{\# You could also clone the repository to keep the files up to date if needed}
-\NormalTok{git clone {-}{-}single{-}branch https://github.com/cortes{-}ciriano{-}lab/SComatic.git /path/to/dir/}
+\CommentTok{\# You could also clone the repository to keep the files up to date if needed}
+\FunctionTok{git}\NormalTok{ clone }\AttributeTok{{-}{-}single{-}branch}\NormalTok{ https://github.com/cortes{-}ciriano{-}lab/SComatic.git /path/to/dir/}
 
-\NormalTok{\# I install the remaining dependencies as instructed, using the “requirements.txt” file in the repository.}
-\NormalTok{mamba activate d\_scomatic}
+\CommentTok{\# I install the remaining dependencies as instructed, using the “requirements.txt” file in the repository.}
+\ExtensionTok{mamba}\NormalTok{ activate d\_scomatic}
 
-\NormalTok{pip install {-}r requirements.txt}
+\ExtensionTok{pip}\NormalTok{ install }\AttributeTok{{-}r}\NormalTok{ requirements.txt}
 \end{Highlighting}
 \end{Shaded}
 
@@ -381,78 +465,76 @@ quality control with fastQC and multiQC and alignment of the sequences.
 \section{1.1. Download fastQ files from
 ENA}\label{download-fastq-files-from-ena}
 
-https://www.ebi.ac.uk/biostudies/arrayexpress/studies/E-MTAB-8662
-
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{\#!/bin/bash}
-\NormalTok{\# [matterhorn]}
-\NormalTok{\# AUTHOR: Alba Mendez Alejandre}
-\NormalTok{\# DESCRIPTION: Download the raw fastQ via ftp from ENA. The metadata is stored in the downloaded csv. }
-\NormalTok{\# DATE: 10/06/2024}
+\CommentTok{\#!/bin/bash}
+\CommentTok{\# [matterhorn]}
+\CommentTok{\# AUTHOR: Alba Mendez Alejandre}
+\CommentTok{\# DESCRIPTION: Download the raw fastQ via ftp from ENA. The metadata is stored in the downloaded csv. }
+\CommentTok{\# DATE: 10/06/2024}
 
-\NormalTok{seq\_ids=("run1" "run2")}
+\VariableTok{seq\_ids}\OperatorTok{=}\VariableTok{(}\StringTok{"run1"} \StringTok{"run2"}\VariableTok{)}
 
-\NormalTok{for seq\_number in "$\{seq\_ids[@]\}"; do}
+\ControlFlowTok{for}\NormalTok{ seq\_number }\KeywordTok{in} \StringTok{"}\VariableTok{$\{seq\_ids}\OperatorTok{[@]}\VariableTok{\}}\StringTok{"}\KeywordTok{;} \ControlFlowTok{do}
 
-\NormalTok{    \# Path to our CSV file}
-\NormalTok{    CSV\_FILE="/mnt/D/mcGinn\_2021/data\_info/$\{seq\_number\}\_download.csv"}
+    \CommentTok{\# Path to our CSV file}
+    \VariableTok{CSV\_FILE}\OperatorTok{=}\StringTok{"/mnt/D/mcGinn\_2021/data\_info/}\VariableTok{$\{seq\_number\}}\StringTok{\_download.csv"}
 
-\NormalTok{    \# Directory where we are going to download the data (bam and fastq)}
-\NormalTok{    DOWNLOAD\_DIR="./$\{seq\_number\}\_run1/$\{seq\_number\}\_adult\_P70"}
+    \CommentTok{\# Directory where we are going to download the data (bam and fastq)}
+    \VariableTok{DOWNLOAD\_DIR}\OperatorTok{=}\StringTok{"./}\VariableTok{$\{seq\_number\}}\StringTok{\_run1/}\VariableTok{$\{seq\_number\}}\StringTok{\_adult\_P70"}
 
-\NormalTok{    \# Create the directory if it doesn\textquotesingle{}t exist}
-\NormalTok{    mkdir {-}p "$DOWNLOAD\_DIR"}
+    \CommentTok{\# Create the directory if it doesn\textquotesingle{}t exist}
+    \FunctionTok{mkdir} \AttributeTok{{-}p} \StringTok{"}\VariableTok{$DOWNLOAD\_DIR}\StringTok{"}
 
-\NormalTok{    \# Iterate through each line in the CSV file}
-\NormalTok{    \{ }
-\NormalTok{        read \# skip header}
-\NormalTok{        while IFS=, read {-}r name source\_name bam\_uri R1\_fastq\_uri R2\_fastq\_uri I1\_fastq\_uri \# these are the columns of the file}
-\NormalTok{        do}
-\NormalTok{            \# Skip header}
-\NormalTok{            if [[ $name == "name" ]]; then}
-\NormalTok{            continue}
-\NormalTok{            fi}
+    \CommentTok{\# Iterate through each line in the CSV file}
+    \KeywordTok{\{} 
+        \BuiltInTok{read} \CommentTok{\# skip header}
+        \ControlFlowTok{while} \VariableTok{IFS}\OperatorTok{=}\NormalTok{, }\BuiltInTok{read} \AttributeTok{{-}r} \VariableTok{name} \VariableTok{source\_name} \VariableTok{bam\_uri} \VariableTok{R1\_fastq\_uri} \VariableTok{R2\_fastq\_uri} \VariableTok{I1\_fastq\_uri} \CommentTok{\# these are the columns of the file}
+        \ControlFlowTok{do}
+            \CommentTok{\# Skip header}
+            \ControlFlowTok{if} \KeywordTok{[[} \VariableTok{$name} \OtherTok{==} \StringTok{"name"} \KeywordTok{]];} \ControlFlowTok{then}
+            \ControlFlowTok{continue}
+            \ControlFlowTok{fi}
 
-\NormalTok{            \# Ensure the URI is not empty}
-\NormalTok{            if [[ {-}z $R1\_fastq\_uri ]]; then}
-\NormalTok{            echo "Empty URI for name: $name"}
-\NormalTok{            continue}
-\NormalTok{            fi}
+            \CommentTok{\# Ensure the URI is not empty}
+            \ControlFlowTok{if} \KeywordTok{[[} \OtherTok{{-}z} \VariableTok{$R1\_fastq\_uri} \KeywordTok{]];} \ControlFlowTok{then}
+            \BuiltInTok{echo} \StringTok{"Empty URI for name: }\VariableTok{$name}\StringTok{"}
+            \ControlFlowTok{continue}
+            \ControlFlowTok{fi}
 
-\NormalTok{            \# Download R1\_fastq\_uri}
-\NormalTok{            curl {-}L {-}o "$\{DOWNLOAD\_DIR\}/$\{name\}\_$(basename "$R1\_fastq\_uri")" "$R1\_fastq\_uri"}
+            \CommentTok{\# Download R1\_fastq\_uri}
+            \ExtensionTok{curl} \AttributeTok{{-}L} \AttributeTok{{-}o} \StringTok{"}\VariableTok{$\{DOWNLOAD\_DIR\}}\StringTok{/}\VariableTok{$\{name\}}\StringTok{\_}\VariableTok{$(}\FunctionTok{basename} \StringTok{"}\VariableTok{$R1\_fastq\_uri}\StringTok{"}\VariableTok{)}\StringTok{"} \StringTok{"}\VariableTok{$R1\_fastq\_uri}\StringTok{"}
             
-\NormalTok{            if [[ {-}z $R2\_fastq\_uri ]]; then}
-\NormalTok{            echo "Empty URI for name: $name"}
-\NormalTok{            continue}
-\NormalTok{            fi}
+            \ControlFlowTok{if} \KeywordTok{[[} \OtherTok{{-}z} \VariableTok{$R2\_fastq\_uri} \KeywordTok{]];} \ControlFlowTok{then}
+            \BuiltInTok{echo} \StringTok{"Empty URI for name: }\VariableTok{$name}\StringTok{"}
+            \ControlFlowTok{continue}
+            \ControlFlowTok{fi}
 
-\NormalTok{            \# Download R2\_fastq\_uri}
-\NormalTok{            curl {-}L {-}o "$\{DOWNLOAD\_DIR\}/$\{name\}\_$(basename "$R2\_fastq\_uri")" "$R2\_fastq\_uri"}
+            \CommentTok{\# Download R2\_fastq\_uri}
+            \ExtensionTok{curl} \AttributeTok{{-}L} \AttributeTok{{-}o} \StringTok{"}\VariableTok{$\{DOWNLOAD\_DIR\}}\StringTok{/}\VariableTok{$\{name\}}\StringTok{\_}\VariableTok{$(}\FunctionTok{basename} \StringTok{"}\VariableTok{$R2\_fastq\_uri}\StringTok{"}\VariableTok{)}\StringTok{"} \StringTok{"}\VariableTok{$R2\_fastq\_uri}\StringTok{"}
             
-\NormalTok{            if [[ {-}z $I1\_fastq\_uri ]]; then}
-\NormalTok{            echo "Empty URI for name: $name"}
-\NormalTok{            continue}
-\NormalTok{            fi}
+            \ControlFlowTok{if} \KeywordTok{[[} \OtherTok{{-}z} \VariableTok{$I1\_fastq\_uri} \KeywordTok{]];} \ControlFlowTok{then}
+            \BuiltInTok{echo} \StringTok{"Empty URI for name: }\VariableTok{$name}\StringTok{"}
+            \ControlFlowTok{continue}
+            \ControlFlowTok{fi}
 
-\NormalTok{            \# Download I1\_fastq\_uri}
-\NormalTok{            curl {-}L {-}o "$\{DOWNLOAD\_DIR\}/$\{name\}\_$(basename "$I1\_fastq\_uri")" "$I1\_fastq\_uri"}
+            \CommentTok{\# Download I1\_fastq\_uri}
+            \ExtensionTok{curl} \AttributeTok{{-}L} \AttributeTok{{-}o} \StringTok{"}\VariableTok{$\{DOWNLOAD\_DIR\}}\StringTok{/}\VariableTok{$\{name\}}\StringTok{\_}\VariableTok{$(}\FunctionTok{basename} \StringTok{"}\VariableTok{$I1\_fastq\_uri}\StringTok{"}\VariableTok{)}\StringTok{"} \StringTok{"}\VariableTok{$I1\_fastq\_uri}\StringTok{"}
         
-\NormalTok{            if [[ {-}z $bam\_uri ]]; then}
-\NormalTok{            echo "Empty URI for name: $name"}
-\NormalTok{            continue}
-\NormalTok{            fi}
+            \ControlFlowTok{if} \KeywordTok{[[} \OtherTok{{-}z} \VariableTok{$bam\_uri} \KeywordTok{]];} \ControlFlowTok{then}
+            \BuiltInTok{echo} \StringTok{"Empty URI for name: }\VariableTok{$name}\StringTok{"}
+            \ControlFlowTok{continue}
+            \ControlFlowTok{fi}
 
-\NormalTok{        done \textless{} "$CSV\_FILE"}
-\NormalTok{    \}}
-\NormalTok{done}
+        \ControlFlowTok{done} \OperatorTok{\textless{}} \StringTok{"}\VariableTok{$CSV\_FILE}\StringTok{"}
+    \KeywordTok{\}}
+\ControlFlowTok{done}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{./}
+\ExtensionTok{./download\_fastq.sh}
 \end{Highlighting}
 \end{Shaded}
 
@@ -462,11 +544,11 @@ obtain
 \section{1.2 Quality control with
 MultiQC}\label{quality-control-with-multiqc}
 
-\href{./docs/Mouse/fastQC/run1/multiqc_report.html}{View MultiQC report
-for sequencing run 2}
+\href{fastQC/run1/multiqc_report.html}{View MultiQC report for
+sequencing run 2}
 
-\href{./docs/Mouse/fastQC/run2/multiqc_report.html}{View MultiQC report
-for sequencing run 1}
+\href{fastQC/run2/multiqc_report.html}{View MultiQC report for
+sequencing run 1}
 
 \section{1.3. STAR aligment}\label{star-aligment}
 
@@ -475,70 +557,76 @@ and run2 for simplification).
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{\#!/bin/bash}
-\NormalTok{\# [folia]}
-\NormalTok{\# This script must be executed in the server where we want to run STAR}
+\CommentTok{\#!/bin/bash}
+\CommentTok{\# [folia]}
+\CommentTok{\# This script must be executed in the server where we want to run STAR}
 
-\NormalTok{\# activate env where we have installed STAR}
-\NormalTok{source /home/albax/miniforge3/bin/activate STAR}
+\CommentTok{\# activate env where we have installed STAR}
+\BuiltInTok{source}\NormalTok{ /home/albax/miniforge3/bin/activate STAR}
 
-\NormalTok{FOLIA\_BASE="/home/albax/mcGinn\_2021"}
-\NormalTok{MATTERHORN\_BASE="/media/storage/mcGinn\_2021"}
-\NormalTok{CONCATENATED\_RUNS\_DIR="$\{MATTERHORN\_BASE\}/concatenated\_runs/sample\_concatenated"}
+\VariableTok{FOLIA\_BASE}\OperatorTok{=}\StringTok{"/home/albax/mcGinn\_2021"}
+\VariableTok{MATTERHORN\_BASE}\OperatorTok{=}\StringTok{"/media/storage/mcGinn\_2021"}
+\VariableTok{CONCATENATED\_RUNS\_DIR}\OperatorTok{=}\StringTok{"}\VariableTok{$\{MATTERHORN\_BASE\}}\StringTok{/concatenated\_runs/sample\_concatenated"}
 
 
-\NormalTok{SAMPLE\_NAMES=("lib1" "lib2" "lib3" "lib4" "lib5" "lib6" "lib7" "lib8") \# list of samples to proccess}
+\VariableTok{SAMPLE\_NAMES}\OperatorTok{=}\VariableTok{(}\StringTok{"lib1"} \StringTok{"lib2"} \StringTok{"lib3"} \StringTok{"lib4"} \StringTok{"lib5"} \StringTok{"lib6"} \StringTok{"lib7"} \StringTok{"lib8"}\VariableTok{)} \CommentTok{\# list of samples to proccess}
 
-\NormalTok{i=0}
-\NormalTok{for SAMPLE in "$\{SAMPLE\_NAMES[@]\}"; }
-\NormalTok{do}
-\NormalTok{    i=$((i + 1))}
+\VariableTok{i}\OperatorTok{=}\NormalTok{0}
+\ControlFlowTok{for}\NormalTok{ SAMPLE }\KeywordTok{in} \StringTok{"}\VariableTok{$\{SAMPLE\_NAMES}\OperatorTok{[@]}\VariableTok{\}}\StringTok{"}\KeywordTok{;} 
+\ControlFlowTok{do}
+    \VariableTok{i}\OperatorTok{=}\VariableTok{$((i} \OperatorTok{+} \DecValTok{1}\VariableTok{))}
 
-\NormalTok{    SAMPLE\_DIR="$\{CONCATENATED\_RUNS\_DIR\}/$\{SAMPLE\}"}
-\NormalTok{    LOCAL\_SAMPLE\_DIR="$\{FOLIA\_BASE\}$\{SAMPLE\_DIR\}"}
-\NormalTok{    echo "Processing sample: $\{SAMPLE\}"}
+    \VariableTok{SAMPLE\_DIR}\OperatorTok{=}\StringTok{"}\VariableTok{$\{CONCATENATED\_RUNS\_DIR\}}\StringTok{/}\VariableTok{$\{SAMPLE\}}\StringTok{"}
+    \VariableTok{LOCAL\_SAMPLE\_DIR}\OperatorTok{=}\StringTok{"}\VariableTok{$\{FOLIA\_BASE\}$\{SAMPLE\_DIR\}}\StringTok{"}
+    \BuiltInTok{echo} \StringTok{"Processing sample: }\VariableTok{$\{SAMPLE\}}\StringTok{"}
 
-\NormalTok{    R2\_FILE="$\{SAMPLE\_DIR\}/$\{SAMPLE\}*R2*run1.fastq.gz"}
-\NormalTok{    R1\_FILE="$\{SAMPLE\_DIR\}/$\{SAMPLE\}*R1*run1.fastq.gz"}
+    \VariableTok{R2\_FILE}\OperatorTok{=}\StringTok{"}\VariableTok{$\{SAMPLE\_DIR\}}\StringTok{/}\VariableTok{$\{SAMPLE\}}\StringTok{*R2*run1.fastq.gz"}
+    \VariableTok{R1\_FILE}\OperatorTok{=}\StringTok{"}\VariableTok{$\{SAMPLE\_DIR\}}\StringTok{/}\VariableTok{$\{SAMPLE\}}\StringTok{*R1*run1.fastq.gz"}
 
-\NormalTok{    \# Files\textquotesingle{} pull from matterhorn to folia}
-\NormalTok{    rsync {-}avR {-}{-}progress {-}hh "alba@matterhorn:$\{R2\_FILE\}" "$\{FOLIA\_BASE\}"}
-\NormalTok{    rsync {-}avR {-}{-}progress {-}hh "alba@matterhorn:$\{R1\_FILE\}" "$\{FOLIA\_BASE\}"}
+    \CommentTok{\# Files\textquotesingle{} pull from matterhorn to folia}
+    \FunctionTok{rsync} \AttributeTok{{-}avR} \AttributeTok{{-}{-}progress} \AttributeTok{{-}hh} \StringTok{"alba@matterhorn:}\VariableTok{$\{R2\_FILE\}}\StringTok{"} \StringTok{"}\VariableTok{$\{FOLIA\_BASE\}}\StringTok{"}
+    \FunctionTok{rsync} \AttributeTok{{-}avR} \AttributeTok{{-}{-}progress} \AttributeTok{{-}hh} \StringTok{"alba@matterhorn:}\VariableTok{$\{R1\_FILE\}}\StringTok{"} \StringTok{"}\VariableTok{$\{FOLIA\_BASE\}}\StringTok{"}
 
-\NormalTok{    LOCAL\_R2\_FILE="$\{FOLIA\_BASE\}$\{R2\_FILE\}"}
-\NormalTok{    LOCAL\_R1\_FILE="$\{FOLIA\_BASE\}$\{R1\_FILE\}"}
+    \VariableTok{LOCAL\_R2\_FILE}\OperatorTok{=}\StringTok{"}\VariableTok{$\{FOLIA\_BASE\}$\{R2\_FILE\}}\StringTok{"}
+    \VariableTok{LOCAL\_R1\_FILE}\OperatorTok{=}\StringTok{"}\VariableTok{$\{FOLIA\_BASE\}$\{R1\_FILE\}}\StringTok{"}
 
-\NormalTok{    echo "R2 file (folia): $\{LOCAL\_R2\_FILE\}"}
-\NormalTok{    echo "R1 file (folia): $\{LOCAL\_R1\_FILE\}"}
+    \BuiltInTok{echo} \StringTok{"R2 file (folia): }\VariableTok{$\{LOCAL\_R2\_FILE\}}\StringTok{"}
+    \BuiltInTok{echo} \StringTok{"R1 file (folia): }\VariableTok{$\{LOCAL\_R1\_FILE\}}\StringTok{"}
     
-\NormalTok{    cd $\{FOLIA\_BASE\}}
-\NormalTok{    mkdir {-}p "$\{FOLIA\_BASE\}/STAR\_out/$\{SAMPLE\}"}
+    \BuiltInTok{cd} \VariableTok{$\{FOLIA\_BASE\}}
+    \FunctionTok{mkdir} \AttributeTok{{-}p} \StringTok{"}\VariableTok{$\{FOLIA\_BASE\}}\StringTok{/STAR\_out/}\VariableTok{$\{SAMPLE\}}\StringTok{"}
 
-\NormalTok{  \# Process files}
-\NormalTok{\#   \textasciitilde{}/miniforge3/envs/STAR/bin/STAR \textbackslash{}}
-\NormalTok{    STAR {-}{-}runMode alignReads {-}{-}genomeDir /home/albax/reference\_genomes/STAR\_indexes/Mus\_musculus/mm10 {-}{-}outFileNamePrefix STAR\_out/SLX{-}17937\_$\{SAMPLE\} {-}{-}readFilesCommand zcat {-}{-}readFilesIn $\{LOCAL\_R2\_FILE\} $\{LOCAL\_R1\_FILE\} {-}{-}soloType CB\_UMI\_Simple {-}{-}soloCBwhitelist /home/albax/mcGinn\_2021/STAR\_whitelist/3M{-}february{-}2018.txt {-}{-}soloCBstart 1 {-}{-}soloCBlen 16 {-}{-}soloUMIstart 17 {-}{-}soloUMIlen 12 {-}{-}soloStrand Forward {-}{-}soloFeatures Gene GeneFull Velocyto {-}{-}outSAMattributes NH HI AS nM CR UR CB UB GX GN sM sS sQ {-}{-}outSAMtype BAM SortedByCoordinate {-}{-}runThreadN 4}
+  \CommentTok{\# Process files}
+\CommentTok{\#   \textasciitilde{}/miniforge3/envs/STAR/bin/STAR \textbackslash{}}
+    \ExtensionTok{STAR} \AttributeTok{{-}{-}runMode}\NormalTok{ alignReads }\AttributeTok{{-}{-}genomeDir}\NormalTok{ /home/albax/reference\_genomes/STAR\_indexes/Mus\_musculus/mm10 }\AttributeTok{{-}{-}outFileNamePrefix}\NormalTok{ STAR\_out/SLX{-}17937\_}\VariableTok{$\{SAMPLE\}} \AttributeTok{{-}{-}readFilesCommand}\NormalTok{ zcat }\AttributeTok{{-}{-}readFilesIn} \VariableTok{$\{LOCAL\_R2\_FILE\}} \VariableTok{$\{LOCAL\_R1\_FILE\}} \AttributeTok{{-}{-}soloType}\NormalTok{ CB\_UMI\_Simple }\AttributeTok{{-}{-}soloCBwhitelist}\NormalTok{ /home/albax/mcGinn\_2021/STAR\_whitelist/3M{-}february{-}2018.txt }\AttributeTok{{-}{-}soloCBstart}\NormalTok{ 1 }\AttributeTok{{-}{-}soloCBlen}\NormalTok{ 16 }\AttributeTok{{-}{-}soloUMIstart}\NormalTok{ 17 }\AttributeTok{{-}{-}soloUMIlen}\NormalTok{ 12 }\AttributeTok{{-}{-}soloStrand}\NormalTok{ Forward }\AttributeTok{{-}{-}soloFeatures}\NormalTok{ Gene GeneFull Velocyto }\AttributeTok{{-}{-}outSAMattributes}\NormalTok{ NH HI AS nM CR UR CB UB GX GN sM sS sQ }\AttributeTok{{-}{-}outSAMtype}\NormalTok{ BAM SortedByCoordinate }\AttributeTok{{-}{-}runThreadN}\NormalTok{ 4}
 
-\NormalTok{    if [[ $? {-}ne 0 ]]; then}
-\NormalTok{        echo "STAR alignment failed for sample $\{SAMPLE\}."}
-\NormalTok{        continue}
-\NormalTok{    fi}
+    \ControlFlowTok{if} \KeywordTok{[[} \VariableTok{$?} \OtherTok{{-}ne}\NormalTok{ 0 }\KeywordTok{]];} \ControlFlowTok{then}
+        \BuiltInTok{echo} \StringTok{"STAR alignment failed for sample }\VariableTok{$\{SAMPLE\}}\StringTok{."}
+        \ControlFlowTok{continue}
+    \ControlFlowTok{fi}
 
-\NormalTok{        \# Transfer back to matterhorn}
-\NormalTok{    ssh alba@matterhorn "mkdir {-}p /media/storage/mcGinn\_2021/STARalignment/$\{SAMPLE\}/"}
+        \CommentTok{\# Transfer back to matterhorn}
+    \FunctionTok{ssh}\NormalTok{ alba@matterhorn }\StringTok{"mkdir {-}p /media/storage/mcGinn\_2021/STARalignment/}\VariableTok{$\{SAMPLE\}}\StringTok{/"}
 
-\NormalTok{    rsync {-}av {-}{-}progress {-}hh $\{FOLIA\_BASE\}/STAR\_out/*$\{SAMPLE\}* alba@matterhorn:$\{MATTERHORN\_BASE\}/STARalignment/$\{SAMPLE\}/}
+    \FunctionTok{rsync} \AttributeTok{{-}av} \AttributeTok{{-}{-}progress} \AttributeTok{{-}hh} \VariableTok{$\{FOLIA\_BASE\}}\NormalTok{/STAR\_out/}\PreprocessorTok{*}\VariableTok{$\{SAMPLE\}}\PreprocessorTok{*}\NormalTok{ alba@matterhorn:}\VariableTok{$\{MATTERHORN\_BASE\}}\NormalTok{/STARalignment/}\VariableTok{$\{SAMPLE\}}\NormalTok{/}
 
-\NormalTok{    \# Remove to save space}
-\NormalTok{    echo {-}e "\textbackslash{}n[ $(date +\textquotesingle{}\%Y/\%m/\%d \%T.\%3N\textquotesingle{}) ] Finished processing $\{SAMPLE\}"}
-\NormalTok{    rm $\{LOCAL\_R1\_FILE\} $\{LOCAL\_R2\_FILE\}}
-\NormalTok{    rm {-}r $\{FOLIA\_BASE\}/STAR\_out/*$\{SAMPLE\}*/}
+    \CommentTok{\# Remove to save space}
+    \BuiltInTok{echo} \AttributeTok{{-}e} \StringTok{"\textbackslash{}n[ }\VariableTok{$(}\FunctionTok{date}\NormalTok{ +}\StringTok{\textquotesingle{}\%Y/\%m/\%d \%T.\%3N\textquotesingle{}}\VariableTok{)}\StringTok{ ] Finished processing }\VariableTok{$\{SAMPLE\}}\StringTok{"}
+    \FunctionTok{rm} \VariableTok{$\{LOCAL\_R1\_FILE\}} \VariableTok{$\{LOCAL\_R2\_FILE\}}
+    \FunctionTok{rm} \AttributeTok{{-}r} \VariableTok{$\{FOLIA\_BASE\}}\NormalTok{/STAR\_out/}\PreprocessorTok{*}\VariableTok{$\{SAMPLE\}}\PreprocessorTok{*}\NormalTok{/}
 
-\NormalTok{done}
+\ControlFlowTok{done}
 
-\NormalTok{\# clean up base directory}
-\NormalTok{rm {-}r $\{FOLIA\_BASE\}/STAR\_out}
+\CommentTok{\# clean up base directory}
+\FunctionTok{rm} \AttributeTok{{-}r} \VariableTok{$\{FOLIA\_BASE\}}\NormalTok{/STAR\_out}
 
-\NormalTok{conda deactivate}
+\ExtensionTok{conda}\NormalTok{ deactivate}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ExtensionTok{./STAR\_alignment.sh}
 \end{Highlighting}
 \end{Shaded}
 
@@ -546,20 +634,20 @@ Generate the reference genome indexed file
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{\#!/bin/bash}
+\CommentTok{\#!/bin/bash}
 
-\NormalTok{cd \textasciitilde{}/reference\_genomes/}
-\NormalTok{mkdir STAR\_indexes}
-\NormalTok{mkdir logs}
+\BuiltInTok{cd}\NormalTok{ \textasciitilde{}/reference\_genomes/}
+\FunctionTok{mkdir}\NormalTok{ STAR\_indexes}
+\FunctionTok{mkdir}\NormalTok{ logs}
 
-\NormalTok{\# path to star}
-\NormalTok{\textasciitilde{}/miniforge3/envs/STAR/bin/STAR \textbackslash{}}
-\NormalTok{            {-}{-}runThreadN 4 \textbackslash{}}
-\NormalTok{        {-}{-}runMode genomeGenerate \textbackslash{}}
-\NormalTok{        {-}{-}genomeDir ./STAR\_indexes/Mus\_musculus/mm10 \textbackslash{}}
-\NormalTok{        {-}{-}genomeFastaFiles ./Mus\_musculus\_C57BL{-}6J/Mus\_musculus.GRCm38.dna.primary\_assembly.fa \textbackslash{}}
-\NormalTok{        {-}{-}sjdbGTFfile ./Mus\_musculus\_C57BL{-}6J/Mus\_musculus.GRCm38.97.gtf \textbackslash{}}
-\NormalTok{                                |\& tee logs/star\_index.log}
+\CommentTok{\# path to star}
+\ExtensionTok{\textasciitilde{}/miniforge3/envs/STAR/bin/STAR} \DataTypeTok{\textbackslash{}}
+            \AttributeTok{{-}{-}runThreadN}\NormalTok{ 4 }\DataTypeTok{\textbackslash{}}
+        \AttributeTok{{-}{-}runMode}\NormalTok{ genomeGenerate }\DataTypeTok{\textbackslash{}}
+        \AttributeTok{{-}{-}genomeDir}\NormalTok{ ./STAR\_indexes/Mus\_musculus/mm10 }\DataTypeTok{\textbackslash{}}
+        \AttributeTok{{-}{-}genomeFastaFiles}\NormalTok{ ./Mus\_musculus\_C57BL{-}6J/Mus\_musculus.GRCm38.dna.primary\_assembly.fa }\DataTypeTok{\textbackslash{}}
+        \AttributeTok{{-}{-}sjdbGTFfile}\NormalTok{ ./Mus\_musculus\_C57BL{-}6J/Mus\_musculus.GRCm38.97.gtf }\DataTypeTok{\textbackslash{}}
+                                \KeywordTok{|\&} \FunctionTok{tee}\NormalTok{ logs/star\_index.log}
 \end{Highlighting}
 \end{Shaded}
 
@@ -568,7 +656,7 @@ Generate the reference genome indexed file
 The next step is to create the seurat object with the count matrices
 obtained from STARsolo, with spliced, unspliced and gene matrices.
 
-\begin{tcolorbox}[enhanced jigsaw, rightrule=.15mm, leftrule=.75mm, bottomtitle=1mm, colbacktitle=quarto-callout-note-color!10!white, toptitle=1mm, left=2mm, breakable, coltitle=black, titlerule=0mm, opacitybacktitle=0.6, colback=white, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{{[}The file is named ``1-4\_merge\_seurat\_fixedrank.R''{]}}, opacityback=0, arc=.35mm, bottomrule=.15mm, colframe=quarto-callout-note-color-frame, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, breakable, opacityback=0, colframe=quarto-callout-note-color-frame, colback=white, opacitybacktitle=0.6, bottomrule=.15mm, titlerule=0mm, rightrule=.15mm, leftrule=.75mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, left=2mm, toptitle=1mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{{[}The file is named ``1-4\_merge\_seurat\_fixedrank.R''{]}}, arc=.35mm]
 
 \end{tcolorbox}
 
@@ -700,7 +788,7 @@ Look for duplicated genes:
 \end{Highlighting}
 \end{Shaded}
 
-\section{QC stats}\label{qc-stats}
+\section{2.1. QC stats}\label{qc-stats}
 
 We are going to perform everything only in the ``spliced'' assay.
 
@@ -820,7 +908,7 @@ not going to do this.
 \end{Highlighting}
 \end{Shaded}
 
-\section{Normalization, feature selection,
+\section{2.2. Normalization, feature selection,
 scaling}\label{normalization-feature-selection-scaling}
 
 \begin{Shaded}
@@ -842,8 +930,8 @@ scaling}\label{normalization-feature-selection-scaling}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{Dimensional reduction
-(PCA)}\label{dimensional-reduction-pca}
+\subsection{i. Dimensional reduction
+(PCA)}\label{i.-dimensional-reduction-pca}
 
 Observation: Makes most sense to plot RNA velocity over cell embeddings
 from the SCT matrix (built from spliced, not unspliced counts; i.e.~we
@@ -888,8 +976,8 @@ analysis of sources of variation)
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{Non-linear dimensional
-representation}\label{non-linear-dimensional-representation}
+\subsection{ii. Non-linear dimensional
+representation}\label{ii.-non-linear-dimensional-representation}
 
 Simplifies the complex manifold of the data in a super-reduced
 dimensional space for visualization. We should run this after PCA, in
@@ -936,7 +1024,8 @@ Be careful when running this chunk, as umap can consume a lot of cpu:
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{Clustering (graph-based)}\label{clustering-graph-based}
+\subsection{iii. Clustering
+(graph-based)}\label{iii.-clustering-graph-based}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -957,7 +1046,7 @@ Be careful when running this chunk, as umap can consume a lot of cpu:
 \end{Highlighting}
 \end{Shaded}
 
-\section{Find Clusters}\label{find-clusters}
+\section{2.3. Find Clusters}\label{find-clusters}
 
 Algorithm for modularity optimization (1 = original Louvain algorithm; 2
 = Louvain algorithm with multilevel refinement; 3 = SLM algorithm; 4 =
@@ -1093,7 +1182,7 @@ Delete cluster 4 and 7:
 \end{Highlighting}
 \end{Shaded}
 
-\section{Cell annotation}\label{cell-annotation}
+\section{2.4. Cell annotation}\label{cell-annotation}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1113,7 +1202,7 @@ Delete cluster 4 and 7:
 \end{Highlighting}
 \end{Shaded}
 
-\section{Re-normalization and clustering of filtered
+\section{2.5. Re-normalization and clustering of filtered
 object}\label{re-normalization-and-clustering-of-filtered-object}
 
 Repeat normalization, PCA, tSNE and umap:
@@ -1193,7 +1282,7 @@ This is a premature proposal, we will decide this later.
 \end{Highlighting}
 \end{Shaded}
 
-\section{Cell cycle scoring}\label{cell-cycle-scoring}
+\section{2.6. Cell cycle scoring}\label{cell-cycle-scoring}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1216,7 +1305,7 @@ This is a premature proposal, we will decide this later.
 \end{Highlighting}
 \end{Shaded}
 
-\section{Cluster annotation based on cellular composition, DGE,
+\section{2.7. Cluster annotation based on cellular composition, DGE,
 FeaturePlots\ldots{}}\label{cluster-annotation-based-on-cellular-composition-dge-featureplots}
 
 The mouse esophageal mucosa consists of three layers: stratified
@@ -1226,53 +1315,80 @@ muscularis mucosa) from the esophagi. So, we should only have the
 stratified epithelium and maybe lamina propia. The epithelium, in the
 lumen, is keratinized in mice.
 
-We are going to create different signatures depending on: 1. Cell state
-(resting basal, cycling basal, differentiated) -\textgreater{} this is
-what the authors did in McGinn, 2021; or basal, differentiated, cell
-cycle - Basal: Cdh3, Itgb1, Krt15, Krt14, Krt5, Col17a1, Sox2, Trp63,
-Itga6 - Cell cycle: Gmnn, Mcm6, Mcm2, Cdt1, Pcna, Ccne1, E2f1, Ccne1,
-Cdc6, Aurkb, Top2a, Ccnb2, Bub1, Ube2c, Aurka, Kif23, Ccnb1, Mki67,
-Mad2l1, Birc5 - Differentiating: Krt13, Klf4, Tgm3, Sbsn, Grhl3, Krt4,
-Notch3, Krtdap
+We are going to create different signatures depending on:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
-\setcounter{enumi}{1}
+\tightlist
 \item
-  Structure of the epithelium: Stratified epithelium: Lumen
+  Cell state (resting basal, cycling basal, differentiated) This is what
+  the authors did in McGinn, 2021; or basal, differentiated, cell cycle
 
   \begin{itemize}
   \tightlist
   \item
-    Keratinized cells (final stage of granular): ; Lor, Ivl, Envoplakin,
-    Periplakin, Sprr1a, Sprr1b, Sprr2a1, Sprr2a2, Sprr2a3, Sprr2b,
-    Sprr2d, Sprr2e, Sprr2f, Sprr3; Lor, Flg, Tchp, Ivl, Capza1, S100A1,
-    Sprr1a, Sprr1b, Sprr2a1, Sprr2a2, Sprr2a3, Sprr2b, Sprr2d, Sprr2e,
-    Sprr2f, Sprr3
+    Basal: Cdh3, Itgb1, Krt15, Krt14, Krt5, Col17a1, Sox2, Trp63, Itga6
   \item
-    Suprabasal cells -\textgreater{} differentiation
+    Cell cycle: Gmnn, Mcm6, Mcm2, Cdt1, Pcna, Ccne1, E2f1, Ccne1, Cdc6,
+    Aurkb, Top2a, Ccnb2, Bub1, Ube2c, Aurka, Kif23, Ccnb1, Mki67,
+    Mad2l1, Birc5
+  \item
+    Differentiating: Krt13, Klf4, Tgm3, Sbsn, Grhl3, Krt4, Notch3,
+    Krtdap
+  \end{itemize}
+\item
+  Structure of the epithelium. Stratified epithelium:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Lumen
 
     \begin{itemize}
     \tightlist
     \item
-      Granular: Lor, Flg, Ivl; Tgm3, Krt1, Krt2e, Krt9, Krt10, Dsg1,
-      Dsc1
+      Keratinized cells (final stage of granular): ; Lor, Ivl,
+      Envoplakin, Periplakin, Sprr1a, Sprr1b, Sprr2a1, Sprr2a2, Sprr2a3,
+      Sprr2b, Sprr2d, Sprr2e, Sprr2f, Sprr3; Lor, Flg, Tchp, Ivl,
+      Capza1, S100A1, Sprr1a, Sprr1b, Sprr2a1, Sprr2a2, Sprr2a3, Sprr2b,
+      Sprr2d, Sprr2e, Sprr2f, Sprr3
     \item
-      Spinous: Krt10, Krt1, Tgm1, Tgm5; Tgm1, Tgm5, Dsg2, Dsg3, Dsg4
+      Suprabasal cells -\textgreater{} differentiation
+
+      \begin{itemize}
+      \tightlist
+      \item
+        Granular: Lor, Flg, Ivl; Tgm3, Krt1, Krt2e, Krt9, Krt10, Dsg1,
+        Dsc1
+      \item
+        Spinous: Krt10, Krt1, Tgm1, Tgm5; Tgm1, Tgm5, Dsg2, Dsg3, Dsg4
+      \end{itemize}
+    \item
+      Basal cells (can be differentiating or be progenitor cells)
+      -\textgreater{} proliferation, p63+,krt5+,krt7-; Bmi1 progenitor
+      cells, Krt5, Krt14, Krt15; Krt5, Krt14, Tgm2, Bpag1; Itgb1, Trp63,
+      Krt5, Krt14, Krt15; Krt5, Krt14, Bpag1, Tgm2
+    \item
+      Basal lamina: Lama5, Itga6, Itgb4, Bpag2
     \end{itemize}
   \item
-    Basal cells (can be differentiating or be progenitor cells)
-    -\textgreater{} proliferation, p63+,krt5+,krt7-; Bmi1 progenitor
-    cells, Krt5, Krt14, Krt15; Krt5, Krt14, Tgm2, Bpag1; Itgb1, Trp63,
-    Krt5, Krt14, Krt15; Krt5, Krt14, Bpag1, Tgm2
-  \item
-    Basal lamina: Lama5, Itga6, Itgb4, Bpag2 Basal
+    Basal
   \end{itemize}
+\end{enumerate}
 
-  Disclaimer: keratinized cells and granular cells could be grouped in
-  one category, the cornified envelope.
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, breakable, opacityback=0, colframe=quarto-callout-tip-color-frame, colback=white, opacitybacktitle=0.6, bottomrule=.15mm, titlerule=0mm, rightrule=.15mm, leftrule=.75mm, toprule=.15mm, colbacktitle=quarto-callout-tip-color!10!white, bottomtitle=1mm, left=2mm, toptitle=1mm, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Tip}, arc=.35mm]
 
-  Summarised by taking the genes in common from the literature: Lumen
+keratinized cells and granular cells could be grouped in one category,
+the cornified envelope.
+
+\end{tcolorbox}
+
+Summarised by taking the genes in common from the literature:
+
+\begin{itemize}
+\tightlist
+\item
+  Lumen
 
   \begin{itemize}
   \tightlist
@@ -1295,9 +1411,11 @@ Notch3, Krtdap
     -\textgreater{} proliferation: Krt5, Krt14, Krt15, Tgm2, Bpag1,
     Tp63, Itgb1
   \item
-    Basal lamina: Lama5, Itga6, Itgb4 Basal
+    Basal lamina: Lama5, Itga6, Itgb4
   \end{itemize}
-\end{enumerate}
+\item
+  Basal
+\end{itemize}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1347,32 +1465,13 @@ Notch3, Krtdap
 \end{Highlighting}
 \end{Shaded}
 
-\section{SComatic preparation}\label{scomatic-preparation}
+\section{2.8. SComatic preparation}\label{scomatic-preparation}
 
 SComatic needs a TSV metadata file that relates each cell barcode with
 each ``Cell type'' annotation. The annotation will depend on how much
 granularity we need or is adequate to cal lsomatic variants from single
 cell transcriptomics. Here, the library design plays a very important
 role.
-
-\begin{figure}[H]
-
-{\centering \includegraphics{index_files/mediabag/library_design_mouse.png}
-
-}
-
-\caption{Library design}
-
-\end{figure}%%
-\begin{figure}[H]
-
-{\centering \includegraphics{index_files/mediabag/CCF_mouse.png}
-
-}
-
-\caption{Cancer cell fraction relation}
-
-\end{figure}%
 
 \subsection{Save cell barcodes with cell types in TSV format
 (SComatic)}\label{save-cell-barcodes-with-cell-types-in-tsv-format-scomatic}
@@ -1393,8 +1492,8 @@ barcode and second column is cell type)
 \end{Highlighting}
 \end{Shaded}
 
-\section{Annotation of clusters (based on known canonical markers of
-each
+\section{2.9. Annotation of clusters (based on known canonical markers
+of each
 cluster)}\label{annotation-of-clusters-based-on-known-canonical-markers-of-each-cluster}
 
 Annotate each mouse .tsv ``Cell\_type'' as: Epi; so that in Step 3 of
@@ -1483,7 +1582,7 @@ SComatic we obtain a .tsv with 1 ``cluster''
 \end{Highlighting}
 \end{Shaded}
 
-\section{scVelo preparation}\label{scvelo-preparation}
+\section{2.10. scVelo preparation}\label{scvelo-preparation}
 
 \subsection{Cluster annotation for
 scvelo}\label{cluster-annotation-for-scvelo}
@@ -1616,7 +1715,7 @@ Save seurat object:
 \end{Highlighting}
 \end{Shaded}
 
-\section{Normalization of counts}\label{normalization-of-counts}
+\section{2.11. Normalization of counts}\label{normalization-of-counts}
 
 We are going to normalize the data by total counts (in each
 library-Sequencing ID). For that, we have to sum all the columns.
@@ -1693,7 +1792,7 @@ Adult & 3 & 2 & \emph{676} & 5438 & \emph{36246.5} & 15707 &
 3.5389684657119 \\
 \end{longtable}
 
-\begin{tcolorbox}[enhanced jigsaw, breakable, leftrule=.75mm, bottomrule=.15mm, colback=white, arc=.35mm, opacityback=0, rightrule=.15mm, toprule=.15mm, colframe=quarto-callout-warning-color-frame, left=2mm]
+\begin{tcolorbox}[enhanced jigsaw, bottomrule=.15mm, breakable, rightrule=.15mm, leftrule=.75mm, toprule=.15mm, opacityback=0, colframe=quarto-callout-warning-color-frame, colback=white, left=2mm, arc=.35mm]
 
 \vspace{-3mm}\textbf{Warning:}\vspace{3mm}
 
@@ -1708,7 +1807,7 @@ not is up to you.
 
 \end{tcolorbox}
 
-\section{Do we find barcodes from Epi\_DEN shared in other
+\section{2.12. Do we find barcodes from Epi\_DEN shared in other
 clusters?}\label{do-we-find-barcodes-from-epi_den-shared-in-other-clusters}
 
 \begin{itemize}
@@ -1740,7 +1839,9 @@ clusters?}\label{do-we-find-barcodes-from-epi_den-shared-in-other-clusters}
 
 \chapter{3. Inference of velocity}\label{inference-of-velocity}
 
-\section{Slingshot}\label{slingshot}
+\section{3.1. Slingshot}\label{slingshot}
+
+\subsection{Import libraries}\label{import-libraries-1}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1890,7 +1991,7 @@ object}\label{load-filtered-seurat-object}
 \end{Highlighting}
 \end{Shaded}
 
-\section{scVelo}\label{scvelo}
+\section{3.2. scVelo}\label{scvelo}
 
 \subsection{Load of .h5ad file}\label{load-of-.h5ad-file}
 
@@ -1999,7 +2100,7 @@ Define functions and colors for plotting:
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{Stochastic model}\label{stochastic-model}
+\subsection{i. Stochastic model}\label{i.-stochastic-model}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -2056,7 +2157,7 @@ Save the .h5ad file with stochastic model
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{Deterministic model}\label{deterministic-model}
+\subsection{ii. Deterministic model}\label{ii.-deterministic-model}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -2114,7 +2215,7 @@ Save the .h5ad file with dererministic model
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{Dynamical model}\label{dynamical-model}
+\subsection{iii. Dynamical model}\label{iii.-dynamical-model}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -2245,7 +2346,7 @@ Save the .h5ad file with dynamical model
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{Cycling progenitors}\label{cycling-progenitors}
+\subsection{iv. Cycling progenitors}\label{iv.-cycling-progenitors}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -2260,12 +2361,12 @@ Save the .h5ad file with dynamical model
 \end{Highlighting}
 \end{Shaded}
 
-\chapter{3. SComatic calling}\label{scomatic-calling}
+\chapter{4. SComatic calling}\label{scomatic-calling}
 
 We are going to perform somatic variant calling with the novel algorithm
 from Muyas et.al (2024) doi: https://doi.org/10.1038/s41587-023-01863-z
 
-\section{3.1. Script to call somatic
+\section{4.1. Script to call somatic
 variants}\label{script-to-call-somatic-variants}
 
 \begin{itemize}
@@ -2280,214 +2381,214 @@ variants}\label{script-to-call-somatic-variants}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{\#!/bin/bash}
-\NormalTok{\# Script with bams separated by run (run1 vs run2). Each run bams are analyzed in a scomatic pipeline. This means, the output of this script will give two final .tsv: one for the run of run1, and another one for the run of run2. Each of these runs/.tsv, will have 8 samples: sample1\_Epi, samp2\_Epi, samp3\_Epi, samp4\_Epi, samp5\_Epi, samp6\_Epi, samp7\_Epi, samp8\_Epi. }
-\NormalTok{\# There are 6 sample which are control adult, + one sample is old CTL, and + one sample is old DEN. }
-\NormalTok{\# Each of the sample has the key like "sample1\_Epi", "samp2\_Epi", etc. }
-\NormalTok{\# DISCLAIMER: ALWAYS USE THE SAME REFERENCE GENOME!!! If you have aligned you rreads with mm10, scomatic will have to be ran with mm10. No coordinates\textquotesingle{} change with bedtools nor similar strange things. }
-\NormalTok{\# SComatic nowadays has only panel of normales (PON) and editing sites (A{-}to{-}I events) for: GRCh38 and mm10. There aren\textquotesingle{}t PON nor editing sites for mouse assembly mm39. }
-\NormalTok{\# The PON for human has been made with GATK data 1000 genomes project. No info of how they did it.}
-\NormalTok{\# The PON for mouse mm10 was done in July 20, using mm10 Tabula muris data. No info of how exactly they did it. }
+\CommentTok{\#!/bin/bash}
+\CommentTok{\# Script with bams separated by run (run1 vs run2). Each run bams are analyzed in a scomatic pipeline. This means, the output of this script will give two final .tsv: one for the run of run1, and another one for the run of run2. Each of these runs/.tsv, will have 8 samples: sample1\_Epi, samp2\_Epi, samp3\_Epi, samp4\_Epi, samp5\_Epi, samp6\_Epi, samp7\_Epi, samp8\_Epi. }
+\CommentTok{\# There are 6 sample which are control adult, + one sample is old CTL, and + one sample is old DEN. }
+\CommentTok{\# Each of the sample has the key like "sample1\_Epi", "samp2\_Epi", etc. }
+\CommentTok{\# DISCLAIMER: ALWAYS USE THE SAME REFERENCE GENOME!!! If you have aligned you rreads with mm10, scomatic will have to be ran with mm10. No coordinates\textquotesingle{} change with bedtools nor similar strange things. }
+\CommentTok{\# SComatic nowadays has only panel of normales (PON) and editing sites (A{-}to{-}I events) for: GRCh38 and mm10. There aren\textquotesingle{}t PON nor editing sites for mouse assembly mm39. }
+\CommentTok{\# The PON for human has been made with GATK data 1000 genomes project. No info of how they did it.}
+\CommentTok{\# The PON for mouse mm10 was done in July 20, using mm10 Tabula muris data. No info of how exactly they did it. }
 
-\NormalTok{\# Run this script in a environment with scomatic installed. }
+\CommentTok{\# Run this script in a environment with scomatic installed. }
 
-\NormalTok{SCOMATIC=\textasciitilde{}/bin/SComatic{-}main}
+\VariableTok{SCOMATIC}\OperatorTok{=}\NormalTok{\textasciitilde{}/bin/SComatic{-}main}
 
-\NormalTok{run\_names=("run1" "run2") \# list of runs}
+\VariableTok{run\_names}\OperatorTok{=}\VariableTok{(}\StringTok{"run1"} \StringTok{"run2"}\VariableTok{)} \CommentTok{\# list of runs}
 
-\NormalTok{echo "Starting Scomatic analysis."}
-
-
-\NormalTok{i=0}
-\NormalTok{for run in "$\{run\_names[@]\}";}
-\NormalTok{do}
-\NormalTok{    i=$((i + 1)) }
-
-\NormalTok{  \# iterate though each bam in the directory where they are located}
-\NormalTok{  bam\_dir="/media/storage/mcGinn\_2021/STARalignment/bam/$\{run\}"}
-\NormalTok{  output\_dir="/media/storage/mcGinn\_2021/scomatic/output/$\{run\}"}
-
-\NormalTok{  mkdir {-}p $output\_dir}
-
-\NormalTok{  logfile="$output\_dir/scomatic\_log.txt"}
-\NormalTok{  mkdir {-}p "$(dirname "$logfile")"}
-
-\NormalTok{  log\_message() \{}
-\NormalTok{      local log\_time}
-\NormalTok{      log\_time=$(date +"\%Y{-}\%m{-}\%d \%H:\%M:\%S")}
-\NormalTok{      local message="[$log\_time] $1"}
-\NormalTok{      echo "$message" \textgreater{}\textgreater{} "$logfile"}
-\NormalTok{      echo "$message"}
-\NormalTok{  \}}
-
-\NormalTok{  \# Initialize log file}
-\NormalTok{  echo "\#\#\# Scomatic Pipeline Log \#\#\#" \textgreater{} "$logfile"}
-\NormalTok{  log\_message "Running scomatic pipeline for run: $\{run\}"}
+\BuiltInTok{echo} \StringTok{"Starting Scomatic analysis."}
 
 
-\NormalTok{  \# Step 1: Splitting alignment file in cell type specific bams}
-\NormalTok{  log\_message "Step 1: Splitting alignment file in cell type specific bams..."}
+\VariableTok{i}\OperatorTok{=}\NormalTok{0}
+\ControlFlowTok{for}\NormalTok{ run }\KeywordTok{in} \StringTok{"}\VariableTok{$\{run\_names}\OperatorTok{[@]}\VariableTok{\}}\StringTok{"}\KeywordTok{;}
+\ControlFlowTok{do}
+    \VariableTok{i}\OperatorTok{=}\VariableTok{$((i} \OperatorTok{+} \DecValTok{1}\VariableTok{))} 
 
-\NormalTok{  output\_dir1=$output\_dir/Step1\_BamCellTypes}
-\NormalTok{  mkdir {-}p $output\_dir1}
-\NormalTok{  meta\_dir="/media/storage/mcGinn\_2021/scomatic/markers"}
+  \CommentTok{\# iterate though each bam in the directory where they are located}
+  \VariableTok{bam\_dir}\OperatorTok{=}\StringTok{"/media/storage/mcGinn\_2021/STARalignment/bam/}\VariableTok{$\{run\}}\StringTok{"}
+  \VariableTok{output\_dir}\OperatorTok{=}\StringTok{"/media/storage/mcGinn\_2021/scomatic/output/}\VariableTok{$\{run\}}\StringTok{"}
 
-\NormalTok{  \# Iterate through each BAM file in the bam\_dir}
-\NormalTok{  for bam\_file in "$bam\_dir"/*.bam}
-\NormalTok{  do}
-\NormalTok{      \# Extract the sample name from the file name}
-\NormalTok{      base\_name=$(basename "$bam\_file" Aligned.sortedByCoord.out.bam) \# run1\_lib1}
-\NormalTok{      sample=$\{base\_name\#*\_\} \# remove the prefix up to \textquotesingle{}\_\textquotesingle{}, so that we get only lib1}
+  \FunctionTok{mkdir} \AttributeTok{{-}p} \VariableTok{$output\_dir}
 
-\NormalTok{      echo "Started sample: $sample"}
+  \VariableTok{logfile}\OperatorTok{=}\StringTok{"}\VariableTok{$output\_dir}\StringTok{/scomatic\_log.txt"}
+  \FunctionTok{mkdir} \AttributeTok{{-}p} \StringTok{"}\VariableTok{$(}\FunctionTok{dirname} \StringTok{"}\VariableTok{$logfile}\StringTok{"}\VariableTok{)}\StringTok{"}
 
-\NormalTok{      meta\_file="$meta\_dir/$\{run\}/esoph\_markers\_scomatic\_$\{base\_name\}.tsv"}
+  \FunctionTok{log\_message()} \KeywordTok{\{}
+      \BuiltInTok{local} \VariableTok{log\_time}
+      \VariableTok{log\_time}\OperatorTok{=}\VariableTok{$(}\FunctionTok{date}\NormalTok{ +}\StringTok{"\%Y{-}\%m{-}\%d \%H:\%M:\%S"}\VariableTok{)}
+      \BuiltInTok{local} \VariableTok{message}\OperatorTok{=}\StringTok{"[}\VariableTok{$log\_time}\StringTok{] }\VariableTok{$1}\StringTok{"}
+      \BuiltInTok{echo} \StringTok{"}\VariableTok{$message}\StringTok{"} \OperatorTok{\textgreater{}\textgreater{}} \StringTok{"}\VariableTok{$logfile}\StringTok{"}
+      \BuiltInTok{echo} \StringTok{"}\VariableTok{$message}\StringTok{"}
+  \KeywordTok{\}}
+
+  \CommentTok{\# Initialize log file}
+  \BuiltInTok{echo} \StringTok{"\#\#\# Scomatic Pipeline Log \#\#\#"} \OperatorTok{\textgreater{}} \StringTok{"}\VariableTok{$logfile}\StringTok{"}
+  \ExtensionTok{log\_message} \StringTok{"Running scomatic pipeline for run: }\VariableTok{$\{run\}}\StringTok{"}
+
+
+  \CommentTok{\# Step 1: Splitting alignment file in cell type specific bams}
+  \ExtensionTok{log\_message} \StringTok{"Step 1: Splitting alignment file in cell type specific bams..."}
+
+  \VariableTok{output\_dir1}\OperatorTok{=}\VariableTok{$output\_dir}\NormalTok{/Step1\_BamCellTypes}
+  \FunctionTok{mkdir} \AttributeTok{{-}p} \VariableTok{$output\_dir1}
+  \VariableTok{meta\_dir}\OperatorTok{=}\StringTok{"/media/storage/mcGinn\_2021/scomatic/markers"}
+
+  \CommentTok{\# Iterate through each BAM file in the bam\_dir}
+  \ControlFlowTok{for}\NormalTok{ bam\_file }\KeywordTok{in} \StringTok{"}\VariableTok{$bam\_dir}\StringTok{"}\NormalTok{/}\PreprocessorTok{*}\NormalTok{.bam}
+  \ControlFlowTok{do}
+      \CommentTok{\# Extract the sample name from the file name}
+      \VariableTok{base\_name}\OperatorTok{=}\VariableTok{$(}\FunctionTok{basename} \StringTok{"}\VariableTok{$bam\_file}\StringTok{"}\NormalTok{ Aligned.sortedByCoord.out.bam}\VariableTok{)} \CommentTok{\# run1\_lib1}
+      \VariableTok{sample}\OperatorTok{=}\VariableTok{$\{base\_name}\OperatorTok{\#}\PreprocessorTok{*}\NormalTok{\_}\VariableTok{\}} \CommentTok{\# remove the prefix up to \textquotesingle{}\_\textquotesingle{}, so that we get only lib1}
+
+      \BuiltInTok{echo} \StringTok{"Started sample: }\VariableTok{$sample}\StringTok{"}
+
+      \VariableTok{meta\_file}\OperatorTok{=}\StringTok{"}\VariableTok{$meta\_dir}\StringTok{/}\VariableTok{$\{run\}}\StringTok{/esoph\_markers\_scomatic\_}\VariableTok{$\{base\_name\}}\StringTok{.tsv"}
       
-\NormalTok{      \# Run the Python script with the appropriate arguments}
-\NormalTok{      python $SCOMATIC/scripts/SplitBam/SplitBamCellTypes.py {-}{-}bam "$bam\_file" \textbackslash{}}
-\NormalTok{          {-}{-}meta "$meta\_file" \textbackslash{}}
-\NormalTok{          {-}{-}id "$sample" \textbackslash{}}
-\NormalTok{          {-}{-}n\_trim 5 \textbackslash{}}
-\NormalTok{          {-}{-}max\_nM 5 \textbackslash{}}
-\NormalTok{          {-}{-}max\_NH 1 \textbackslash{}}
-\NormalTok{          {-}{-}outdir "$output\_dir1"}
+      \CommentTok{\# Run the Python script with the appropriate arguments}
+      \ExtensionTok{python} \VariableTok{$SCOMATIC}\NormalTok{/scripts/SplitBam/SplitBamCellTypes.py }\AttributeTok{{-}{-}bam} \StringTok{"}\VariableTok{$bam\_file}\StringTok{"} \DataTypeTok{\textbackslash{}}
+          \AttributeTok{{-}{-}meta} \StringTok{"}\VariableTok{$meta\_file}\StringTok{"} \DataTypeTok{\textbackslash{}}
+          \AttributeTok{{-}{-}id} \StringTok{"}\VariableTok{$sample}\StringTok{"} \DataTypeTok{\textbackslash{}}
+          \AttributeTok{{-}{-}n\_trim}\NormalTok{ 5 }\DataTypeTok{\textbackslash{}}
+          \AttributeTok{{-}{-}max\_nM}\NormalTok{ 5 }\DataTypeTok{\textbackslash{}}
+          \AttributeTok{{-}{-}max\_NH}\NormalTok{ 1 }\DataTypeTok{\textbackslash{}}
+          \AttributeTok{{-}{-}outdir} \StringTok{"}\VariableTok{$output\_dir1}\StringTok{"}
 
-\NormalTok{      log\_message "Finished sample: $sample"}
+      \ExtensionTok{log\_message} \StringTok{"Finished sample: }\VariableTok{$sample}\StringTok{"}
 
-\NormalTok{      sample\_list+=("$sample")}
-\NormalTok{  done}
+      \VariableTok{sample\_list}\OperatorTok{+=}\VariableTok{(}\StringTok{"}\VariableTok{$sample}\StringTok{"}\VariableTok{)}
+  \ControlFlowTok{done}
 
-\NormalTok{  \# Now, we have each .bam file for each sample located in =$output\_dir/Step1\_BamCellTypes. In total, 16 .tsv}
-\NormalTok{  \# The bam file will be like: run1\_lib1.lib1\_Epi.bam}
+  \CommentTok{\# Now, we have each .bam file for each sample located in =$output\_dir/Step1\_BamCellTypes. In total, 16 .tsv}
+  \CommentTok{\# The bam file will be like: run1\_lib1.lib1\_Epi.bam}
 
 
-\NormalTok{  \#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}
-\NormalTok{  \# Step 2: Collecting base count information}
+  \CommentTok{\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}
+  \CommentTok{\# Step 2: Collecting base count information}
   
-\NormalTok{  REF=/media/storage/reference\_genomes/Mus\_musculus.GRCm38.dna.primary\_assembly.fa}
+  \VariableTok{REF}\OperatorTok{=}\NormalTok{/media/storage/reference\_genomes/Mus\_musculus.GRCm38.dna.primary\_assembly.fa}
 
-\NormalTok{  output\_dir2=$output\_dir/Step2\_BaseCellCounts}
-\NormalTok{  mkdir {-}p $output\_dir2}
+  \VariableTok{output\_dir2}\OperatorTok{=}\VariableTok{$output\_dir}\NormalTok{/Step2\_BaseCellCounts}
+  \FunctionTok{mkdir} \AttributeTok{{-}p} \VariableTok{$output\_dir2}
 
-\NormalTok{  for bam in "$output\_dir1"/*.bam}
-\NormalTok{  do}
+  \ControlFlowTok{for}\NormalTok{ bam }\KeywordTok{in} \StringTok{"}\VariableTok{$output\_dir1}\StringTok{"}\NormalTok{/}\PreprocessorTok{*}\NormalTok{.bam}
+  \ControlFlowTok{do}
     
-\NormalTok{    \# Cell type, which will be lib1 in this case}
-\NormalTok{    cell\_type=$(basename $bam | awk {-}F\textquotesingle{}.\textquotesingle{} \textquotesingle{}\{print $(NF{-}1)\}\textquotesingle{}) \# this takes the cell\_type from the bam name (the second field to last by separating by \textquotesingle{}.\textquotesingle{})}
+    \CommentTok{\# Cell type, which will be lib1 in this case}
+    \VariableTok{cell\_type}\OperatorTok{=}\VariableTok{$(}\FunctionTok{basename} \VariableTok{$bam} \KeywordTok{|} \FunctionTok{awk} \AttributeTok{{-}F}\StringTok{\textquotesingle{}.\textquotesingle{}} \StringTok{\textquotesingle{}\{print $(NF{-}1)\}\textquotesingle{}}\VariableTok{)} \CommentTok{\# this takes the cell\_type from the bam name (the second field to last by separating by \textquotesingle{}.\textquotesingle{})}
 
-\NormalTok{    \# Temp folder}
-\NormalTok{    temp=$output\_dir2/temp\_$\{cell\_type\}}
-\NormalTok{    mkdir {-}p $temp}
+    \CommentTok{\# Temp folder}
+    \VariableTok{temp}\OperatorTok{=}\VariableTok{$output\_dir2}\NormalTok{/temp\_}\VariableTok{$\{cell\_type\}}
+    \FunctionTok{mkdir} \AttributeTok{{-}p} \VariableTok{$temp}
 
-\NormalTok{    log\_message "Processing base counts for cell type: $cell\_type"}
+    \ExtensionTok{log\_message} \StringTok{"Processing base counts for cell type: }\VariableTok{$cell\_type}\StringTok{"}
 
-\NormalTok{    \# Command line to submit to cluster}
-\NormalTok{    python $SCOMATIC/scripts/BaseCellCounter/BaseCellCounter.py {-}{-}bam $bam \textbackslash{}}
-\NormalTok{      {-}{-}ref $REF \textbackslash{}}
-\NormalTok{      {-}{-}chrom all \textbackslash{}}
-\NormalTok{      {-}{-}out\_folder $output\_dir2 \textbackslash{}}
-\NormalTok{      {-}{-}min\_bq 30 \textbackslash{}}
-\NormalTok{      {-}{-}tmp\_dir $temp \textbackslash{}}
-\NormalTok{      {-}{-}nprocs 10}
+    \CommentTok{\# Command line to submit to cluster}
+    \ExtensionTok{python} \VariableTok{$SCOMATIC}\NormalTok{/scripts/BaseCellCounter/BaseCellCounter.py }\AttributeTok{{-}{-}bam} \VariableTok{$bam} \DataTypeTok{\textbackslash{}}
+      \AttributeTok{{-}{-}ref} \VariableTok{$REF} \DataTypeTok{\textbackslash{}}
+      \AttributeTok{{-}{-}chrom}\NormalTok{ all }\DataTypeTok{\textbackslash{}}
+      \AttributeTok{{-}{-}out\_folder} \VariableTok{$output\_dir2} \DataTypeTok{\textbackslash{}}
+      \AttributeTok{{-}{-}min\_bq}\NormalTok{ 30 }\DataTypeTok{\textbackslash{}}
+      \AttributeTok{{-}{-}tmp\_dir} \VariableTok{$temp} \DataTypeTok{\textbackslash{}}
+      \AttributeTok{{-}{-}nprocs}\NormalTok{ 10}
 
-\NormalTok{    rm {-}rf $temp}
+    \FunctionTok{rm} \AttributeTok{{-}rf} \VariableTok{$temp}
 
-\NormalTok{    log\_message "Finished base count processing for cell type: $cell\_type"}
-\NormalTok{  done}
+    \ExtensionTok{log\_message} \StringTok{"Finished base count processing for cell type: }\VariableTok{$cell\_type}\StringTok{"}
+  \ControlFlowTok{done}
 
-\NormalTok{  log\_message "Listing files in $output\_dir2 before renaming:"}
-\NormalTok{  ls "$output\_dir2"}
-\NormalTok{  \# Now, we have each .tsv for each sample in output\_dir2=$output\_dir/Step2\_BaseCellCounts}
-\NormalTok{  \# We are going to move both .tsv from the same sample to a new folder inside output\_dir2, named after the sample name.}
+  \ExtensionTok{log\_message} \StringTok{"Listing files in }\VariableTok{$output\_dir2}\StringTok{ before renaming:"}
+  \FunctionTok{ls} \StringTok{"}\VariableTok{$output\_dir2}\StringTok{"}
+  \CommentTok{\# Now, we have each .tsv for each sample in output\_dir2=$output\_dir/Step2\_BaseCellCounts}
+  \CommentTok{\# We are going to move both .tsv from the same sample to a new folder inside output\_dir2, named after the sample name.}
 
-\NormalTok{  \# echo "Organizing .tsv files into sample{-}specific folders..."}
-\NormalTok{  log\_message "Renaming .tsv files..."}
+  \CommentTok{\# echo "Organizing .tsv files into sample{-}specific folders..."}
+  \ExtensionTok{log\_message} \StringTok{"Renaming .tsv files..."}
 
 
-\NormalTok{  for tsv in "$output\_dir2"/*.tsv}
-\NormalTok{  do}
-\NormalTok{      \# Create a new directory for the sample}
-\NormalTok{      \# Move the .tsv files corresponding to the sample into the sample directory}
+  \ControlFlowTok{for}\NormalTok{ tsv }\KeywordTok{in} \StringTok{"}\VariableTok{$output\_dir2}\StringTok{"}\NormalTok{/}\PreprocessorTok{*}\NormalTok{.tsv}
+  \ControlFlowTok{do}
+      \CommentTok{\# Create a new directory for the sample}
+      \CommentTok{\# Move the .tsv files corresponding to the sample into the sample directory}
  
-\NormalTok{      base\_name=$(basename "$tsv")}
+      \VariableTok{base\_name}\OperatorTok{=}\VariableTok{$(}\FunctionTok{basename} \StringTok{"}\VariableTok{$tsv}\StringTok{"}\VariableTok{)}
       
-\NormalTok{      \# lib1.lib1\_Epi.tsv ; we want lib1.tsv {-}\textgreater{} this will be our unique "cell types"}
+      \CommentTok{\# lib1.lib1\_Epi.tsv ; we want lib1.tsv {-}\textgreater{} this will be our unique "cell types"}
     
-\NormalTok{      \# Extract run name, and spec cell}
-\NormalTok{      sample\_run=$(echo "$base\_name" | awk {-}F\textquotesingle{}.\textquotesingle{} \textquotesingle{}\{print $1\}\textquotesingle{}) \# extracts lib1}
-\NormalTok{      spec\_cell=$(echo "$base\_name" | awk {-}F\textquotesingle{}\_\textquotesingle{} \textquotesingle{}\{print $2\}\textquotesingle{}) \# extracts Epi.tsv}
+      \CommentTok{\# Extract run name, and spec cell}
+      \VariableTok{sample\_run}\OperatorTok{=}\VariableTok{$(}\BuiltInTok{echo} \StringTok{"}\VariableTok{$base\_name}\StringTok{"} \KeywordTok{|} \FunctionTok{awk} \AttributeTok{{-}F}\StringTok{\textquotesingle{}.\textquotesingle{}} \StringTok{\textquotesingle{}\{print $1\}\textquotesingle{}}\VariableTok{)} \CommentTok{\# extracts lib1}
+      \VariableTok{spec\_cell}\OperatorTok{=}\VariableTok{$(}\BuiltInTok{echo} \StringTok{"}\VariableTok{$base\_name}\StringTok{"} \KeywordTok{|} \FunctionTok{awk} \AttributeTok{{-}F}\StringTok{\textquotesingle{}\_\textquotesingle{}} \StringTok{\textquotesingle{}\{print $2\}\textquotesingle{}}\VariableTok{)} \CommentTok{\# extracts Epi.tsv}
 
-\NormalTok{      new\_filename="$\{output\_dir2\}/$\{sample\_run\}\_$\{spec\_cell\}" \# lib1\_Epi.tsv}
+      \VariableTok{new\_filename}\OperatorTok{=}\StringTok{"}\VariableTok{$\{output\_dir2\}}\StringTok{/}\VariableTok{$\{sample\_run\}}\StringTok{\_}\VariableTok{$\{spec\_cell\}}\StringTok{"} \CommentTok{\# lib1\_Epi.tsv}
 
-\NormalTok{      \# Change each name of the .tsv files by adding its run}
-\NormalTok{      \# mv "$output\_dir2/$\{sample\_name\}"*.tsv "$sample\_dir/$\{run\_name\}$\{sample\_name\}"*.tsv}
-\NormalTok{      mv "$tsv" "$new\_filename"}
+      \CommentTok{\# Change each name of the .tsv files by adding its run}
+      \CommentTok{\# mv "$output\_dir2/$\{sample\_name\}"*.tsv "$sample\_dir/$\{run\_name\}$\{sample\_name\}"*.tsv}
+      \FunctionTok{mv} \StringTok{"}\VariableTok{$tsv}\StringTok{"} \StringTok{"}\VariableTok{$new\_filename}\StringTok{"}
 
-\NormalTok{      \# echo "Moved .tsv files for sample: $sample to $sample\_dir"}
-\NormalTok{      log\_message "Renamed $tsv to $new\_filename"}
-\NormalTok{  done}
+      \CommentTok{\# echo "Moved .tsv files for sample: $sample to $sample\_dir"}
+      \ExtensionTok{log\_message} \StringTok{"Renamed }\VariableTok{$tsv}\StringTok{ to }\VariableTok{$new\_filename}\StringTok{"}
+  \ControlFlowTok{done}
 
-\NormalTok{  log\_message "Listing files in $output\_dir2 after renaming:"}
-\NormalTok{  ls "$output\_dir2"}
+  \ExtensionTok{log\_message} \StringTok{"Listing files in }\VariableTok{$output\_dir2}\StringTok{ after renaming:"}
+  \FunctionTok{ls} \StringTok{"}\VariableTok{$output\_dir2}\StringTok{"}
 
-\NormalTok{  \# echo "Moved the files successfully!"}
-\NormalTok{  log\_message "Renamed the files successfully!"}
+  \CommentTok{\# echo "Moved the files successfully!"}
+  \ExtensionTok{log\_message} \StringTok{"Renamed the files successfully!"}
 
-\NormalTok{  \#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}
-\NormalTok{  \# Step 3: Merging base count matrices}
-\NormalTok{  log\_message "Step 3: Merging base count matrices..."}
+  \CommentTok{\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}
+  \CommentTok{\# Step 3: Merging base count matrices}
+  \ExtensionTok{log\_message} \StringTok{"Step 3: Merging base count matrices..."}
 
-\NormalTok{  output\_dir3=$output\_dir/Step3\_BaseCellCountsMerged}
-\NormalTok{  mkdir {-}p $output\_dir3}
+  \VariableTok{output\_dir3}\OperatorTok{=}\VariableTok{$output\_dir}\NormalTok{/Step3\_BaseCellCountsMerged}
+  \FunctionTok{mkdir} \AttributeTok{{-}p} \VariableTok{$output\_dir3}
 
-\NormalTok{  log\_message "Merging base count matrices into a single .tsv file..."}
+  \ExtensionTok{log\_message} \StringTok{"Merging base count matrices into a single .tsv file..."}
 
-\NormalTok{  python $SCOMATIC/scripts/MergeCounts/MergeBaseCellCounts.py \textbackslash{}}
-\NormalTok{    {-}{-}tsv\_folder $\{output\_dir2\} \textbackslash{}}
-\NormalTok{    {-}{-}outfile $\{output\_dir3\}/$\{run\}.BaseCellCounts.AllCellTypes.tsv}
-
-
-\NormalTok{  \#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}
-\NormalTok{  \# Step 4: Detection of somatic mutations}
-\NormalTok{  log\_message "Step 4: Detection of somatic mutations..."}
-
-\NormalTok{  \# Step 4.1}
-\NormalTok{  log\_message "Step 4.1: Variant calling..."}
-\NormalTok{  output\_dir4=$output\_dir/Step4\_VariantCalling}
-\NormalTok{  mkdir {-}p $output\_dir4}
-
-\NormalTok{  python $SCOMATIC/scripts/BaseCellCalling/BaseCellCalling.step1.py \textbackslash{}}
-\NormalTok{            {-}{-}infile $\{output\_dir3\}/$\{run\}.BaseCellCounts.AllCellTypes.tsv \textbackslash{}}
-\NormalTok{            {-}{-}outfile $\{output\_dir4\}/$\{run\} \textbackslash{}}
-\NormalTok{        {-}{-}max\_cell\_types 1 \textbackslash{}}
-\NormalTok{        {-}{-}min\_cell\_types 2 \textbackslash{}}
-\NormalTok{            {-}{-}ref $REF}
+  \ExtensionTok{python} \VariableTok{$SCOMATIC}\NormalTok{/scripts/MergeCounts/MergeBaseCellCounts.py }\DataTypeTok{\textbackslash{}}
+    \AttributeTok{{-}{-}tsv\_folder} \VariableTok{$\{output\_dir2\}} \DataTypeTok{\textbackslash{}}
+    \AttributeTok{{-}{-}outfile} \VariableTok{$\{output\_dir3\}}\NormalTok{/}\VariableTok{$\{run\}}\NormalTok{.BaseCellCounts.AllCellTypes.tsv}
 
 
-\NormalTok{  \# Step 4.2}
-\NormalTok{  log\_message "Step 4.2: Somatic mutation detection..."}
-\NormalTok{  editing=$SCOMATIC/RNAediting/AllEditingSites.mm10.txt}
-\NormalTok{  PON=$SCOMATIC/PoNs/PoN.scRNAseq.mm10.tsv}
+  \CommentTok{\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}
+  \CommentTok{\# Step 4: Detection of somatic mutations}
+  \ExtensionTok{log\_message} \StringTok{"Step 4: Detection of somatic mutations..."}
 
-\NormalTok{  python $SCOMATIC/scripts/BaseCellCalling/BaseCellCalling.step2.py \textbackslash{}}
-\NormalTok{            {-}{-}infile $\{output\_dir4\}/$\{run\}.calling.step1.tsv \textbackslash{}}
-\NormalTok{            {-}{-}outfile $\{output\_dir4\}/$\{run\}.calling.step2.tsv \textbackslash{}}
-\NormalTok{            {-}{-}editing $editing \textbackslash{}}
-\NormalTok{            {-}{-}pon $PON}
+  \CommentTok{\# Step 4.1}
+  \ExtensionTok{log\_message} \StringTok{"Step 4.1: Variant calling..."}
+  \VariableTok{output\_dir4}\OperatorTok{=}\VariableTok{$output\_dir}\NormalTok{/Step4\_VariantCalling}
+  \FunctionTok{mkdir} \AttributeTok{{-}p} \VariableTok{$output\_dir4}
 
-\NormalTok{  \# extra step: Intersection with bed file}
-\NormalTok{  log\_message "Extra step: Intersection with bed file..."}
-\NormalTok{  bedtools intersect {-}header {-}a $\{output\_dir4\}/$\{run\}.calling.step2.tsv {-}b $SCOMATIC/bed\_files\_of\_interest/UCSC.mm10.without.repeatmasker.bed | awk \textquotesingle{}$1 \textasciitilde{} /\^{}\#/ || $6 == "PASS"\textquotesingle{} \textgreater{} $\{output\_dir4\}/$\{run\}.calling.step2.pass.tsv}
+  \ExtensionTok{python} \VariableTok{$SCOMATIC}\NormalTok{/scripts/BaseCellCalling/BaseCellCalling.step1.py }\DataTypeTok{\textbackslash{}}
+            \AttributeTok{{-}{-}infile} \VariableTok{$\{output\_dir3\}}\NormalTok{/}\VariableTok{$\{run\}}\NormalTok{.BaseCellCounts.AllCellTypes.tsv }\DataTypeTok{\textbackslash{}}
+            \AttributeTok{{-}{-}outfile} \VariableTok{$\{output\_dir4\}}\NormalTok{/}\VariableTok{$\{run\}} \DataTypeTok{\textbackslash{}}
+        \AttributeTok{{-}{-}max\_cell\_types}\NormalTok{ 1 }\DataTypeTok{\textbackslash{}}
+        \AttributeTok{{-}{-}min\_cell\_types}\NormalTok{ 2 }\DataTypeTok{\textbackslash{}}
+            \AttributeTok{{-}{-}ref} \VariableTok{$REF}
 
-\NormalTok{  log\_message "Finished scomatic pipeline for $\{run\} successfully!"}
 
-\NormalTok{done}
+  \CommentTok{\# Step 4.2}
+  \ExtensionTok{log\_message} \StringTok{"Step 4.2: Somatic mutation detection..."}
+  \VariableTok{editing}\OperatorTok{=}\VariableTok{$SCOMATIC}\NormalTok{/RNAediting/AllEditingSites.mm10.txt}
+  \VariableTok{PON}\OperatorTok{=}\VariableTok{$SCOMATIC}\NormalTok{/PoNs/PoN.scRNAseq.mm10.tsv}
 
-\NormalTok{log\_message "Pipeline completed successfully for both runs!"}
+  \ExtensionTok{python} \VariableTok{$SCOMATIC}\NormalTok{/scripts/BaseCellCalling/BaseCellCalling.step2.py }\DataTypeTok{\textbackslash{}}
+            \AttributeTok{{-}{-}infile} \VariableTok{$\{output\_dir4\}}\NormalTok{/}\VariableTok{$\{run\}}\NormalTok{.calling.step1.tsv }\DataTypeTok{\textbackslash{}}
+            \AttributeTok{{-}{-}outfile} \VariableTok{$\{output\_dir4\}}\NormalTok{/}\VariableTok{$\{run\}}\NormalTok{.calling.step2.tsv }\DataTypeTok{\textbackslash{}}
+            \AttributeTok{{-}{-}editing} \VariableTok{$editing} \DataTypeTok{\textbackslash{}}
+            \AttributeTok{{-}{-}pon} \VariableTok{$PON}
 
-\NormalTok{\# Display log file}
-\NormalTok{echo "Log file saved to: $logfile"}
-\NormalTok{cat "$logfile"}
+  \CommentTok{\# extra step: Intersection with bed file}
+  \ExtensionTok{log\_message} \StringTok{"Extra step: Intersection with bed file..."}
+  \ExtensionTok{bedtools}\NormalTok{ intersect }\AttributeTok{{-}header} \AttributeTok{{-}a} \VariableTok{$\{output\_dir4\}}\NormalTok{/}\VariableTok{$\{run\}}\NormalTok{.calling.step2.tsv }\AttributeTok{{-}b} \VariableTok{$SCOMATIC}\NormalTok{/bed\_files\_of\_interest/UCSC.mm10.without.repeatmasker.bed }\KeywordTok{|} \FunctionTok{awk} \StringTok{\textquotesingle{}$1 \textasciitilde{} /\^{}\#/ || $6 == "PASS"\textquotesingle{}} \OperatorTok{\textgreater{}} \VariableTok{$\{output\_dir4\}}\NormalTok{/}\VariableTok{$\{run\}}\NormalTok{.calling.step2.pass.tsv}
+
+  \ExtensionTok{log\_message} \StringTok{"Finished scomatic pipeline for }\VariableTok{$\{run\}}\StringTok{ successfully!"}
+
+\ControlFlowTok{done}
+
+\ExtensionTok{log\_message} \StringTok{"Pipeline completed successfully for both runs!"}
+
+\CommentTok{\# Display log file}
+\BuiltInTok{echo} \StringTok{"Log file saved to: }\VariableTok{$logfile}\StringTok{"}
+\FunctionTok{cat} \StringTok{"}\VariableTok{$logfile}\StringTok{"}
 
 \end{Highlighting}
 \end{Shaded}
@@ -2496,79 +2597,79 @@ Execute:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{\# [matterhorn]}
-\NormalTok{./SComatic\_mouse.sh}
+\CommentTok{\# [matterhorn]}
+\ExtensionTok{./SComatic\_mouse.sh}
 \end{Highlighting}
 \end{Shaded}
 
-\section{3.2. SingleCellGenotype calling to obtain mutated cell
+\section{4.2. SingleCellGenotype calling to obtain mutated cell
 barcodes}\label{singlecellgenotype-calling-to-obtain-mutated-cell-barcodes}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{\#!/bin/bash}
-\NormalTok{\# SComatic extra functionality: Computing the genotype for each cell at the variant sites}
-\NormalTok{\# 01/10/2024}
-\NormalTok{\# Author: Alba Méndez Alejandre}
-\NormalTok{\# This is going to allow us to map each variant in the UMAP}
+\CommentTok{\#!/bin/bash}
+\CommentTok{\# SComatic extra functionality: Computing the genotype for each cell at the variant sites}
+\CommentTok{\# 01/10/2024}
+\CommentTok{\# Author: Alba Méndez Alejandre}
+\CommentTok{\# This is going to allow us to map each variant in the UMAP}
 
-\NormalTok{SCOMATIC=\textasciitilde{}/bin/SComatic{-}main}
+\VariableTok{SCOMATIC}\OperatorTok{=}\NormalTok{\textasciitilde{}/bin/SComatic{-}main}
 
-\NormalTok{run\_names=("run1" "run1") \# list of runs}
+\VariableTok{run\_names}\OperatorTok{=}\VariableTok{(}\StringTok{"run1"} \StringTok{"run1"}\VariableTok{)} \CommentTok{\# list of runs}
 
-\NormalTok{REF=/media/storage/reference\_genomes/Mus\_musculus.GRCm38.dna.primary\_assembly.fa}
-\NormalTok{meta\_dir=/media/storage/mcGinn\_2021/scomatic/markers}
+\VariableTok{REF}\OperatorTok{=}\NormalTok{/media/storage/reference\_genomes/Mus\_musculus.GRCm38.dna.primary\_assembly.fa}
+\VariableTok{meta\_dir}\OperatorTok{=}\NormalTok{/media/storage/mcGinn\_2021/scomatic/markers}
 
-\NormalTok{i=0}
-\NormalTok{for run in "$\{run\_names[@]\}";}
-\NormalTok{do}
-\NormalTok{    i=$((i + 1))}
+\VariableTok{i}\OperatorTok{=}\NormalTok{0}
+\ControlFlowTok{for}\NormalTok{ run }\KeywordTok{in} \StringTok{"}\VariableTok{$\{run\_names}\OperatorTok{[@]}\VariableTok{\}}\StringTok{"}\KeywordTok{;}
+\ControlFlowTok{do}
+    \VariableTok{i}\OperatorTok{=}\VariableTok{$((i} \OperatorTok{+} \DecValTok{1}\VariableTok{))}
 
-\NormalTok{    output\_dir="/media/storage/mcGinn\_2021/scomatic/output/$\{run\}"}
-\NormalTok{    output\_dir1=$output\_dir/Step1\_BamCellTypes}
-\NormalTok{    output\_dir4=$output\_dir/Step4\_VariantCalling}
+    \VariableTok{output\_dir}\OperatorTok{=}\StringTok{"/media/storage/mcGinn\_2021/scomatic/output/}\VariableTok{$\{run\}}\StringTok{"}
+    \VariableTok{output\_dir1}\OperatorTok{=}\VariableTok{$output\_dir}\NormalTok{/Step1\_BamCellTypes}
+    \VariableTok{output\_dir4}\OperatorTok{=}\VariableTok{$output\_dir}\NormalTok{/Step4\_VariantCalling}
 
-\NormalTok{    STEP4\_2\_pass=$\{output\_dir4\}/$\{run\}\_modif.calling.step2.pass.tsv \# modified chr1 to 1 tsv file}
+    \VariableTok{STEP4\_2\_pass}\OperatorTok{=}\VariableTok{$\{output\_dir4\}}\NormalTok{/}\VariableTok{$\{run\}}\NormalTok{\_modif.calling.step2.pass.tsv }\CommentTok{\# modified chr1 to 1 tsv file}
 
-\NormalTok{    output\_dir7=$output\_dir/SingleCellAlleles}
-\NormalTok{    mkdir {-}p $output\_dir7}
+    \VariableTok{output\_dir7}\OperatorTok{=}\VariableTok{$output\_dir}\NormalTok{/SingleCellAlleles}
+    \FunctionTok{mkdir} \AttributeTok{{-}p} \VariableTok{$output\_dir7}
     
     
-\NormalTok{    for bam in $(ls {-}d $output\_dir1/*bam);do  }
-\NormalTok{            cell\_type=$(basename $bam | awk {-}F\textquotesingle{}.\textquotesingle{} \textquotesingle{}\{print $(NF{-}1)\}\textquotesingle{})}
+    \ControlFlowTok{for}\NormalTok{ bam }\KeywordTok{in} \VariableTok{$(}\FunctionTok{ls} \AttributeTok{{-}d} \VariableTok{$output\_dir1}\NormalTok{/}\PreprocessorTok{*}\NormalTok{bam}\VariableTok{)}\KeywordTok{;}\ControlFlowTok{do}  
+            \VariableTok{cell\_type}\OperatorTok{=}\VariableTok{$(}\FunctionTok{basename} \VariableTok{$bam} \KeywordTok{|} \FunctionTok{awk} \AttributeTok{{-}F}\StringTok{\textquotesingle{}.\textquotesingle{}} \StringTok{\textquotesingle{}\{print $(NF{-}1)\}\textquotesingle{}}\VariableTok{)}
     
-\NormalTok{        temp=$output\_dir7/temp\_$\{cell\_type\}}
-\NormalTok{            mkdir {-}p $temp}
+        \VariableTok{temp}\OperatorTok{=}\VariableTok{$output\_dir7}\NormalTok{/temp\_}\VariableTok{$\{cell\_type\}}
+            \FunctionTok{mkdir} \AttributeTok{{-}p} \VariableTok{$temp}
 
-\NormalTok{        meta\_file="$meta\_dir/$\{run\}/esoph\_markers\_scomatic\_$\{run\}\_$\{cell\_type\}.tsv"}
+        \VariableTok{meta\_file}\OperatorTok{=}\StringTok{"}\VariableTok{$meta\_dir}\StringTok{/}\VariableTok{$\{run\}}\StringTok{/esoph\_markers\_scomatic\_}\VariableTok{$\{run\}}\StringTok{\_}\VariableTok{$\{cell\_type\}}\StringTok{.tsv"}
         
-\NormalTok{            python $SCOMATIC/scripts/SingleCellGenotype/SingleCellGenotype.py {-}{-}bam $bam  \textbackslash{}}
-\NormalTok{                {-}{-}infile $\{STEP4\_2\_pass\}   \textbackslash{}}
-\NormalTok{                {-}{-}nprocs 10   \textbackslash{}}
-\NormalTok{                {-}{-}meta $meta\_file   \textbackslash{}}
-\NormalTok{                {-}{-}outfile $\{output\_dir7\}/$\{run\}\_$\{cell\_type\}.single\_cell\_genotype.tsv \textbackslash{}}
-\NormalTok{                {-}{-}tmp\_dir $temp  \textbackslash{}}
-\NormalTok{                {-}{-}ref $REF \textbackslash{}}
-\NormalTok{            {-}{-}alt\_flag All}
+            \ExtensionTok{python} \VariableTok{$SCOMATIC}\NormalTok{/scripts/SingleCellGenotype/SingleCellGenotype.py }\AttributeTok{{-}{-}bam} \VariableTok{$bam}  \DataTypeTok{\textbackslash{}}
+                \AttributeTok{{-}{-}infile} \VariableTok{$\{STEP4\_2\_pass\}}   \DataTypeTok{\textbackslash{}}
+                \AttributeTok{{-}{-}nprocs}\NormalTok{ 10   }\DataTypeTok{\textbackslash{}}
+                \AttributeTok{{-}{-}meta} \VariableTok{$meta\_file}   \DataTypeTok{\textbackslash{}}
+                \AttributeTok{{-}{-}outfile} \VariableTok{$\{output\_dir7\}}\NormalTok{/}\VariableTok{$\{run\}}\NormalTok{\_}\VariableTok{$\{cell\_type\}}\NormalTok{.single\_cell\_genotype.tsv }\DataTypeTok{\textbackslash{}}
+                \AttributeTok{{-}{-}tmp\_dir} \VariableTok{$temp}  \DataTypeTok{\textbackslash{}}
+                \AttributeTok{{-}{-}ref} \VariableTok{$REF} \DataTypeTok{\textbackslash{}}
+            \AttributeTok{{-}{-}alt\_flag}\NormalTok{ All}
         
-\NormalTok{        echo "bam file is: $bam, Infile is: $\{STEP4\_2\_pass\}, meta file is $meta\_file and outfile is $\{output\_dir7\}/$\{cell\_type\}.single\_cell\_genotype.tsv"}
+        \BuiltInTok{echo} \StringTok{"bam file is: }\VariableTok{$bam}\StringTok{, Infile is: }\VariableTok{$\{STEP4\_2\_pass\}}\StringTok{, meta file is }\VariableTok{$meta\_file}\StringTok{ and outfile is }\VariableTok{$\{output\_dir7\}}\StringTok{/}\VariableTok{$\{cell\_type\}}\StringTok{.single\_cell\_genotype.tsv"}
 
-\NormalTok{            rm {-}rf $temp}
-\NormalTok{        done}
-\NormalTok{done}
+            \FunctionTok{rm} \AttributeTok{{-}rf} \VariableTok{$temp}
+        \ControlFlowTok{done}
+\ControlFlowTok{done}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{\# [matterhorn]}
-\NormalTok{cd /home/alba/scripts/scomatic}
+\CommentTok{\# [matterhorn]}
+\BuiltInTok{cd}\NormalTok{ /home/alba/scripts/scomatic}
 
-\NormalTok{./variants\_mapping.sh}
+\ExtensionTok{./variants\_mapping.sh}
 \end{Highlighting}
 \end{Shaded}
 
-\section{3.3. Discard variants falling in repetitive
+\section{4.3. Discard variants falling in repetitive
 regions}\label{discard-variants-falling-in-repetitive-regions}
 
 Creation of bed file with regions overlapping with repetitive ones, in
@@ -2576,7 +2677,7 @@ order to remove variants falling in repetitive regions.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{bedtools intersect {-}v {-}a mm10\_genes.bed {-}b mm10\_RepeatMasker.bed \textgreater{} UCSC.m10.without.repeatmasker.bed}
+\ExtensionTok{bedtools}\NormalTok{ intersect }\AttributeTok{{-}v} \AttributeTok{{-}a}\NormalTok{ mm10\_genes.bed }\AttributeTok{{-}b}\NormalTok{ mm10\_RepeatMasker.bed }\OperatorTok{\textgreater{}}\NormalTok{ UCSC.m10.without.repeatmasker.bed}
 \end{Highlighting}
 \end{Shaded}
 
@@ -2586,26 +2687,26 @@ regions}\label{filter-scomatic-output-to-discard-variants-falling-in-repetitive-
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{conda activate SComatic}
-\NormalTok{SCOMATIC=\textasciitilde{}/bin/SComatic{-}main}
-\NormalTok{output\_dir4=/media/storage/mcGinn\_2021/scomatic/output/run1/Step4\_VariantCalling}
+\ExtensionTok{conda}\NormalTok{ activate SComatic}
+\VariableTok{SCOMATIC}\OperatorTok{=}\NormalTok{\textasciitilde{}/bin/SComatic{-}main}
+\VariableTok{output\_dir4}\OperatorTok{=}\NormalTok{/media/storage/mcGinn\_2021/scomatic/output/run1/Step4\_VariantCalling}
 
-\NormalTok{bedtools intersect {-}header {-}a $\{output\_dir4\}/run1.calling.step2.tsv {-}b $SCOMATIC/bed\_files\_of\_interest/UCSC.mm10.without.repeatmasker.bed | awk \textquotesingle{}$1 \textasciitilde{} /\^{}\#/ || $6 == "PASS"\textquotesingle{} \textgreater{} $\{output\_dir4\}/run1.calling.step2.pass.tsv}
+\ExtensionTok{bedtools}\NormalTok{ intersect }\AttributeTok{{-}header} \AttributeTok{{-}a} \VariableTok{$\{output\_dir4\}}\NormalTok{/run1.calling.step2.tsv }\AttributeTok{{-}b} \VariableTok{$SCOMATIC}\NormalTok{/bed\_files\_of\_interest/UCSC.mm10.without.repeatmasker.bed }\KeywordTok{|} \FunctionTok{awk} \StringTok{\textquotesingle{}$1 \textasciitilde{} /\^{}\#/ || $6 == "PASS"\textquotesingle{}} \OperatorTok{\textgreater{}} \VariableTok{$\{output\_dir4\}}\NormalTok{/run1.calling.step2.pass.tsv}
 
-\NormalTok{output\_dir4=/media/storage/mcGinn\_2021/scomatic/output/run2/Step4\_VariantCalling}
+\VariableTok{output\_dir4}\OperatorTok{=}\NormalTok{/media/storage/mcGinn\_2021/scomatic/output/run2/Step4\_VariantCalling}
 
-\NormalTok{bedtools intersect {-}header {-}a $\{output\_dir4\}/run2.calling.step2.tsv {-}b $SCOMATIC/bed\_files\_of\_interest/UCSC.mm10.without.repeatmasker.bed | awk \textquotesingle{}$1 \textasciitilde{} /\^{}\#/ || $6 == "PASS"\textquotesingle{} \textgreater{} $\{output\_dir4\}/run2.calling.step2.pass.tsv}
+\ExtensionTok{bedtools}\NormalTok{ intersect }\AttributeTok{{-}header} \AttributeTok{{-}a} \VariableTok{$\{output\_dir4\}}\NormalTok{/run2.calling.step2.tsv }\AttributeTok{{-}b} \VariableTok{$SCOMATIC}\NormalTok{/bed\_files\_of\_interest/UCSC.mm10.without.repeatmasker.bed }\KeywordTok{|} \FunctionTok{awk} \StringTok{\textquotesingle{}$1 \textasciitilde{} /\^{}\#/ || $6 == "PASS"\textquotesingle{}} \OperatorTok{\textgreater{}} \VariableTok{$\{output\_dir4\}}\NormalTok{/run2.calling.step2.pass.tsv}
 \end{Highlighting}
 \end{Shaded}
 
-\begin{tcolorbox}[enhanced jigsaw, rightrule=.15mm, leftrule=.75mm, bottomtitle=1mm, colbacktitle=quarto-callout-note-color!10!white, toptitle=1mm, left=2mm, breakable, coltitle=black, titlerule=0mm, opacitybacktitle=0.6, colback=white, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note:}, opacityback=0, arc=.35mm, bottomrule=.15mm, colframe=quarto-callout-note-color-frame, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, breakable, opacityback=0, colframe=quarto-callout-note-color-frame, colback=white, opacitybacktitle=0.6, bottomrule=.15mm, titlerule=0mm, rightrule=.15mm, leftrule=.75mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, left=2mm, toptitle=1mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note:}, arc=.35mm]
 
 *calling.step2.pass.tsv files contain only FILTER = PASS variants that
 don't fall in repetitive regions
 
 \end{tcolorbox}
 
-\section{3.4. Filtering of TSVs}\label{filtering-of-tsvs}
+\section{4.4. Filtering of TSVs}\label{filtering-of-tsvs}
 
 \subsection{Filter the TSVs with only PASS in FILTER
 column}\label{filter-the-tsvs-with-only-pass-in-filter-column}
@@ -2613,18 +2714,18 @@ column}\label{filter-the-tsvs-with-only-pass-in-filter-column}
 \begin{Shaded}
 \begin{Highlighting}[]
 
-\NormalTok{seq\_ids=("run1" "run2")}
-\NormalTok{wd="/media/storage/mcGinn\_2021/scomatic/output/"}
+\VariableTok{seq\_ids}\OperatorTok{=}\VariableTok{(}\StringTok{"run1"} \StringTok{"run2"}\VariableTok{)}
+\VariableTok{wd}\OperatorTok{=}\StringTok{"/media/storage/mcGinn\_2021/scomatic/output/"}
 
-\NormalTok{for seq in "$\{seq\_ids[@]\}"; do}
+\ControlFlowTok{for}\NormalTok{ seq }\KeywordTok{in} \StringTok{"}\VariableTok{$\{seq\_ids}\OperatorTok{[@]}\VariableTok{\}}\StringTok{"}\KeywordTok{;} \ControlFlowTok{do}
    
-\NormalTok{    awk \textquotesingle{}BEGIN \{FS="\textbackslash{}t"; OFS="\textbackslash{}t"\} NR \textless{}= 29 || ($6 == "PASS" \&\& !/\^{}\#/) \{print\}\textquotesingle{} "$\{wd\}/$\{seq\}/Step4\_VariantCalling/$\{seq\}.calling.step2.tsv" \textgreater{} "$\{wd\}/$\{seq\}/Step4\_VariantCalling/$\{seq\}\_filtered.calling.step2.tsv"}
+    \FunctionTok{awk} \StringTok{\textquotesingle{}BEGIN \{FS="\textbackslash{}t"; OFS="\textbackslash{}t"\} NR \textless{}= 29 || ($6 == "PASS" \&\& !/\^{}\#/) \{print\}\textquotesingle{}} \StringTok{"}\VariableTok{$\{wd\}}\StringTok{/}\VariableTok{$\{seq\}}\StringTok{/Step4\_VariantCalling/}\VariableTok{$\{seq\}}\StringTok{.calling.step2.tsv"} \OperatorTok{\textgreater{}} \StringTok{"}\VariableTok{$\{wd\}}\StringTok{/}\VariableTok{$\{seq\}}\StringTok{/Step4\_VariantCalling/}\VariableTok{$\{seq\}}\StringTok{\_filtered.calling.step2.tsv"}
 
-\NormalTok{done}
+\ControlFlowTok{done}
 \end{Highlighting}
 \end{Shaded}
 
-\begin{tcolorbox}[enhanced jigsaw, rightrule=.15mm, leftrule=.75mm, bottomtitle=1mm, colbacktitle=quarto-callout-note-color!10!white, toptitle=1mm, left=2mm, breakable, coltitle=black, titlerule=0mm, opacitybacktitle=0.6, colback=white, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note:}, opacityback=0, arc=.35mm, bottomrule=.15mm, colframe=quarto-callout-note-color-frame, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, breakable, opacityback=0, colframe=quarto-callout-note-color-frame, colback=white, opacitybacktitle=0.6, bottomrule=.15mm, titlerule=0mm, rightrule=.15mm, leftrule=.75mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, left=2mm, toptitle=1mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note:}, arc=.35mm]
 
 *\_filtered.calling.step2.tsv files contain only FILTER = PASS variants,
 including variants that fall in repetitive regions.
@@ -2640,17 +2741,17 @@ In order to analyze the variants that are arked solely as
 \begin{Shaded}
 \begin{Highlighting}[]
 
-\NormalTok{seq\_ids=("run1" "run2")}
-\NormalTok{wd="/media/storage/mcGinn\_2021/scomatic/output/"}
+\VariableTok{seq\_ids}\OperatorTok{=}\VariableTok{(}\StringTok{"run1"} \StringTok{"run2"}\VariableTok{)}
+\VariableTok{wd}\OperatorTok{=}\StringTok{"/media/storage/mcGinn\_2021/scomatic/output/"}
 
-\NormalTok{for seq in "$\{seq\_ids[@]\}"; do}
+\ControlFlowTok{for}\NormalTok{ seq }\KeywordTok{in} \StringTok{"}\VariableTok{$\{seq\_ids}\OperatorTok{[@]}\VariableTok{\}}\StringTok{"}\KeywordTok{;} \ControlFlowTok{do}
 
-\NormalTok{    awk \textquotesingle{}BEGIN \{FS="\textbackslash{}t"; OFS="\textbackslash{}t"\} NR \textless{}= 29 || ($6 == "PASS" || $6 == "Multiple\_cell\_types") \&\& !/\^{}\#/ \{print\}\textquotesingle{} "$\{wd\}/$\{seq\}/Step4\_VariantCalling/$\{seq\}.calling.step2.tsv" \textgreater{} "$\{wd\}/$\{seq\}/Step4\_VariantCalling/$\{seq\}\_mult.calling.step2.tsv"}
-\NormalTok{done}
+    \FunctionTok{awk} \StringTok{\textquotesingle{}BEGIN \{FS="\textbackslash{}t"; OFS="\textbackslash{}t"\} NR \textless{}= 29 || ($6 == "PASS" || $6 == "Multiple\_cell\_types") \&\& !/\^{}\#/ \{print\}\textquotesingle{}} \StringTok{"}\VariableTok{$\{wd\}}\StringTok{/}\VariableTok{$\{seq\}}\StringTok{/Step4\_VariantCalling/}\VariableTok{$\{seq\}}\StringTok{.calling.step2.tsv"} \OperatorTok{\textgreater{}} \StringTok{"}\VariableTok{$\{wd\}}\StringTok{/}\VariableTok{$\{seq\}}\StringTok{/Step4\_VariantCalling/}\VariableTok{$\{seq\}}\StringTok{\_mult.calling.step2.tsv"}
+\ControlFlowTok{done}
 \end{Highlighting}
 \end{Shaded}
 
-\begin{tcolorbox}[enhanced jigsaw, rightrule=.15mm, leftrule=.75mm, bottomtitle=1mm, colbacktitle=quarto-callout-note-color!10!white, toptitle=1mm, left=2mm, breakable, coltitle=black, titlerule=0mm, opacitybacktitle=0.6, colback=white, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note:}, opacityback=0, arc=.35mm, bottomrule=.15mm, colframe=quarto-callout-note-color-frame, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, breakable, opacityback=0, colframe=quarto-callout-note-color-frame, colback=white, opacitybacktitle=0.6, bottomrule=.15mm, titlerule=0mm, rightrule=.15mm, leftrule=.75mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, left=2mm, toptitle=1mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note:}, arc=.35mm]
 
 *\_mult.calling.step2.tsv files contain only FILTER =
 PASS\textbar Multiple\_cell\_types variants, including variants that
@@ -2660,22 +2761,22 @@ fall in repetitive regions.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{\# [matterhorn]}
-\NormalTok{conda activate SComatic}
-\NormalTok{SCOMATIC=\textasciitilde{}/bin/SComatic{-}main}
-\NormalTok{output\_dir4=/media/storage/mcGinn\_2021/scomatic/output/run1/Step4\_VariantCalling}
+\CommentTok{\# [matterhorn]}
+\ExtensionTok{conda}\NormalTok{ activate SComatic}
+\VariableTok{SCOMATIC}\OperatorTok{=}\NormalTok{\textasciitilde{}/bin/SComatic{-}main}
+\VariableTok{output\_dir4}\OperatorTok{=}\NormalTok{/media/storage/mcGinn\_2021/scomatic/output/run1/Step4\_VariantCalling}
 
-\NormalTok{\# for multiple\_cell type}
-\NormalTok{bedtools intersect {-}header {-}a $\{output\_dir4\}/run1\_mult.calling.step2.tsv {-}b $SCOMATIC/bed\_files\_of\_interest/UCSC.mm10.withouvt.repeatmasker.bed | awk \textquotesingle{}$1 \textasciitilde{} /\^{}\#/ || $6 == "PASS"\textquotesingle{} \textgreater{} $\{output\_dir4\}/run1\_mult.calling.step2.pass.tsv}
+\CommentTok{\# for multiple\_cell type}
+\ExtensionTok{bedtools}\NormalTok{ intersect }\AttributeTok{{-}header} \AttributeTok{{-}a} \VariableTok{$\{output\_dir4\}}\NormalTok{/run1\_mult.calling.step2.tsv }\AttributeTok{{-}b} \VariableTok{$SCOMATIC}\NormalTok{/bed\_files\_of\_interest/UCSC.mm10.withouvt.repeatmasker.bed }\KeywordTok{|} \FunctionTok{awk} \StringTok{\textquotesingle{}$1 \textasciitilde{} /\^{}\#/ || $6 == "PASS"\textquotesingle{}} \OperatorTok{\textgreater{}} \VariableTok{$\{output\_dir4\}}\NormalTok{/run1\_mult.calling.step2.pass.tsv}
 
-\NormalTok{output\_dir4=/media/storage/mcGinn\_2021/scomatic/output/run2/Step4\_VariantCalling}
+\VariableTok{output\_dir4}\OperatorTok{=}\NormalTok{/media/storage/mcGinn\_2021/scomatic/output/run2/Step4\_VariantCalling}
 
-\NormalTok{\# for multiple\_cell type}
-\NormalTok{bedtools intersect {-}header {-}a $\{output\_dir4\}/run2\_mult.calling.step2.tsv {-}b $SCOMATIC/bed\_files\_of\_interest/UCSC.mm10.without.repeatmasker.bed | awk \textquotesingle{}$1 \textasciitilde{} /\^{}\#/ || $6 == "PASS"\textquotesingle{} \textgreater{} $\{output\_dir4\}/run2\_mult.calling.step2.pass.tsv}
+\CommentTok{\# for multiple\_cell type}
+\ExtensionTok{bedtools}\NormalTok{ intersect }\AttributeTok{{-}header} \AttributeTok{{-}a} \VariableTok{$\{output\_dir4\}}\NormalTok{/run2\_mult.calling.step2.tsv }\AttributeTok{{-}b} \VariableTok{$SCOMATIC}\NormalTok{/bed\_files\_of\_interest/UCSC.mm10.without.repeatmasker.bed }\KeywordTok{|} \FunctionTok{awk} \StringTok{\textquotesingle{}$1 \textasciitilde{} /\^{}\#/ || $6 == "PASS"\textquotesingle{}} \OperatorTok{\textgreater{}} \VariableTok{$\{output\_dir4\}}\NormalTok{/run2\_mult.calling.step2.pass.tsv}
 \end{Highlighting}
 \end{Shaded}
 
-\begin{tcolorbox}[enhanced jigsaw, rightrule=.15mm, leftrule=.75mm, bottomtitle=1mm, colbacktitle=quarto-callout-note-color!10!white, toptitle=1mm, left=2mm, breakable, coltitle=black, titlerule=0mm, opacitybacktitle=0.6, colback=white, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note:}, opacityback=0, arc=.35mm, bottomrule=.15mm, colframe=quarto-callout-note-color-frame, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, breakable, opacityback=0, colframe=quarto-callout-note-color-frame, colback=white, opacitybacktitle=0.6, bottomrule=.15mm, titlerule=0mm, rightrule=.15mm, leftrule=.75mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, left=2mm, toptitle=1mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note:}, arc=.35mm]
 
 *\_mult.calling.step2.pass.tsv files contain only FILTER =
 PASS\textbar Multiple\_cell\_types variants that don't fall in
@@ -2683,7 +2784,7 @@ repetitive regions
 
 \end{tcolorbox}
 
-\section{3.5. Convert the TSV files to
+\section{4.5. Convert the TSV files to
 VCF}\label{convert-the-tsv-files-to-vcf}
 
 The program outputs its files in a custom TSV format which makes it very
@@ -2693,7 +2794,7 @@ in bioinformatics, the VCFv4.3
 (https://samtools.github.io/hts-specs/VCFv4.3.pdf). For that, we
 generated a custom script ``3-5\_TSVtoVCF.py''.
 
-\begin{tcolorbox}[enhanced jigsaw, rightrule=.15mm, leftrule=.75mm, bottomtitle=1mm, colbacktitle=quarto-callout-note-color!10!white, toptitle=1mm, left=2mm, breakable, coltitle=black, titlerule=0mm, opacitybacktitle=0.6, colback=white, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{What is a VCF?}, opacityback=0, arc=.35mm, bottomrule=.15mm, colframe=quarto-callout-note-color-frame, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, breakable, opacityback=0, colframe=quarto-callout-note-color-frame, colback=white, opacitybacktitle=0.6, bottomrule=.15mm, titlerule=0mm, rightrule=.15mm, leftrule=.75mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, left=2mm, toptitle=1mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{What is a VCF?}, arc=.35mm]
 
 VCF is a text file format (most likely stored in a compressed manner).
 It contains meta-information lines (prefixed with ``\#\#''), a header
@@ -2708,11 +2809,11 @@ support both LF (``\n'') and CR+LF (``\r\n'') newline conventions.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{cd /media/storage/mcGinn\_2021/scomatic}
-\NormalTok{conda activate d\_vep}
+\BuiltInTok{cd}\NormalTok{ /media/storage/mcGinn\_2021/scomatic}
+\ExtensionTok{conda}\NormalTok{ activate d\_vep}
 
-\NormalTok{python 3{-}5\_TSVtoVCF.py {-}{-}add{-}info {-}{-}add{-}celltypes output/run1/Step4\_VariantCalling/run1.calling.step2.tsv output/run1/Step4\_VariantCalling/run1.calling.step2.vcf}
-\NormalTok{python 3{-}5\_TSVtoVCF.py {-}{-}add{-}info {-}{-}add{-}celltypes output/run2/Step4\_VariantCalling/run2.calling.step2.tsv output/run2/Step4\_VariantCalling/run2.calling.step2.vcf}
+\ExtensionTok{python}\NormalTok{ 3{-}5\_TSVtoVCF.py }\AttributeTok{{-}{-}add{-}info} \AttributeTok{{-}{-}add{-}celltypes}\NormalTok{ output/run1/Step4\_VariantCalling/run1.calling.step2.tsv output/run1/Step4\_VariantCalling/run1.calling.step2.vcf}
+\ExtensionTok{python}\NormalTok{ 3{-}5\_TSVtoVCF.py }\AttributeTok{{-}{-}add{-}info} \AttributeTok{{-}{-}add{-}celltypes}\NormalTok{ output/run2/Step4\_VariantCalling/run2.calling.step2.tsv output/run2/Step4\_VariantCalling/run2.calling.step2.vcf}
 \end{Highlighting}
 \end{Shaded}
 
@@ -2725,21 +2826,21 @@ EBI VCF validator. However, neither tool currently supports VCF version
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{\# [matterhorn]}
-\NormalTok{conda activate samtools}
-\NormalTok{samtools faidx Mus\_musculus.GRCm39.dna.primary\_assembly.faidx}
+\CommentTok{\# [matterhorn]}
+\ExtensionTok{conda}\NormalTok{ activate samtools}
+\ExtensionTok{samtools}\NormalTok{ faidx Mus\_musculus.GRCm39.dna.primary\_assembly.faidx}
 
-\NormalTok{conda activate d\_gatk}
+\ExtensionTok{conda}\NormalTok{ activate d\_gatk}
 
-\NormalTok{gatk CreateSequenceDictionary {-}R Mus\_musculus.GRCm39.dna.primary\_assembly.fa }
+\ExtensionTok{gatk}\NormalTok{ CreateSequenceDictionary }\AttributeTok{{-}R}\NormalTok{ Mus\_musculus.GRCm39.dna.primary\_assembly.fa }
 
-\NormalTok{REF=\textasciitilde{}/bin/SComatic{-}main/reference\_genomes/Mus\_musculus.GRCm38.dna.primary\_assembly.fa }
+\VariableTok{REF}\OperatorTok{=}\NormalTok{\textasciitilde{}/bin/SComatic{-}main/reference\_genomes/Mus\_musculus.GRCm38.dna.primary\_assembly.fa }
 
-\NormalTok{gatk ValidateVariants {-}V output/run1/Step4\_VariantCalling/run1\_filtered.calling.step2.vcf {-}R $REF {-}{-}validation{-}type{-}to{-}exclude ALLELES}
-\NormalTok{gatk ValidateVariants {-}V output/run2/Step4\_VariantCalling/run2\_filtered.calling.step2.vcf {-}R $REF {-}{-}validation{-}type{-}to{-}exclude ALLELES}
+\ExtensionTok{gatk}\NormalTok{ ValidateVariants }\AttributeTok{{-}V}\NormalTok{ output/run1/Step4\_VariantCalling/run1\_filtered.calling.step2.vcf }\AttributeTok{{-}R} \VariableTok{$REF} \AttributeTok{{-}{-}validation{-}type{-}to{-}exclude}\NormalTok{ ALLELES}
+\ExtensionTok{gatk}\NormalTok{ ValidateVariants }\AttributeTok{{-}V}\NormalTok{ output/run2/Step4\_VariantCalling/run2\_filtered.calling.step2.vcf }\AttributeTok{{-}R} \VariableTok{$REF} \AttributeTok{{-}{-}validation{-}type{-}to{-}exclude}\NormalTok{ ALLELES}
 
-\NormalTok{vcf\_validator {-}i output/run1/Step4\_VariantCalling/run1\_filtered.calling.step2.vcf {-}r summary,text,database}
-\NormalTok{vcf\_validator {-}i output/run2/Step4\_VariantCalling/run2\_filtered.calling.step2.vcf {-}r summary,text,database}
+\ExtensionTok{vcf\_validator} \AttributeTok{{-}i}\NormalTok{ output/run1/Step4\_VariantCalling/run1\_filtered.calling.step2.vcf }\AttributeTok{{-}r}\NormalTok{ summary,text,database}
+\ExtensionTok{vcf\_validator} \AttributeTok{{-}i}\NormalTok{ output/run2/Step4\_VariantCalling/run2\_filtered.calling.step2.vcf }\AttributeTok{{-}r}\NormalTok{ summary,text,database}
 \end{Highlighting}
 \end{Shaded}
 
@@ -2785,7 +2886,7 @@ VEP (variant effect predictor).
 \end{Highlighting}
 \end{Shaded}
 
-\chapter{5.1. Analysis of annotations}\label{analysis-of-annotations}
+\section{5.1. Analysis of annotations}\label{analysis-of-annotations}
 
 We are going to view the genes that are drivers, as well as those that
 are found in the 192 gene panel from Colom 2021 and in the WES data from
@@ -2806,7 +2907,7 @@ Abcb11,Abcc2,Adam10,Adam29,Adcy10,Aff3,Ajuba,Akap9,Akt1,Akt2,Apob,Arid1a,Arid2,A
   human genes previously.
 \end{itemize}
 
-\begin{tcolorbox}[enhanced jigsaw, breakable, leftrule=.75mm, bottomrule=.15mm, colback=white, arc=.35mm, opacityback=0, rightrule=.15mm, toprule=.15mm, colframe=quarto-callout-warning-color-frame, left=2mm]
+\begin{tcolorbox}[enhanced jigsaw, bottomrule=.15mm, breakable, rightrule=.15mm, leftrule=.75mm, toprule=.15mm, opacityback=0, colframe=quarto-callout-warning-color-frame, colback=white, left=2mm, arc=.35mm]
 
 \vspace{-3mm}\textbf{Warning! this is the structure of the CSQ value from INFO column:}\vspace{3mm}
 
@@ -2820,9 +2921,9 @@ Allele\textbar Consequence\textbar IMPACT\textbar SYMBOL\textbar Gene\textbar Fe
 \end{Highlighting}
 \end{Shaded}
 
-\chapter{5.2.}\label{section}
+\section{5.2.}\label{section}
 
-\section{Wordcloud of genes}\label{wordcloud-of-genes}
+\subsection{Wordcloud of genes}\label{wordcloud-of-genes}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -2846,7 +2947,7 @@ Allele\textbar Consequence\textbar IMPACT\textbar SYMBOL\textbar Gene\textbar Fe
 \end{Highlighting}
 \end{Shaded}
 
-\chapter{4. Functional Analysis}\label{functional-analysis}
+\chapter{6. Gene Ontology Analysis}\label{gene-ontology-analysis}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -2887,7 +2988,7 @@ Allele\textbar Consequence\textbar IMPACT\textbar SYMBOL\textbar Gene\textbar Fe
 esophagus HCA
 dataset}\label{visualization-of-intersected-genes-with-venn-diagrams-in-esophagus-hca-dataset}
 
-\chapter{Import libraries}\label{import-libraries-1}
+\chapter{Import libraries}\label{import-libraries-2}
 
 \begin{Shaded}
 \begin{Highlighting}[]

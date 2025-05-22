@@ -1,18 +1,7 @@
----
-title: "1 - Inspection of HCA seurat object"
-format:
-  html:
-    toc: true
-jupyter:
-  kernel: python3
-fig-show: hold
-execute:
-  eval: false
-author: Alba Mendez Alejandre
-date: 02-2025
----
+# 1. Inspection of HCA seurat object"
 
-# Import libraries
+
+## Import libraries
 ```{r}
 
 .libPaths("/home/albax/miniforge3/envs/seurat_v4/lib/R/library")
@@ -51,7 +40,7 @@ projectPath <- setwd("/home/albax/human_esophagus") # where we are
 ```
 
 
-# Load rds object
+## Load rds object
 
 ```{r}
 # hca_esoph <- readRDS(file = "./data/hca_esoph_with_annotations.rds")
@@ -67,25 +56,9 @@ my_esoph
 ```
 
 
+## 1.1. Possible artifacts 
 
-# Viewing barcodes of potential artifacts in UMAP
-While doing the heatmap clustering analysis, we found that donor 296C has a very strange pattern, with more than 100 clones in a single cluster (cluster 30 with cognate True), also it only has 5 clusters... Why is this happening?
-
-To answer that question, we thought that maybe Malat1 was highly present in the cells of those clones...
-
-```{r}
-# load CB_seurat barcodes from cluster30
-cbs_lista <- read.table("/home/albax/dario_TFM/singlecell/seurat/cluster30_CBs")
-
-```
-
-```{r}
-DimPlot(hca_esoph, cells.highlight=cbs_lista$V1)
-
-```
-
-
-## MALAT1
+### MALAT1
 
 As shown in https://www.biorxiv.org/content/10.1101/2024.07.14.603469v2 and https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-024-11015-5 , low levels of MALAT1 might indicate empty droplets or poor quality cells, as it is a nuclear marker, so its absence indicates cells lacking a nucleus. Therefore, low expression of MALAT1 might indicate low-quality cells. 
 
@@ -106,9 +79,9 @@ FeaturePlot(my_esoph, features = c("MALAT1"), split.by = "Donor") & scale_y_cont
 
 ```
 
-it doesn't look like there are low-quality cells in 296C...
+it doesn't look like there are low-quality cells anywhere
 
-# DE genes for these cells
+## 1.2. DE genes for specific cells
 
 ```{r}
 all_CBs <-colnames(hca_esoph)[hca_esoph@meta.data$Donor == "296C"]

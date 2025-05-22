@@ -1,6 +1,5 @@
 project:
   type: book
-  # output-dir: _book
   output-dir: docs
 
 book:
@@ -48,6 +47,6 @@ format:
     toc-expand: 4
     toc-location: right
     toc-title: "Index"
-  pdf:
-    toc: true
-    documentclass: scrreprt
+  # pdf:
+  #   toc: true
+  #   documentclass: scrreprt

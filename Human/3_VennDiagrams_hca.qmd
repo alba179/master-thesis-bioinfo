@@ -1,18 +1,10 @@
----
-title: "3 - Visualization of intersected genes with Venn diagrams in esophagus HCA dataset"
-format:
-  html:
-    toc: true
-jupyter:
-  kernel: python3
-fig-show: hold
-execute:
-  eval: false
-author: Alba Mendez Alejandre
+<!-- ---
 date: 04-2025
----
+--- -->
 
-# Import libraries
+# 3. Visualization of intersected genes with Venn diagrams in esophagus HCA dataset
+
+### Import libraries
 
 ```{r}
 .libPaths("/home/albax/miniforge3/envs/seurat_v4/lib/R/library")
@@ -30,7 +22,7 @@ projectPath <- setwd("/home/albax/human_esophagus") # where we are
 
 ```
 
-# Gene lists to plot
+## 3.1. Gene lists to plot
 we are going to plot specific sets of genes against all of the SComatic detected genes.
 
 - intOGen human driver database
@@ -51,9 +43,9 @@ all_mutated_scomatic <- read.table("data/mutated_genes_hca.tsv", sep="\t", heade
 ```
 
 
-# Plot Venn diagrams
+## 3.2. Plot Venn diagrams
 
-## 1. Detected in SComatic vs. intOGen
+### i. Detected in SComatic vs. intOGen
 ```{r}
 detected_genes <- all_mutated_scomatic[all_mutated_scomatic$V1 %in% intersect(all_mutated_scomatic$V1, all_intogen$Symbol), ] # 95
 
@@ -68,7 +60,7 @@ write.table(detected_genes, "venn_intersect/venn_scomatic_vs_intogen.csv", sep =
 
 ```
 
-## 2. Detected in SComatic vs. common cancer
+### ii. Detected in SComatic vs. common cancer
 
 ```{r}
 detected_genes <- all_mutated_scomatic[all_mutated_scomatic$V1 %in% intersect(all_mutated_scomatic$V1, common_cancer_genes), ] # 95
@@ -85,7 +77,7 @@ write.table(detected_genes, "venn_intersect/venn_scomatic_vs_common_cancer_genes
 
 ```
 
-## 3. Detected in SComatic vs intogen vs common cancer
+### iii. Detected in SComatic vs intogen vs common cancer
 
 ```{r}
 # Generate Venn diagram
