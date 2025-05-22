@@ -202,7 +202,7 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same} % disable monospaced font for URLs
 \hypersetup{
-  pdftitle={Master thesis in Bioinformatics and Computational Biology},
+  pdftitle={Master's thesis in Bioinformatics and Computational Biology},
   pdfauthor={Alba Méndez Alejandre},
   colorlinks=true,
   linkcolor={blue},
@@ -212,15 +212,7 @@
   pdfcreator={LaTeX via pandoc}}
 
 
-\title{Master thesis in Bioinformatics and Computational Biology}
-\usepackage{etoolbox}
-\makeatletter
-\providecommand{\subtitle}[1]{% add subtitle to \maketitle
-  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
-}
-\makeatother
-\subtitle{Single-cell transcriptomics analysis of mutant competition
-during field cancerization in mouse esophagus}
+\title{Master's thesis in Bioinformatics and Computational Biology}
 \author{Alba Méndez Alejandre}
 \date{22/05/2025}
 
@@ -578,7 +570,7 @@ Generate the reference genome indexed file
 The next step is to create the seurat object with the count matrices
 obtained from STARsolo, with spliced, unspliced and gene matrices.
 
-\begin{tcolorbox}[enhanced jigsaw, titlerule=0mm, toprule=.15mm, rightrule=.15mm, arc=.35mm, left=2mm, colback=white, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{{[}The file is named ``1-4\_merge\_seurat\_fixedrank.R''{]}}, colbacktitle=quarto-callout-note-color!10!white, toptitle=1mm, bottomrule=.15mm, colframe=quarto-callout-note-color-frame, breakable, coltitle=black, bottomtitle=1mm, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, breakable, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{{[}The file is named ``1-4\_merge\_seurat\_fixedrank.R''{]}}, bottomtitle=1mm, opacitybacktitle=0.6, toptitle=1mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, rightrule=.15mm, bottomrule=.15mm, leftrule=.75mm, left=2mm, colback=white]
 
 \end{tcolorbox}
 
@@ -1703,7 +1695,7 @@ Adult & 3 & 2 & \emph{676} & 5438 & \emph{36246.5} & 15707 &
 3.5389684657119 \\
 \end{longtable}
 
-\begin{tcolorbox}[enhanced jigsaw, bottomrule=.15mm, colframe=quarto-callout-warning-color-frame, toprule=.15mm, breakable, rightrule=.15mm, arc=.35mm, left=2mm, colback=white, leftrule=.75mm, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, toprule=.15mm, left=2mm, arc=.35mm, rightrule=.15mm, breakable, bottomrule=.15mm, colframe=quarto-callout-warning-color-frame, leftrule=.75mm, colback=white, opacityback=0]
 
 \vspace{-3mm}\textbf{Warning:}\vspace{3mm}
 
@@ -2608,7 +2600,7 @@ regions}\label{filter-scomatic-output-to-discard-variants-falling-in-repetitive-
 \end{Highlighting}
 \end{Shaded}
 
-\begin{tcolorbox}[enhanced jigsaw, titlerule=0mm, toprule=.15mm, rightrule=.15mm, arc=.35mm, left=2mm, colback=white, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note:}, colbacktitle=quarto-callout-note-color!10!white, toptitle=1mm, bottomrule=.15mm, colframe=quarto-callout-note-color-frame, breakable, coltitle=black, bottomtitle=1mm, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, breakable, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note:}, bottomtitle=1mm, opacitybacktitle=0.6, toptitle=1mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, rightrule=.15mm, bottomrule=.15mm, leftrule=.75mm, left=2mm, colback=white]
 
 *calling.step2.pass.tsv files contain only FILTER = PASS variants that
 don't fall in repetitive regions
@@ -2634,7 +2626,7 @@ column}\label{filter-the-tsvs-with-only-pass-in-filter-column}
 \end{Highlighting}
 \end{Shaded}
 
-\begin{tcolorbox}[enhanced jigsaw, titlerule=0mm, toprule=.15mm, rightrule=.15mm, arc=.35mm, left=2mm, colback=white, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note:}, colbacktitle=quarto-callout-note-color!10!white, toptitle=1mm, bottomrule=.15mm, colframe=quarto-callout-note-color-frame, breakable, coltitle=black, bottomtitle=1mm, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, breakable, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note:}, bottomtitle=1mm, opacitybacktitle=0.6, toptitle=1mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, rightrule=.15mm, bottomrule=.15mm, leftrule=.75mm, left=2mm, colback=white]
 
 *\_filtered.calling.step2.tsv files contain only FILTER = PASS variants,
 including variants that fall in repetitive regions.
@@ -2660,7 +2652,7 @@ In order to analyze the variants that are arked solely as
 \end{Highlighting}
 \end{Shaded}
 
-\begin{tcolorbox}[enhanced jigsaw, titlerule=0mm, toprule=.15mm, rightrule=.15mm, arc=.35mm, left=2mm, colback=white, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note:}, colbacktitle=quarto-callout-note-color!10!white, toptitle=1mm, bottomrule=.15mm, colframe=quarto-callout-note-color-frame, breakable, coltitle=black, bottomtitle=1mm, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, breakable, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note:}, bottomtitle=1mm, opacitybacktitle=0.6, toptitle=1mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, rightrule=.15mm, bottomrule=.15mm, leftrule=.75mm, left=2mm, colback=white]
 
 *\_mult.calling.step2.tsv files contain only FILTER =
 PASS\textbar Multiple\_cell\_types variants, including variants that
@@ -2685,7 +2677,7 @@ fall in repetitive regions.
 \end{Highlighting}
 \end{Shaded}
 
-\begin{tcolorbox}[enhanced jigsaw, titlerule=0mm, toprule=.15mm, rightrule=.15mm, arc=.35mm, left=2mm, colback=white, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note:}, colbacktitle=quarto-callout-note-color!10!white, toptitle=1mm, bottomrule=.15mm, colframe=quarto-callout-note-color-frame, breakable, coltitle=black, bottomtitle=1mm, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, breakable, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note:}, bottomtitle=1mm, opacitybacktitle=0.6, toptitle=1mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, rightrule=.15mm, bottomrule=.15mm, leftrule=.75mm, left=2mm, colback=white]
 
 *\_mult.calling.step2.pass.tsv files contain only FILTER =
 PASS\textbar Multiple\_cell\_types variants that don't fall in
@@ -2703,7 +2695,7 @@ in bioinformatics, the VCFv4.3
 (https://samtools.github.io/hts-specs/VCFv4.3.pdf). For that, we
 generated a custom script ``3-5\_TSVtoVCF.py''.
 
-\begin{tcolorbox}[enhanced jigsaw, titlerule=0mm, toprule=.15mm, rightrule=.15mm, arc=.35mm, left=2mm, colback=white, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{What is a VCF?}, colbacktitle=quarto-callout-note-color!10!white, toptitle=1mm, bottomrule=.15mm, colframe=quarto-callout-note-color-frame, breakable, coltitle=black, bottomtitle=1mm, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, breakable, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{What is a VCF?}, bottomtitle=1mm, opacitybacktitle=0.6, toptitle=1mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, rightrule=.15mm, bottomrule=.15mm, leftrule=.75mm, left=2mm, colback=white]
 
 VCF is a text file format (most likely stored in a compressed manner).
 It contains meta-information lines (prefixed with ``\#\#''), a header
@@ -2816,7 +2808,7 @@ Abcb11,Abcc2,Adam10,Adam29,Adcy10,Aff3,Ajuba,Akap9,Akt1,Akt2,Apob,Arid1a,Arid2,A
   human genes previously.
 \end{itemize}
 
-\begin{tcolorbox}[enhanced jigsaw, bottomrule=.15mm, colframe=quarto-callout-warning-color-frame, toprule=.15mm, breakable, rightrule=.15mm, arc=.35mm, left=2mm, colback=white, leftrule=.75mm, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, toprule=.15mm, left=2mm, arc=.35mm, rightrule=.15mm, breakable, bottomrule=.15mm, colframe=quarto-callout-warning-color-frame, leftrule=.75mm, colback=white, opacityback=0]
 
 \vspace{-3mm}\textbf{Warning! this is the structure of the CSQ value from INFO column:}\vspace{3mm}
 
@@ -2892,6 +2884,115 @@ Allele\textbar Consequence\textbar IMPACT\textbar SYMBOL\textbar Gene\textbar Fe
 \end{Shaded}
 
 \part{Human HCA analysis}
+
+\chapter{3 - Visualization of intersected genes with Venn diagrams in
+esophagus HCA
+dataset}\label{visualization-of-intersected-genes-with-venn-diagrams-in-esophagus-hca-dataset}
+
+\chapter{Import libraries}\label{import-libraries-1}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{.libPaths("/home/albax/miniforge3/envs/seurat\_v4/lib/R/library")}
+
+\NormalTok{if(.Platform$OS.type == "linux") Sys.setenv(PATH= paste("/home/albax/miniforge3/envs/seurat\_v4/lib",Sys.getenv()["PATH"],sep=";"))}
+
+\NormalTok{use\_condaenv("/home/albax/miniforge3/envs/seurat\_v4", required = TRUE)}
+
+\NormalTok{library(VennDiagram)}
+\NormalTok{library(ggplot2)}
+\NormalTok{library(ggvenn)}
+\NormalTok{library(svglite)}
+
+\NormalTok{projectPath \textless{}{-} setwd("/home/albax/human\_esophagus") \# where we are}
+\end{Highlighting}
+\end{Shaded}
+
+\chapter{Gene lists to plot}\label{gene-lists-to-plot}
+
+we are going to plot specific sets of genes against all of the SComatic
+detected genes.
+
+\begin{itemize}
+\tightlist
+\item
+  intOGen human driver database
+\item
+  common cancer genes from MartinCorena et al
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{all\_intogen \textless{}{-} read.table("/home/albax/intogen/IntOGen{-}DriverGenes.tsv", sep="\textbackslash{}t", header = TRUE)}
+
+
+\NormalTok{common\_cancer\_genes \textless{}{-} c("ADAM29", "ADAMTS18", "AJUBA", "AKT1", "AKT2", "APOB", "ARID1A", "ARID2", "AURKA", "BAI3", "BRAF", "CASP8", "CCND1", "CDH1", "CDKN2A", "CR2", "CREBBP", "CUL3", "DICER1", "EGFR", "EPHA2", "ERBB2", "ERBB3", "ERBB4", "EZH2", "FAT1", "FAT4", "FBXW7", "FGFR1", "FGFR2", "FGFR3", "FLG2", "GRIN2A", "GRM3", "HRAS", "IRF6", "KCNH5", "KEAP1", "KMT2A", "KMT2C", "KMT2D", "KRAS", "MET", "MUC17", "NF1", "NFE2L2", "NOTCH1", "NOTCH2", "NOTCH3", "NOTCH4", "NRAS", "NSD1", "PCED1B", "PIK3CA", "PLCB1", "PPP1R3A", "PREX2", "PTCH1", "PTEN", "PTPRT", "RB1", "RBM10", "SALL1", "SCN11A", "SCN1A", "SETD2", "SMAD4", "SMO", "SOX2", "SPHKAP", "SUFU", "TP53", "TP63", "TRIOBP", "ZNF750", "TGFBR2")}
+\end{Highlighting}
+\end{Shaded}
+
+SComatic mutated genes. They are \_\_ in total.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{all\_mutated\_scomatic \textless{}{-} read.table("data/mutated\_genes\_hca.tsv", sep="\textbackslash{}t", header = FALSE)}
+\end{Highlighting}
+\end{Shaded}
+
+\chapter{Plot Venn diagrams}\label{plot-venn-diagrams}
+
+\section{1. Detected in SComatic
+vs.~intOGen}\label{detected-in-scomatic-vs.-intogen}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{detected\_genes \textless{}{-} all\_mutated\_scomatic[all\_mutated\_scomatic$V1 \%in\% intersect(all\_mutated\_scomatic$V1, all\_intogen$Symbol), ] \# 95}
+
+\NormalTok{\# Generate Venn diagram}
+\NormalTok{p \textless{}{-} ggvenn(list("intOgen genes" = all\_intogen$Symbol, "SComatic mutated genes" = all\_mutated\_scomatic$V1), fill\_color = c("yellow", "blue"))}
+\NormalTok{ggsave("venn\_intersect/venn\_scomatic\_vs\_intogen.svg", p,  device = "svg")}
+\NormalTok{ggsave("venn\_intersect/venn\_scomatic\_vs\_intogen.pdf", p,  device = "pdf")}
+\NormalTok{ggsave("venn\_intersect/venn\_scomatic\_vs\_intogen.png", p,  device = "png", dpi = 300)}
+\NormalTok{p}
+
+\NormalTok{write.table(detected\_genes, "venn\_intersect/venn\_scomatic\_vs\_intogen.csv", sep = ",", quote = FALSE, row.names = FALSE)}
+\end{Highlighting}
+\end{Shaded}
+
+\section{2. Detected in SComatic vs.~common
+cancer}\label{detected-in-scomatic-vs.-common-cancer}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{detected\_genes \textless{}{-} all\_mutated\_scomatic[all\_mutated\_scomatic$V1 \%in\% intersect(all\_mutated\_scomatic$V1, common\_cancer\_genes), ] \# 95}
+
+\NormalTok{\# Generate Venn diagram}
+\NormalTok{p \textless{}{-} ggvenn(list("common cancer genes" = common\_cancer\_genes, "SComatic mutated genes" = all\_mutated\_scomatic$V1), fill\_color = c("green", "blue"))}
+
+\NormalTok{ggsave("venn\_intersect/venn\_scomatic\_vs\_common\_cancer\_genes.svg", p,  device = "svg")}
+\NormalTok{ggsave("venn\_intersect/venn\_scomatic\_vs\_common\_cancer\_genes.pdf", p,  device = "pdf")}
+\NormalTok{ggsave("venn\_intersect/venn\_scomatic\_vs\_common\_cancer\_genes.png", p,  device = "png", dpi = 300)}
+\NormalTok{p}
+
+\NormalTok{write.table(detected\_genes, "venn\_intersect/venn\_scomatic\_vs\_common\_cancer\_genes.csv", sep = ",", quote = FALSE, row.names = FALSE)}
+\end{Highlighting}
+\end{Shaded}
+
+\section{3. Detected in SComatic vs intogen vs common
+cancer}\label{detected-in-scomatic-vs-intogen-vs-common-cancer}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{\# Generate Venn diagram}
+\NormalTok{svglite("venn\_intersect/venn\_scomatic\_vs\_intogen\_vs\_common\_cancer\_genes.svg")}
+\NormalTok{p \textless{}{-} ggvenn(list("intOgen genes" = all\_intogen$Symbol, "common cancer genes" = common\_cancer\_genes, "SComatic mutated genes" = all\_mutated\_scomatic$V1), fill\_color = c("yellow", "green", "blue"), text\_size = 6)}
+
+\NormalTok{ggsave("venn\_intersect/venn\_scomatic\_vs\_intogen\_vs\_common\_cancer\_genes.svg", p,  device = "svg")}
+\NormalTok{ggsave("venn\_intersect/venn\_scomatic\_vs\_intogen\_vs\_common\_cancer\_genes.pdf", p,  device = "pdf")}
+\NormalTok{ggsave("venn\_intersect/venn\_scomatic\_vs\_intogen\_vs\_common\_cancer\_genes.png", p,  device = "png", dpi = 300)}
+\NormalTok{p}
+\end{Highlighting}
+\end{Shaded}
+
 
 
 

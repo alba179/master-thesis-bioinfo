@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>4. Functional Analysis – Master thesis in Bioinformatics and Computational Biology</title>
+<title>4. Functional Analysis – Master's thesis in Bioinformatics and Computational Biology</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -59,6 +59,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<link href="../Human/3_VennDiagrams_hca.html" rel="next">
 <link href="../Mouse/5_AnnotationVariants.html" rel="prev">
 <script src="../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../site_libs/quarto-html/quarto.js"></script>
@@ -110,7 +111,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="../">Master thesis in Bioinformatics and Computational Biology</a> 
+      <a href="../">Master’s thesis in Bioinformatics and Computational Biology</a> 
         <div class="sidebar-tools-main">
     <a href="https://github.com/alba179/master-thesis-bioinfo" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
 </div>
@@ -170,8 +171,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
-      <span class="sidebar-item-text sidebar-link text-start">
- <span class="menu-text">Human HCA analysis</span></span>
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Human HCA analysis</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Human/3_VennDiagrams_hca.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">3 - Visualization of intersected genes with Venn diagrams in esophagus HCA dataset</span></a>
+  </div>
+</li>
+      </ul>
   </li>
     </ul>
     </div>
@@ -204,8 +217,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>gene_list <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(<span class="st">"mutated_genes_mouse.tsv"</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># RANK LIST</span></span>
@@ -234,7 +245,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(<span class="st">"dotplot_GOmouse.pdf"</span>, <span class="at">height =</span> <span class="dv">9</span>)</span>
 <span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="fu">dotplot</span>(all_donors_GO, <span class="at">showCategory=</span><span class="dv">20</span>, <span class="at">font.size =</span> <span class="dv">8</span>, <span class="at">title=</span> <span class="st">""</span>)</span>
 <span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 
 
@@ -667,6 +677,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="../Human/3_VennDiagrams_hca.html" class="pagination-link" aria-label="3 - Visualization of intersected genes with Venn diagrams in esophagus HCA dataset">
+        <span class="nav-page-text"><span class="chapter-title">3 - Visualization of intersected genes with Venn diagrams in esophagus HCA dataset</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav>
 </div> <!-- /content -->

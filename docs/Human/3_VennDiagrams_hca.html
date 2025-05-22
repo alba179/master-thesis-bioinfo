@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Alba Mendez Alejandre">
 
-<title>Introduction – Master's thesis in Bioinformatics and Computational Biology</title>
+<title>3 - Visualization of intersected genes with Venn diagrams in esophagus HCA dataset – Master's thesis in Bioinformatics and Computational Biology</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,20 +24,19 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<link href="./Mouse/1_DataProcessing.html" rel="next">
-<link href="./index.html" rel="prev">
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<link href="../Mouse/6_GOAnalysis.html" rel="prev">
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "language": {
     "search-no-results-text": "No results",
@@ -65,7 +65,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./intro.html"><span class="chapter-title">Introduction</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Human/3_VennDiagrams_hca.html">Human HCA analysis</a></li><li class="breadcrumb-item"><a href="../Human/3_VennDiagrams_hca.html"><span class="chapter-title">3 - Visualization of intersected genes with Venn diagrams in esophagus HCA dataset</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -77,7 +77,7 @@ ul.task-list li input[type="checkbox"] {
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">Master’s thesis in Bioinformatics and Computational Biology</a> 
+      <a href="../">Master’s thesis in Bioinformatics and Computational Biology</a> 
         <div class="sidebar-tools-main">
     <a href="https://github.com/alba179/master-thesis-bioinfo" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
 </div>
@@ -87,12 +87,12 @@ ul.task-list li input[type="checkbox"] {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Mouse and Human SComatic analysis</span></a>
+  <a href="../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Mouse and Human SComatic analysis</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./intro.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Introduction</span></a>
+  <a href="../intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Introduction</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
@@ -106,48 +106,48 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./Mouse/1_DataProcessing.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">1. Data Pre-processing</span></a>
+  <a href="../Mouse/1_DataProcessing.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">1. Data Pre-processing</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./Mouse/2_ClusteringCellAnnotation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">2. Clustering and Cell annotation</span></a>
+  <a href="../Mouse/2_ClusteringCellAnnotation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">2. Clustering and Cell annotation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./Mouse/3_Velocity_inference.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">3. Inference of velocity</span></a>
+  <a href="../Mouse/3_Velocity_inference.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">3. Inference of velocity</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./Mouse/4_VariantCalling.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">3. SComatic calling</span></a>
+  <a href="../Mouse/4_VariantCalling.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">3. SComatic calling</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./Mouse/5_AnnotationVariants.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">5. Functional annotation of variants</span></a>
+  <a href="../Mouse/5_AnnotationVariants.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">5. Functional annotation of variants</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./Mouse/6_GOAnalysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">4. Functional Analysis</span></a>
+  <a href="../Mouse/6_GOAnalysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">4. Functional Analysis</span></a>
   </div>
 </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
  <span class="menu-text">Human HCA analysis</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./Human/3_VennDiagrams_hca.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">3 - Visualization of intersected genes with Venn diagrams in esophagus HCA dataset</span></a>
+  <a href="../Human/3_VennDiagrams_hca.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">3 - Visualization of intersected genes with Venn diagrams in esophagus HCA dataset</span></a>
   </div>
 </li>
       </ul>
@@ -162,11 +162,13 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Index</h2>
    
   <ul>
-  <li><a href="#computers" id="toc-computers" class="nav-link active" data-scroll-target="#computers">Computers</a></li>
-  <li><a href="#conda-environments" id="toc-conda-environments" class="nav-link" data-scroll-target="#conda-environments">Conda environments</a>
+  <li><a href="#import-libraries" id="toc-import-libraries" class="nav-link active" data-scroll-target="#import-libraries">Import libraries</a></li>
+  <li><a href="#gene-lists-to-plot" id="toc-gene-lists-to-plot" class="nav-link" data-scroll-target="#gene-lists-to-plot">Gene lists to plot</a></li>
+  <li><a href="#plot-venn-diagrams" id="toc-plot-venn-diagrams" class="nav-link" data-scroll-target="#plot-venn-diagrams">Plot Venn diagrams</a>
   <ul>
-  <li><a href="#d_rstudio" id="toc-d_rstudio" class="nav-link" data-scroll-target="#d_rstudio">d_rstudio</a></li>
-  <li><a href="#scomatic" id="toc-scomatic" class="nav-link" data-scroll-target="#scomatic">SComatic</a></li>
+  <li><a href="#detected-in-scomatic-vs.-intogen" id="toc-detected-in-scomatic-vs.-intogen" class="nav-link" data-scroll-target="#detected-in-scomatic-vs.-intogen">1. Detected in SComatic vs.&nbsp;intOGen</a></li>
+  <li><a href="#detected-in-scomatic-vs.-common-cancer" id="toc-detected-in-scomatic-vs.-common-cancer" class="nav-link" data-scroll-target="#detected-in-scomatic-vs.-common-cancer">2. Detected in SComatic vs.&nbsp;common cancer</a></li>
+  <li><a href="#detected-in-scomatic-vs-intogen-vs-common-cancer" id="toc-detected-in-scomatic-vs-intogen-vs-common-cancer" class="nav-link" data-scroll-target="#detected-in-scomatic-vs-intogen-vs-common-cancer">3. Detected in SComatic vs intogen vs common cancer</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -174,16 +176,28 @@ ul.task-list li input[type="checkbox"] {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Human/3_VennDiagrams_hca.html">Human HCA analysis</a></li><li class="breadcrumb-item"><a href="../Human/3_VennDiagrams_hca.html"><span class="chapter-title">3 - Visualization of intersected genes with Venn diagrams in esophagus HCA dataset</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-title">Introduction</span></h1>
+<h1 class="title"><span class="chapter-title">3 - Visualization of intersected genes with Venn diagrams in esophagus HCA dataset</span></h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Alba Mendez Alejandre </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">Invalid Date</p>
+    </div>
+  </div>
   
     
   </div>
@@ -193,83 +207,80 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>This repository aims to be a log of the overall work i did for my master’s thesis.</p>
-<section id="computers" class="level2">
-<h2 class="anchored" data-anchor-id="computers">Computers</h2>
-<p>I used mainly two computers for all the calculations, though the HCA dataset was in a third one, so i had to use it sporadically.</p>
-<ul>
-<li><strong>matterhorn:</strong> main computer. Mainly used for storage and explorative analysis.</li>
-<li><strong>nuptse:</strong> used for storage and explorative analysis of HCA dataset.</li>
-<li><strong>folia:</strong> small computing server. Used for clusterization, alignment, etc.</li>
-</ul>
-<p>All code was executed in computers running Ubuntu 22.04.4 LTS.</p>
-</section>
-<section id="conda-environments" class="level2">
-<h2 class="anchored" data-anchor-id="conda-environments">Conda environments</h2>
-<p>Most of the software was installed using mamba/conda environments when possible.</p>
-<pre class="{bash}"><code>mamba config --add channels bioconda
-mamba config --add channels conda-forge</code></pre>
-<section id="d_rstudio" class="level3">
-<h3 class="anchored" data-anchor-id="d_rstudio">d_rstudio</h3>
-<p><strong>State:</strong> active <strong>Computer:</strong> nuptse, folia, matterhorn <strong>Purpose:</strong> to have a functional RStudio/VSCode installation along with the packages for the kallisto-bustools velocity workflow. <strong>Creation:</strong> run the following commands to install RStudio along with the packages needed for data analysis.</p>
-<pre class="{bash}"><code>mamba create -n d_rstudio -c conda-forge rstudio-desktop jupyter r-seurat
+<section id="import-libraries" class="level1">
+<h1>Import libraries</h1>
+<pre class="{r}"><code>.libPaths("/home/albax/miniforge3/envs/seurat_v4/lib/R/library")
 
-conda activate d_rstudio
+if(.Platform$OS.type == "linux") Sys.setenv(PATH= paste("/home/albax/miniforge3/envs/seurat_v4/lib",Sys.getenv()["PATH"],sep=";"))
 
-mamba install r-devtools r-tidyverse r-zeallot r-ggally bioconductor-bsgenome.mmusculus.ucsc.mm10 bioconductor-dropletutils bioconductor-annotationhub bioconductor-singler
+use_condaenv("/home/albax/miniforge3/envs/seurat_v4", required = TRUE)
 
-# Install packages from source
-R
+library(VennDiagram)
+library(ggplot2)
+library(ggvenn)
+library(svglite)
 
-# Hard-code the commit for reproducibility
-devtools::install_github("satijalab/seurat-wrappers@73466e361ee759c6b1add58faa3bc4e7a2ee5753")
-
-q()
-
-# Posterior installations
-mamba install r-velocyto.r
-mamba install -c bioconda bioconductor-slingshot
-mamba install leidenalg # for clustering
-mamba install numpy pandas
-mamba install -c conda-forge r-clustree
-mamba install -c conda-forge r-svglite
-
-# Installing packages to convert to H5AD data
-R
-
-# Hard-code commit for future reproducibility. Skip updates when asked
-devtools::install_github("mojaveazure/seurat-disk@877d4e18ab38c686f5db54f8cd290274ccdbe295")
-
-
-mamba install -c conda-forge plotly python-kaleido
-mamba install -c plotly plotly-orca
-mamba install -c conda-forge r-processx
-mamba install -c conda-forge r-pals
-mamba install -c conda-forge r-ggvenn r-ggvenndiagram r-venn r-venndiagram
+projectPath &lt;- setwd("/home/albax/human_esophagus") # where we are
 </code></pre>
 </section>
-<section id="scomatic" class="level3">
-<h3 class="anchored" data-anchor-id="scomatic">SComatic</h3>
-<p><strong>State:</strong> active <strong>Computer:</strong> nuptse, folia, matterhorn <strong>Purpose:</strong> to have an isolated environment with SComatic for scRNA-seq mutation calling</p>
-<pre class="{bash}"><code>mamba create -n d_scomatic -c bioconda python=3.7 r-base=3.6.1 samtools datamash bedtools
+<section id="gene-lists-to-plot" class="level1">
+<h1>Gene lists to plot</h1>
+<p>we are going to plot specific sets of genes against all of the SComatic detected genes.</p>
+<ul>
+<li>intOGen human driver database</li>
+<li>common cancer genes from MartinCorena et al</li>
+</ul>
+<pre class="{r}"><code>all_intogen &lt;- read.table("/home/albax/intogen/IntOGen-DriverGenes.tsv", sep="\t", header = TRUE)
 
-# You can download a zip file with the repository "Code" button in the web
-# Or you can do the same thing in the linux terminal
-# For future reproducibility
-wget -P /home/dario/bin/ https://github.com/cortes-ciriano-lab/SComatic/archive/f515f4ee3e7c128600215d21992c051c16e0a03f.zip
-# To grab the latest branch
-wget -P /home/dario/bin/ https://github.com/cortes-ciriano-lab/SComatic/archive/main.zip
 
-unzip *zip
-mv SComatic-main SComatic
+common_cancer_genes &lt;- c("ADAM29", "ADAMTS18", "AJUBA", "AKT1", "AKT2", "APOB", "ARID1A", "ARID2", "AURKA", "BAI3", "BRAF", "CASP8", "CCND1", "CDH1", "CDKN2A", "CR2", "CREBBP", "CUL3", "DICER1", "EGFR", "EPHA2", "ERBB2", "ERBB3", "ERBB4", "EZH2", "FAT1", "FAT4", "FBXW7", "FGFR1", "FGFR2", "FGFR3", "FLG2", "GRIN2A", "GRM3", "HRAS", "IRF6", "KCNH5", "KEAP1", "KMT2A", "KMT2C", "KMT2D", "KRAS", "MET", "MUC17", "NF1", "NFE2L2", "NOTCH1", "NOTCH2", "NOTCH3", "NOTCH4", "NRAS", "NSD1", "PCED1B", "PIK3CA", "PLCB1", "PPP1R3A", "PREX2", "PTCH1", "PTEN", "PTPRT", "RB1", "RBM10", "SALL1", "SCN11A", "SCN1A", "SETD2", "SMAD4", "SMO", "SOX2", "SPHKAP", "SUFU", "TP53", "TP63", "TRIOBP", "ZNF750", "TGFBR2")
+</code></pre>
+<p>SComatic mutated genes. They are __ in total.</p>
+<pre class="{r}"><code>all_mutated_scomatic &lt;- read.table("data/mutated_genes_hca.tsv", sep="\t", header = FALSE)
+</code></pre>
+</section>
+<section id="plot-venn-diagrams" class="level1">
+<h1>Plot Venn diagrams</h1>
+<section id="detected-in-scomatic-vs.-intogen" class="level2">
+<h2 class="anchored" data-anchor-id="detected-in-scomatic-vs.-intogen">1. Detected in SComatic vs.&nbsp;intOGen</h2>
+<pre class="{r}"><code>detected_genes &lt;- all_mutated_scomatic[all_mutated_scomatic$V1 %in% intersect(all_mutated_scomatic$V1, all_intogen$Symbol), ] # 95
 
-# You could also clone the repository to keep the files up to date if needed
-git clone --single-branch https://github.com/cortes-ciriano-lab/SComatic.git /path/to/dir/
+# Generate Venn diagram
+p &lt;- ggvenn(list("intOgen genes" = all_intogen$Symbol, "SComatic mutated genes" = all_mutated_scomatic$V1), fill_color = c("yellow", "blue"))
+ggsave("venn_intersect/venn_scomatic_vs_intogen.svg", p,  device = "svg")
+ggsave("venn_intersect/venn_scomatic_vs_intogen.pdf", p,  device = "pdf")
+ggsave("venn_intersect/venn_scomatic_vs_intogen.png", p,  device = "png", dpi = 300)
+p
 
-# I install the remaining dependencies as instructed, using the “requirements.txt” file in the repository.
-mamba activate d_scomatic
+write.table(detected_genes, "venn_intersect/venn_scomatic_vs_intogen.csv", sep = ",", quote = FALSE, row.names = FALSE)
+</code></pre>
+</section>
+<section id="detected-in-scomatic-vs.-common-cancer" class="level2">
+<h2 class="anchored" data-anchor-id="detected-in-scomatic-vs.-common-cancer">2. Detected in SComatic vs.&nbsp;common cancer</h2>
+<pre class="{r}"><code>detected_genes &lt;- all_mutated_scomatic[all_mutated_scomatic$V1 %in% intersect(all_mutated_scomatic$V1, common_cancer_genes), ] # 95
 
-pip install -r requirements.txt</code></pre>
+# Generate Venn diagram
+p &lt;- ggvenn(list("common cancer genes" = common_cancer_genes, "SComatic mutated genes" = all_mutated_scomatic$V1), fill_color = c("green", "blue"))
+
+ggsave("venn_intersect/venn_scomatic_vs_common_cancer_genes.svg", p,  device = "svg")
+ggsave("venn_intersect/venn_scomatic_vs_common_cancer_genes.pdf", p,  device = "pdf")
+ggsave("venn_intersect/venn_scomatic_vs_common_cancer_genes.png", p,  device = "png", dpi = 300)
+p
+
+write.table(detected_genes, "venn_intersect/venn_scomatic_vs_common_cancer_genes.csv", sep = ",", quote = FALSE, row.names = FALSE)
+</code></pre>
+</section>
+<section id="detected-in-scomatic-vs-intogen-vs-common-cancer" class="level2">
+<h2 class="anchored" data-anchor-id="detected-in-scomatic-vs-intogen-vs-common-cancer">3. Detected in SComatic vs intogen vs common cancer</h2>
+<pre class="{r}"><code># Generate Venn diagram
+svglite("venn_intersect/venn_scomatic_vs_intogen_vs_common_cancer_genes.svg")
+p &lt;- ggvenn(list("intOgen genes" = all_intogen$Symbol, "common cancer genes" = common_cancer_genes, "SComatic mutated genes" = all_mutated_scomatic$V1), fill_color = c("yellow", "green", "blue"), text_size = 6)
+
+ggsave("venn_intersect/venn_scomatic_vs_intogen_vs_common_cancer_genes.svg", p,  device = "svg")
+ggsave("venn_intersect/venn_scomatic_vs_intogen_vs_common_cancer_genes.pdf", p,  device = "pdf")
+ggsave("venn_intersect/venn_scomatic_vs_intogen_vs_common_cancer_genes.png", p,  device = "png", dpi = 300)
+p
+</code></pre>
 
 
 </section>
@@ -698,14 +709,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./index.html" class="pagination-link" aria-label="Mouse and Human SComatic analysis">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Mouse and Human SComatic analysis</span></span>
+      <a href="../Mouse/6_GOAnalysis.html" class="pagination-link" aria-label="4. Functional Analysis">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">4. Functional Analysis</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./Mouse/1_DataProcessing.html" class="pagination-link" aria-label="1. Data Pre-processing">
-        <span class="nav-page-text"><span class="chapter-title">1. Data Pre-processing</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>3. Inference of velocity – Master thesis in Bioinformatics and Computational Biology</title>
+<title>3. Inference of velocity – Master's thesis in Bioinformatics and Computational Biology</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -111,7 +111,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="../">Master thesis in Bioinformatics and Computational Biology</a> 
+      <a href="../">Master’s thesis in Bioinformatics and Computational Biology</a> 
         <div class="sidebar-tools-main">
     <a href="https://github.com/alba179/master-thesis-bioinfo" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
 </div>
@@ -171,8 +171,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
-      <span class="sidebar-item-text sidebar-link text-start">
- <span class="menu-text">Human HCA analysis</span></span>
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Human HCA analysis</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Human/3_VennDiagrams_hca.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">3 - Visualization of intersected genes with Venn diagrams in esophagus HCA dataset</span></a>
+  </div>
+</li>
+      </ul>
   </li>
     </ul>
     </div>
@@ -180,7 +192,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="3">
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="4">
     <h2 id="toc-title">Index</h2>
    
   <ul>
@@ -237,8 +249,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="slingshot" class="level2">
 <h2 class="anchored" data-anchor-id="slingshot">Slingshot</h2>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.libPaths</span>(<span class="st">"/home/albax/miniforge3/envs/seurat_v4/lib/R/library"</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Seurat)</span>
@@ -249,13 +259,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(viridis)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <section id="load-filtered-seurat-object" class="level3">
 <h3 class="anchored" data-anchor-id="load-filtered-seurat-object">Load filtered seurat object</h3>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>Esoph <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> <span class="st">"mcGinn_2021/output/esoph_star_filtered_mm10.rds"</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert SeuratObject to SingleCellExperiment with Seurat function 'as.SingleCellExperiment()'</span></span>
@@ -275,11 +282,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="fu">reducedDims</span>(Esoph_sce)<span class="sc">$</span>UMAP <span class="ot">&lt;-</span> umap_data</span>
 <span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="fu">factor</span>(Esoph_sce<span class="sc">$</span>annot_scvelo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run trajectory inference with slingshot</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>Esoph_sce <span class="ot">&lt;-</span> <span class="fu">slingshot</span>(Esoph_sce, <span class="at">clusterLabels =</span> <span class="st">'annot_scvelo'</span>, <span class="at">reducedDim =</span> <span class="st">'UMAP'</span>)</span>
@@ -289,14 +293,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>slingshot_obj <span class="ot">&lt;-</span> <span class="fu">SlingshotDataSet</span>(Esoph_sce)</span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>slingshot_obj<span class="sc">@</span>slingParams<span class="sc">$</span>start.clus</span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>slingshot_obj<span class="sc">@</span>slingParams<span class="sc">$</span>end.clus</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 </section>
 <section id="plot-results" class="level3">
 <h3 class="anchored" data-anchor-id="plot-results">Plot results</h3>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot trajectory (curves how they are called by Slingshot)</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"slingshot_results/plots/Esoph_slingshot_mm10.png"</span>, <span class="at">width=</span><span class="dv">1000</span>, <span class="at">height=</span><span class="dv">1000</span>, <span class="at">units=</span><span class="st">"px"</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -328,11 +329,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="at">x =</span> <span class="fl">0.5</span>, <span class="at">y =</span> <span class="fl">0.65</span>, <span class="at">labels =</span> <span class="st">"Legend"</span>, <span class="at">cex =</span> <span class="fl">1.2</span>, <span class="at">font =</span> <span class="dv">2</span>, <span class="at">pos =</span> <span class="dv">3</span>)</span>
 <span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot trajectory (curves how they are called by Slingshot)</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"slingshot_results/plots/Esoph_slingshot_curves_mm10.png"</span>, <span class="at">width=</span><span class="dv">1000</span>, <span class="at">height=</span><span class="dv">1000</span>, <span class="at">units=</span><span class="st">"px"</span>)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -364,14 +362,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="at">x =</span> <span class="fl">0.5</span>, <span class="at">y =</span> <span class="fl">0.65</span>, <span class="at">labels =</span> <span class="st">"Legend"</span>, <span class="at">cex =</span> <span class="fl">1.2</span>, <span class="at">font =</span> <span class="dv">2</span>, <span class="at">pos =</span> <span class="dv">3</span>)</span>
 <span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 </section>
 <section id="plot-lineage-structure" class="level3">
 <h3 class="anchored" data-anchor-id="plot-lineage-structure">Plot lineage structure</h3>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>palette_d <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"#7A0403FF"</span>, <span class="st">"#FB8022FF"</span>, <span class="st">"#A2FC3CFF"</span>, <span class="st">"#28BBECFF"</span>, <span class="st">"#30123BFF"</span>)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"./velocity/slingshot_results/plots/Esoph_slingshot_trajectories_clusters_mm10.png"</span>, <span class="at">width=</span><span class="dv">1000</span>, <span class="at">height=</span><span class="dv">1000</span>, <span class="at">units=</span><span class="st">"px"</span>)</span>
@@ -383,7 +378,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="at">x=</span><span class="st">"topright"</span>, <span class="at">legend=</span><span class="fu">c</span>(<span class="st">"Basal_1"</span>, <span class="st">"Basal_2"</span>, <span class="st">"Basal_3"</span>, <span class="st">"Suprabasal"</span>, <span class="st">"Epithelial_DEN"</span>), <span class="at">col=</span>palette_d[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>], <span class="at">pch=</span><span class="dv">16</span>, <span class="at">cex=</span><span class="dv">2</span>)</span>
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 </section>
 </section>
@@ -392,8 +386,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="load-of-.h5ad-file" class="level3">
 <h3 class="anchored" data-anchor-id="load-of-.h5ad-file">Load of .h5ad file</h3>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/home/albax/miniforge3/envs/ame python3</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># -*- coding: utf-8 -*-</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">"""</span></span>
@@ -451,12 +443,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a><span class="co"># }</span></span>
 <span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a><span class="co"># adata.obs['annot_scvelo'] = adata.obs['annot_scvelo'].replace(rename_dict)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <p>Define functions and colors for plotting:</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> save_stream(adata, <span class="bu">file</span>, <span class="bu">format</span><span class="op">=</span>[<span class="st">"svg"</span>, <span class="st">"png"</span>], <span class="op">**</span>kwargs):</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">7</span>))  </span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    scv.pl.velocity_embedding_stream(adata, ax<span class="op">=</span>ax, arrow_size<span class="op">=</span><span class="dv">1</span>, cutoff_perc<span class="op">=</span><span class="dv">10</span>, <span class="op">**</span>kwargs)</span>
@@ -493,36 +482,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>palette <span class="op">=</span> sns.color_palette(<span class="st">"plasma_r"</span>)</span>
 <span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>colors_d <span class="op">=</span> [<span class="st">"#7A0403FF"</span>, <span class="st">"#FB8022FF"</span>, <span class="st">"#A2FC3CFF"</span>, <span class="st">"#30123BFF"</span>, <span class="st">"#28BBECFF"</span>]</span>
 <span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>palette_d <span class="op">=</span> sns.color_palette(colors_d)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 </section>
 <section id="stochastic-model" class="level3">
 <h3 class="anchored" data-anchor-id="stochastic-model">Stochastic model</h3>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>scv.tl.velocity(adata, mode <span class="op">=</span><span class="st">"stochastic"</span>) <span class="co"># not good model</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>scv.tl.velocity_graph(adata, n_jobs<span class="op">=</span><span class="dv">6</span>) <span class="co"># number of cores to use</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># scv.pl.pca(adata, color="annot_scvelo")</span></span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># scv.pl.umap(adata, color="annot_scvelo")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <section id="save-plots-for-stochastic-model" class="level4">
 <h4 class="anchored" data-anchor-id="save-plots-for-stochastic-model">Save plots for stochastic model</h4>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>fig_stream_stoc, ax_stream_stoc <span class="op">=</span> save_stream(adata, <span class="bu">file</span><span class="op">=</span><span class="st">"scvelo_results/plots/Esoph_stream_stoch"</span>, <span class="bu">format</span><span class="op">=</span>[<span class="st">'svg'</span>, <span class="st">'png'</span>], basis<span class="op">=</span><span class="st">"umap"</span>, color<span class="op">=</span><span class="st">"annot_scvelo"</span>, palette<span class="op">=</span>palette_d, figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">7</span>), legend_loc<span class="op">=</span><span class="st">'right margin'</span>, title <span class="op">=</span> <span class="st">"Stochastic model (stream)"</span>)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>fig_grid_stoc, ax_grid_stoc <span class="op">=</span> save_grid(adata, <span class="bu">file</span><span class="op">=</span><span class="st">"scvelo_results/plots/Esoph_grid_stoch"</span>, <span class="bu">format</span><span class="op">=</span>[<span class="st">'svg'</span>, <span class="st">'png'</span>], basis<span class="op">=</span><span class="st">'umap'</span>, color<span class="op">=</span><span class="st">"annot_scvelo"</span>, palette<span class="op">=</span>palette_d, figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">7</span>), legend_loc<span class="op">=</span><span class="st">'right margin'</span>, title <span class="op">=</span> <span class="st">"Stochastic model (grid)"</span> )</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>fig_embedding_stoc, ax_embedding_stoc <span class="op">=</span> save_embedding(adata, <span class="bu">file</span><span class="op">=</span><span class="st">"scvelo_results/plots/Esoph_veloc_stoch"</span>, <span class="bu">format</span><span class="op">=</span>[<span class="st">'svg'</span>, <span class="st">'png'</span>], basis<span class="op">=</span><span class="st">"umap"</span>, color<span class="op">=</span><span class="st">"annot_scvelo"</span>, palette<span class="op">=</span>palette_d, figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">7</span>), legend_loc<span class="op">=</span><span class="st">'right margin'</span>, dpi<span class="op">=</span><span class="dv">200</span>, title <span class="op">=</span> <span class="st">"Stochastic model (embedding)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># grid layout for stoc (run everything as chunk)</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>fig_combined, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">27</span>, <span class="dv">7</span>))</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -538,49 +518,37 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>fig_combined.savefig(combined_file_path <span class="op">+</span> <span class="st">'_mm10.svg'</span>, <span class="bu">format</span><span class="op">=</span><span class="st">'svg'</span>, bbox_inches<span class="op">=</span><span class="st">'tight'</span>)</span>
 <span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>fig_combined.savefig(combined_file_path <span class="op">+</span> <span class="st">'_mm10.png'</span>, <span class="bu">format</span><span class="op">=</span><span class="st">'png'</span>, dpi<span class="op">=</span><span class="dv">300</span>, bbox_inches<span class="op">=</span><span class="st">'tight'</span>)</span>
 <span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <p>Save the .h5ad file with stochastic model</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">del</span> adata.raw</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>adata.var.rename(columns<span class="op">=</span>{<span class="st">'_index'</span>: <span class="st">'index'</span>}, inplace<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>adata.obs.rename(columns<span class="op">=</span>{<span class="st">'_index'</span>: <span class="st">'index'</span>}, inplace<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>adata.write(filename <span class="op">=</span> <span class="st">"scvelo_results/Esoph_stochastic_mm10.h5ad"</span>, compression<span class="op">=</span><span class="st">'gzip'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 </section>
 </section>
 <section id="deterministic-model" class="level3">
 <h3 class="anchored" data-anchor-id="deterministic-model">Deterministic model</h3>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>scv.tl.velocity(adata, mode <span class="op">=</span> <span class="st">"deterministic"</span>)</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>scv.tl.velocity_graph(adata, n_jobs<span class="op">=</span><span class="dv">6</span>)</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># scv.pl.velocity_embedding_stream(adata, basis="umap", color="annot_scvelo")</span></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co"># scv.pl.pca(adata, color="annot_scvelo")</span></span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co"># scv.pl.umap(adata, color="annot_scvelo")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <section id="save-plots-of-deterministic-model" class="level4">
 <h4 class="anchored" data-anchor-id="save-plots-of-deterministic-model">Save plots of deterministic model</h4>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>fig_stream_det, ax_stream_det <span class="op">=</span> save_stream(adata, <span class="bu">file</span><span class="op">=</span><span class="st">"scvelo_results/plots/Esoph_stream_det"</span>, <span class="bu">format</span><span class="op">=</span>[<span class="st">'svg'</span>, <span class="st">'png'</span>], basis<span class="op">=</span><span class="st">"umap"</span>, color<span class="op">=</span><span class="st">"annot_scvelo"</span>, palette<span class="op">=</span>palette_d, figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">7</span>), legend_loc<span class="op">=</span><span class="st">'right margin'</span>, title <span class="op">=</span> <span class="st">"Deterministic model (stream)"</span>)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>fig_grid_det, ax_grid_det <span class="op">=</span> save_grid(adata, <span class="bu">file</span><span class="op">=</span><span class="st">"scvelo_results/plots/Esoph_grid_det"</span>, <span class="bu">format</span><span class="op">=</span>[<span class="st">'svg'</span>, <span class="st">'png'</span>], basis<span class="op">=</span><span class="st">'umap'</span>, color<span class="op">=</span><span class="st">"annot_scvelo"</span>, palette<span class="op">=</span>palette_d, figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">7</span>), legend_loc<span class="op">=</span><span class="st">'right margin'</span>, title <span class="op">=</span> <span class="st">"Deterministic model (grid)"</span> )</span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>fig_embedding_det, ax_embedding_det <span class="op">=</span> save_embedding(adata, <span class="bu">file</span><span class="op">=</span><span class="st">"scvelo_results/plots/Esoph_veloc_det"</span>, <span class="bu">format</span><span class="op">=</span>[<span class="st">'svg'</span>, <span class="st">'png'</span>], basis<span class="op">=</span><span class="st">"umap"</span>, color<span class="op">=</span><span class="st">"annot_scvelo"</span>, palette<span class="op">=</span>palette_d, figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">7</span>), legend_loc<span class="op">=</span><span class="st">'right margin'</span>, dpi<span class="op">=</span><span class="dv">200</span>, title <span class="op">=</span> <span class="st">"Deterministic model (embedding)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># grid layout for deterministic (run everything as chunk)</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>fig_combined, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">27</span>, <span class="dv">7</span>))</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -596,26 +564,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>fig_combined.savefig(combined_file_path <span class="op">+</span> <span class="st">'_mm10.svg'</span>, <span class="bu">format</span><span class="op">=</span><span class="st">'svg'</span>, bbox_inches<span class="op">=</span><span class="st">'tight'</span>)</span>
 <span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>fig_combined.savefig(combined_file_path <span class="op">+</span> <span class="st">'_mm10.png'</span>, <span class="bu">format</span><span class="op">=</span><span class="st">'png'</span>, dpi<span class="op">=</span><span class="dv">300</span>, bbox_inches<span class="op">=</span><span class="st">'tight'</span>)</span>
 <span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <p>Save the .h5ad file with dererministic model</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">del</span> adata.raw</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>adata.var.rename(columns<span class="op">=</span>{<span class="st">'_index'</span>: <span class="st">'index'</span>}, inplace<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>adata.obs.rename(columns<span class="op">=</span>{<span class="st">'_index'</span>: <span class="st">'index'</span>}, inplace<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>adata.write(filename <span class="op">=</span> <span class="st">"scvelo_results/Esoph_deterministic_mm10.h5ad"</span>, compression<span class="op">=</span><span class="st">'gzip'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 </section>
 </section>
 <section id="dynamical-model" class="level3">
 <h3 class="anchored" data-anchor-id="dynamical-model">Dynamical model</h3>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>adata <span class="op">=</span> adata[:, adata.var[<span class="st">'highly_variable'</span>]]  <span class="co"># Only use highly variable genes</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>scv.tl.recover_dynamics(adata, n_jobs<span class="op">=</span><span class="dv">6</span>)</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>scv.tl.velocity(adata, mode <span class="op">=</span> <span class="st">"dynamical"</span>)</span>
@@ -625,23 +587,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co"># scv.pl.pca(adata, color="annot_scvelo")</span></span>
 <span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="co"># scv.pl.umap(adata, color="annot_scvelo")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <section id="save-plots-for-dynamical-model" class="level4">
 <h4 class="anchored" data-anchor-id="save-plots-for-dynamical-model">Save plots for dynamical model</h4>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>fig_stream_dyn, ax_stream_dyn <span class="op">=</span> save_stream(adata, <span class="bu">file</span><span class="op">=</span><span class="st">"scvelo_results/plots/Esoph_stream_dyn"</span>, <span class="bu">format</span><span class="op">=</span>[<span class="st">'svg'</span>, <span class="st">'png'</span>], basis<span class="op">=</span><span class="st">"umap"</span>, color<span class="op">=</span><span class="st">"annot_scvelo"</span>, palette<span class="op">=</span>palette_d, figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">7</span>), legend_loc<span class="op">=</span><span class="st">'right margin'</span>, title <span class="op">=</span> <span class="st">"Dynamical model (stream)"</span>)</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>fig_grid_dyn, ax_grid_dyn <span class="op">=</span> save_grid(adata, <span class="bu">file</span><span class="op">=</span><span class="st">"scvelo_results/plots/Esoph_grid_det"</span>, <span class="bu">format</span><span class="op">=</span>[<span class="st">'svg'</span>, <span class="st">'png'</span>], basis<span class="op">=</span><span class="st">'umap'</span>, color<span class="op">=</span><span class="st">"annot_scvelo"</span>, palette<span class="op">=</span>palette_d, figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">7</span>), legend_loc<span class="op">=</span><span class="st">'right margin'</span>, title <span class="op">=</span> <span class="st">"Dynamical model (grid)"</span> )</span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>fig_embedding_dyn, ax_embedding_dyn <span class="op">=</span> save_embedding(adata, <span class="bu">file</span><span class="op">=</span><span class="st">"scvelo_results/plots/Esoph_veloc_dyn"</span>, <span class="bu">format</span><span class="op">=</span>[<span class="st">'svg'</span>, <span class="st">'png'</span>], basis<span class="op">=</span><span class="st">"umap"</span>, color<span class="op">=</span><span class="st">"annot_scvelo"</span>, palette<span class="op">=</span>palette_d, figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">7</span>), legend_loc<span class="op">=</span><span class="st">'right margin'</span>, dpi<span class="op">=</span><span class="dv">200</span>, title <span class="op">=</span> <span class="st">"Dynamical model (embedding)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># grid layout for dynamical model (run everything as chunk)</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>fig_combined, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">27</span>, <span class="dv">7</span>))</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -657,33 +613,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>fig_combined.savefig(combined_file_path <span class="op">+</span> <span class="st">'_mm10.svg'</span>, <span class="bu">format</span><span class="op">=</span><span class="st">'svg'</span>, bbox_inches<span class="op">=</span><span class="st">'tight'</span>)</span>
 <span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>fig_combined.savefig(combined_file_path <span class="op">+</span> <span class="st">'_mm10.png'</span>, <span class="bu">format</span><span class="op">=</span><span class="st">'png'</span>, dpi<span class="op">=</span><span class="dv">300</span>, bbox_inches<span class="op">=</span><span class="st">'tight'</span>)</span>
 <span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <p>Save the .h5ad file with dynamical model</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">del</span> adata.raw</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>adata.var.rename(columns<span class="op">=</span>{<span class="st">'_index'</span>: <span class="st">'index'</span>}, inplace<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>adata.obs.rename(columns<span class="op">=</span>{<span class="st">'_index'</span>: <span class="st">'index'</span>}, inplace<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>adata.write(filename <span class="op">=</span> <span class="st">"scvelo_results/Esoph_dynamical_mm10.h5ad"</span>, compression<span class="op">=</span><span class="st">'gzip'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 </section>
 <section id="coherenceconfidence" class="level4">
 <h4 class="anchored" data-anchor-id="coherenceconfidence">Coherence/Confidence</h4>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>adata_re <span class="op">=</span> scv.read(<span class="st">"scvelo_results/Esoph_dynamical_mm10.h5ad"</span>, cache<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>adata_re.var_names <span class="op">=</span> adata_re.var[<span class="st">'index'</span>]</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>adata_re</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>scv.tl.velocity_confidence(adata)</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>scv.pl.scatter(adata, basis<span class="op">=</span><span class="st">'umap'</span>, color<span class="op">=</span>[<span class="st">'velocity_length'</span>, <span class="st">'velocity_confidence'</span>], color_map<span class="op">=</span><span class="st">'coolwarm'</span>, perc<span class="op">=</span>[<span class="dv">0</span>, <span class="dv">100</span>], save<span class="op">=</span><span class="st">"scvelo_results/plots/Esoph_dyn_confidence.png"</span>)</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -691,15 +638,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>scv.tl.rank_velocity_genes(adata, groupby<span class="op">=</span><span class="st">'annot_scvelo_names'</span>, min_corr<span class="op">=</span><span class="fl">0.3</span>)</span>
 <span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> scv.get_df(adata.uns[<span class="st">'rank_velocity_genes'</span>][<span class="st">'names'</span>])</span>
 <span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>df.to_csv(<span class="st">"scvelo_results/Esoph_dyn_genes_rank.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 </section>
 </section>
 <section id="full-plots" class="level3">
 <h3 class="anchored" data-anchor-id="full-plots">Full plots</h3>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> io</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -741,14 +685,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb23-39"><a href="#cb23-39" aria-hidden="true" tabindex="-1"></a>fig_combined.savefig(<span class="st">"scvelo_results/plots/Esoph_combined_plots_mm10.svg"</span>, <span class="bu">format</span><span class="op">=</span><span class="st">'svg'</span>, dpi<span class="op">=</span><span class="dv">300</span>, bbox_inches<span class="op">=</span><span class="st">'tight'</span>)</span>
 <span id="cb23-40"><a href="#cb23-40" aria-hidden="true" tabindex="-1"></a>fig_combined.savefig(<span class="st">"scvelo_results/plots/Esoph_combined_plots_mm10.pdf"</span>, <span class="bu">format</span><span class="op">=</span><span class="st">'pdf'</span>, dpi<span class="op">=</span><span class="dv">300</span>, bbox_inches<span class="op">=</span><span class="st">'tight'</span>)</span>
 <span id="cb23-41"><a href="#cb23-41" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 </section>
 <section id="cycling-progenitors" class="level3">
 <h3 class="anchored" data-anchor-id="cycling-progenitors">Cycling progenitors</h3>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>scv.tl.score_genes_cell_cycle(adata_re)</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot cycling progenitors</span></span>
@@ -757,7 +698,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>scv.pl.scatter(adata_re, basis<span class="op">=</span><span class="st">'umap'</span>, color<span class="op">=</span><span class="st">'phase'</span>, palette<span class="op">=</span>[<span class="st">'silver'</span>, <span class="st">'coral'</span>, <span class="st">'royalblue'</span>], size<span class="op">=</span><span class="dv">6</span>, alpha<span class="op">=</span><span class="fl">0.4</span>, dpi<span class="op">=</span><span class="dv">300</span>, title<span class="op">=</span><span class="ss">f"Cell phase, dynamical model"</span>, save<span class="op">=</span><span class="st">"scvelo_results/plots/Esoph_filt_dyn_phase.svg"</span>)</span>
 <span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>scv.pl.scatter(adata_re, basis<span class="op">=</span><span class="st">'umap'</span>, color<span class="op">=</span><span class="st">'phase'</span>, palette<span class="op">=</span>[<span class="st">'silver'</span>, <span class="st">'coral'</span>, <span class="st">'royalblue'</span>], size<span class="op">=</span><span class="dv">6</span>, alpha<span class="op">=</span><span class="fl">0.4</span>, dpi<span class="op">=</span><span class="dv">300</span>, title<span class="op">=</span><span class="ss">f"Cell phase, dynamical model"</span>, save<span class="op">=</span><span class="st">"scvelo_results/plots/Esoph_filt_dyn_phase.png"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 
 

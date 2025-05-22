@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>5. Functional annotation of variants – Master thesis in Bioinformatics and Computational Biology</title>
+<title>5. Functional annotation of variants – Master's thesis in Bioinformatics and Computational Biology</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -111,7 +111,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="../">Master thesis in Bioinformatics and Computational Biology</a> 
+      <a href="../">Master’s thesis in Bioinformatics and Computational Biology</a> 
         <div class="sidebar-tools-main">
     <a href="https://github.com/alba179/master-thesis-bioinfo" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
 </div>
@@ -171,8 +171,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
-      <span class="sidebar-item-text sidebar-link text-start">
- <span class="menu-text">Human HCA analysis</span></span>
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Human HCA analysis</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Human/3_VennDiagrams_hca.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">3 - Visualization of intersected genes with Venn diagrams in esophagus HCA dataset</span></a>
+  </div>
+</li>
+      </ul>
   </li>
     </ul>
     </div>
@@ -180,7 +192,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="3">
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="4">
     <h2 id="toc-title">Index</h2>
    
   <ul>
@@ -216,13 +228,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <p>We are going to perfom functional annotation of variants with Ensembl’s VEP (variant effect predictor).</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># [folia]</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/scripts/variant_annotation</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">./annotate_vep.sh</span> 102 mus_musculus ~/mcGinn_2021/mcGinn_2021_files_for_vep.fofn</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <section id="analysis-of-annotations" class="level1">
 <h1>5.1. Analysis of annotations</h1>
@@ -247,10 +256,7 @@ Warning! this is the structure of the CSQ value from INFO column:
 </div>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 </section>
 <section id="section" class="level1">
@@ -258,8 +264,6 @@ Warning! this is the structure of the CSQ value from INFO column:
 <section id="wordcloud-of-genes" class="level2">
 <h2 class="anchored" data-anchor-id="wordcloud-of-genes">Wordcloud of genes</h2>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"wordcloud"</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="st">"/media/storage/Documents/scRNAseq/SComatic/TextMining/mutatedGenes_mouse.txt"</span>, <span class="at">header=</span><span class="cn">TRUE</span>)</span>
@@ -277,7 +281,6 @@ Warning! this is the structure of the CSQ value from INFO column:
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">colors=</span><span class="fu">brewer.pal</span>(<span class="dv">8</span>, <span class="st">"Dark2"</span>)[<span class="fu">factor</span>(df<span class="sc">$</span>iscancer)]) <span class="co"># no. of different colors and palette</span></span>
 <span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topright"</span>, <span class="at">legend =</span> <span class="fu">levels</span>(<span class="fu">factor</span>(df<span class="sc">$</span>iscancer)), <span class="at">text.col=</span><span class="fu">brewer.pal</span>(<span class="dv">8</span>, <span class="st">"Dark2"</span>)[<span class="fu">unique</span>(<span class="fu">factor</span>(df<span class="sc">$</span>iscancer))])</span>
 <span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 
 
