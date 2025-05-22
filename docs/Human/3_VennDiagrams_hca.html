@@ -6,9 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Alba Mendez Alejandre">
 
-<title>3 - Visualization of intersected genes with Venn diagrams in esophagus HCA dataset – Master's thesis in Bioinformatics and Computational Biology</title>
+<title>3. Visualization of intersected genes with Venn diagrams in esophagus HCA dataset – Master's thesis in Bioinformatics and Computational Biology</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +19,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -81,7 +114,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Human/3_VennDiagrams_hca.html">Human HCA analysis</a></li><li class="breadcrumb-item"><a href="../Human/3_VennDiagrams_hca.html"><span class="chapter-title">3 - Visualization of intersected genes with Venn diagrams in esophagus HCA dataset</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Human/3_VennDiagrams_hca.html">Human HCA analysis</a></li><li class="breadcrumb-item"><a href="../Human/3_VennDiagrams_hca.html"><span class="chapter-title">3. Visualization of intersected genes with Venn diagrams in esophagus HCA dataset</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -171,7 +204,7 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../Human/3_VennDiagrams_hca.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">3 - Visualization of intersected genes with Venn diagrams in esophagus HCA dataset</span></a>
+  <a href="../Human/3_VennDiagrams_hca.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">3. Visualization of intersected genes with Venn diagrams in esophagus HCA dataset</span></a>
   </div>
 </li>
       </ul>
@@ -187,12 +220,12 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#import-libraries" id="toc-import-libraries" class="nav-link active" data-scroll-target="#import-libraries">Import libraries</a></li>
-  <li><a href="#gene-lists-to-plot" id="toc-gene-lists-to-plot" class="nav-link" data-scroll-target="#gene-lists-to-plot">Gene lists to plot</a></li>
-  <li><a href="#plot-venn-diagrams" id="toc-plot-venn-diagrams" class="nav-link" data-scroll-target="#plot-venn-diagrams">Plot Venn diagrams</a>
+  <li><a href="#gene-lists-to-plot" id="toc-gene-lists-to-plot" class="nav-link" data-scroll-target="#gene-lists-to-plot">3.1. Gene lists to plot</a></li>
+  <li><a href="#plot-venn-diagrams" id="toc-plot-venn-diagrams" class="nav-link" data-scroll-target="#plot-venn-diagrams">3.2. Plot Venn diagrams</a>
   <ul>
-  <li><a href="#detected-in-scomatic-vs.-intogen" id="toc-detected-in-scomatic-vs.-intogen" class="nav-link" data-scroll-target="#detected-in-scomatic-vs.-intogen">1. Detected in SComatic vs.&nbsp;intOGen</a></li>
-  <li><a href="#detected-in-scomatic-vs.-common-cancer" id="toc-detected-in-scomatic-vs.-common-cancer" class="nav-link" data-scroll-target="#detected-in-scomatic-vs.-common-cancer">2. Detected in SComatic vs.&nbsp;common cancer</a></li>
-  <li><a href="#detected-in-scomatic-vs-intogen-vs-common-cancer" id="toc-detected-in-scomatic-vs-intogen-vs-common-cancer" class="nav-link" data-scroll-target="#detected-in-scomatic-vs-intogen-vs-common-cancer">3. Detected in SComatic vs intogen vs common cancer</a></li>
+  <li><a href="#i.-detected-in-scomatic-vs.-intogen" id="toc-i.-detected-in-scomatic-vs.-intogen" class="nav-link" data-scroll-target="#i.-detected-in-scomatic-vs.-intogen">i. Detected in SComatic vs.&nbsp;intOGen</a></li>
+  <li><a href="#ii.-detected-in-scomatic-vs.-common-cancer" id="toc-ii.-detected-in-scomatic-vs.-common-cancer" class="nav-link" data-scroll-target="#ii.-detected-in-scomatic-vs.-common-cancer">ii. Detected in SComatic vs.&nbsp;common cancer</a></li>
+  <li><a href="#iii.-detected-in-scomatic-vs-intogen-vs-common-cancer" id="toc-iii.-detected-in-scomatic-vs-intogen-vs-common-cancer" class="nav-link" data-scroll-target="#iii.-detected-in-scomatic-vs-intogen-vs-common-cancer">iii. Detected in SComatic vs intogen vs common cancer</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -200,28 +233,16 @@ ul.task-list li input[type="checkbox"] {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Human/3_VennDiagrams_hca.html">Human HCA analysis</a></li><li class="breadcrumb-item"><a href="../Human/3_VennDiagrams_hca.html"><span class="chapter-title">3 - Visualization of intersected genes with Venn diagrams in esophagus HCA dataset</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Human/3_VennDiagrams_hca.html">Human HCA analysis</a></li><li class="breadcrumb-item"><a href="../Human/3_VennDiagrams_hca.html"><span class="chapter-title">3. Visualization of intersected genes with Venn diagrams in esophagus HCA dataset</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-title">3 - Visualization of intersected genes with Venn diagrams in esophagus HCA dataset</span></h1>
+<h1 class="title"><span class="chapter-title">3. Visualization of intersected genes with Venn diagrams in esophagus HCA dataset</span></h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>Alba Mendez Alejandre </p>
-          </div>
-  </div>
     
-    <div>
-    <div class="quarto-title-meta-heading">Published</div>
-    <div class="quarto-title-meta-contents">
-      <p class="date">Invalid Date</p>
-    </div>
-  </div>
   
     
   </div>
@@ -231,80 +252,89 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="import-libraries" class="level1">
-<h1>Import libraries</h1>
-<pre class="{r}"><code>.libPaths("/home/albax/miniforge3/envs/seurat_v4/lib/R/library")
-
-if(.Platform$OS.type == "linux") Sys.setenv(PATH= paste("/home/albax/miniforge3/envs/seurat_v4/lib",Sys.getenv()["PATH"],sep=";"))
-
-use_condaenv("/home/albax/miniforge3/envs/seurat_v4", required = TRUE)
-
-library(VennDiagram)
-library(ggplot2)
-library(ggvenn)
-library(svglite)
-
-projectPath &lt;- setwd("/home/albax/human_esophagus") # where we are
-</code></pre>
+<!-- ---
+date: 04-2025
+--- -->
+<section id="import-libraries" class="level3">
+<h3 class="anchored" data-anchor-id="import-libraries">Import libraries</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.libPaths</span>(<span class="st">"/home/albax/miniforge3/envs/seurat_v4/lib/R/library"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(.Platform<span class="sc">$</span>OS.type <span class="sc">==</span> <span class="st">"linux"</span>) <span class="fu">Sys.setenv</span>(<span class="at">PATH=</span> <span class="fu">paste</span>(<span class="st">"/home/albax/miniforge3/envs/seurat_v4/lib"</span>,<span class="fu">Sys.getenv</span>()[<span class="st">"PATH"</span>],<span class="at">sep=</span><span class="st">";"</span>))</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">use_condaenv</span>(<span class="st">"/home/albax/miniforge3/envs/seurat_v4"</span>, <span class="at">required =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(VennDiagram)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggvenn)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(svglite)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>projectPath <span class="ot">&lt;-</span> <span class="fu">setwd</span>(<span class="st">"/home/albax/human_esophagus"</span>) <span class="co"># where we are</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
-<section id="gene-lists-to-plot" class="level1">
-<h1>Gene lists to plot</h1>
+<section id="gene-lists-to-plot" class="level2">
+<h2 class="anchored" data-anchor-id="gene-lists-to-plot">3.1. Gene lists to plot</h2>
 <p>we are going to plot specific sets of genes against all of the SComatic detected genes.</p>
 <ul>
 <li>intOGen human driver database</li>
 <li>common cancer genes from MartinCorena et al</li>
 </ul>
-<pre class="{r}"><code>all_intogen &lt;- read.table("/home/albax/intogen/IntOGen-DriverGenes.tsv", sep="\t", header = TRUE)
-
-
-common_cancer_genes &lt;- c("ADAM29", "ADAMTS18", "AJUBA", "AKT1", "AKT2", "APOB", "ARID1A", "ARID2", "AURKA", "BAI3", "BRAF", "CASP8", "CCND1", "CDH1", "CDKN2A", "CR2", "CREBBP", "CUL3", "DICER1", "EGFR", "EPHA2", "ERBB2", "ERBB3", "ERBB4", "EZH2", "FAT1", "FAT4", "FBXW7", "FGFR1", "FGFR2", "FGFR3", "FLG2", "GRIN2A", "GRM3", "HRAS", "IRF6", "KCNH5", "KEAP1", "KMT2A", "KMT2C", "KMT2D", "KRAS", "MET", "MUC17", "NF1", "NFE2L2", "NOTCH1", "NOTCH2", "NOTCH3", "NOTCH4", "NRAS", "NSD1", "PCED1B", "PIK3CA", "PLCB1", "PPP1R3A", "PREX2", "PTCH1", "PTEN", "PTPRT", "RB1", "RBM10", "SALL1", "SCN11A", "SCN1A", "SETD2", "SMAD4", "SMO", "SOX2", "SPHKAP", "SUFU", "TP53", "TP63", "TRIOBP", "ZNF750", "TGFBR2")
-</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>all_intogen <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="st">"/home/albax/intogen/IntOGen-DriverGenes.tsv"</span>, <span class="at">sep=</span><span class="st">"</span><span class="sc">\t</span><span class="st">"</span>, <span class="at">header =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>common_cancer_genes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"ADAM29"</span>, <span class="st">"ADAMTS18"</span>, <span class="st">"AJUBA"</span>, <span class="st">"AKT1"</span>, <span class="st">"AKT2"</span>, <span class="st">"APOB"</span>, <span class="st">"ARID1A"</span>, <span class="st">"ARID2"</span>, <span class="st">"AURKA"</span>, <span class="st">"BAI3"</span>, <span class="st">"BRAF"</span>, <span class="st">"CASP8"</span>, <span class="st">"CCND1"</span>, <span class="st">"CDH1"</span>, <span class="st">"CDKN2A"</span>, <span class="st">"CR2"</span>, <span class="st">"CREBBP"</span>, <span class="st">"CUL3"</span>, <span class="st">"DICER1"</span>, <span class="st">"EGFR"</span>, <span class="st">"EPHA2"</span>, <span class="st">"ERBB2"</span>, <span class="st">"ERBB3"</span>, <span class="st">"ERBB4"</span>, <span class="st">"EZH2"</span>, <span class="st">"FAT1"</span>, <span class="st">"FAT4"</span>, <span class="st">"FBXW7"</span>, <span class="st">"FGFR1"</span>, <span class="st">"FGFR2"</span>, <span class="st">"FGFR3"</span>, <span class="st">"FLG2"</span>, <span class="st">"GRIN2A"</span>, <span class="st">"GRM3"</span>, <span class="st">"HRAS"</span>, <span class="st">"IRF6"</span>, <span class="st">"KCNH5"</span>, <span class="st">"KEAP1"</span>, <span class="st">"KMT2A"</span>, <span class="st">"KMT2C"</span>, <span class="st">"KMT2D"</span>, <span class="st">"KRAS"</span>, <span class="st">"MET"</span>, <span class="st">"MUC17"</span>, <span class="st">"NF1"</span>, <span class="st">"NFE2L2"</span>, <span class="st">"NOTCH1"</span>, <span class="st">"NOTCH2"</span>, <span class="st">"NOTCH3"</span>, <span class="st">"NOTCH4"</span>, <span class="st">"NRAS"</span>, <span class="st">"NSD1"</span>, <span class="st">"PCED1B"</span>, <span class="st">"PIK3CA"</span>, <span class="st">"PLCB1"</span>, <span class="st">"PPP1R3A"</span>, <span class="st">"PREX2"</span>, <span class="st">"PTCH1"</span>, <span class="st">"PTEN"</span>, <span class="st">"PTPRT"</span>, <span class="st">"RB1"</span>, <span class="st">"RBM10"</span>, <span class="st">"SALL1"</span>, <span class="st">"SCN11A"</span>, <span class="st">"SCN1A"</span>, <span class="st">"SETD2"</span>, <span class="st">"SMAD4"</span>, <span class="st">"SMO"</span>, <span class="st">"SOX2"</span>, <span class="st">"SPHKAP"</span>, <span class="st">"SUFU"</span>, <span class="st">"TP53"</span>, <span class="st">"TP63"</span>, <span class="st">"TRIOBP"</span>, <span class="st">"ZNF750"</span>, <span class="st">"TGFBR2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>SComatic mutated genes. They are __ in total.</p>
-<pre class="{r}"><code>all_mutated_scomatic &lt;- read.table("data/mutated_genes_hca.tsv", sep="\t", header = FALSE)
-</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>all_mutated_scomatic <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="st">"data/mutated_genes_hca.tsv"</span>, <span class="at">sep=</span><span class="st">"</span><span class="sc">\t</span><span class="st">"</span>, <span class="at">header =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
-<section id="plot-venn-diagrams" class="level1">
-<h1>Plot Venn diagrams</h1>
-<section id="detected-in-scomatic-vs.-intogen" class="level2">
-<h2 class="anchored" data-anchor-id="detected-in-scomatic-vs.-intogen">1. Detected in SComatic vs.&nbsp;intOGen</h2>
-<pre class="{r}"><code>detected_genes &lt;- all_mutated_scomatic[all_mutated_scomatic$V1 %in% intersect(all_mutated_scomatic$V1, all_intogen$Symbol), ] # 95
-
-# Generate Venn diagram
-p &lt;- ggvenn(list("intOgen genes" = all_intogen$Symbol, "SComatic mutated genes" = all_mutated_scomatic$V1), fill_color = c("yellow", "blue"))
-ggsave("venn_intersect/venn_scomatic_vs_intogen.svg", p,  device = "svg")
-ggsave("venn_intersect/venn_scomatic_vs_intogen.pdf", p,  device = "pdf")
-ggsave("venn_intersect/venn_scomatic_vs_intogen.png", p,  device = "png", dpi = 300)
-p
-
-write.table(detected_genes, "venn_intersect/venn_scomatic_vs_intogen.csv", sep = ",", quote = FALSE, row.names = FALSE)
-</code></pre>
+<section id="plot-venn-diagrams" class="level2">
+<h2 class="anchored" data-anchor-id="plot-venn-diagrams">3.2. Plot Venn diagrams</h2>
+<section id="i.-detected-in-scomatic-vs.-intogen" class="level3">
+<h3 class="anchored" data-anchor-id="i.-detected-in-scomatic-vs.-intogen">i. Detected in SComatic vs.&nbsp;intOGen</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>detected_genes <span class="ot">&lt;-</span> all_mutated_scomatic[all_mutated_scomatic<span class="sc">$</span>V1 <span class="sc">%in%</span> <span class="fu">intersect</span>(all_mutated_scomatic<span class="sc">$</span>V1, all_intogen<span class="sc">$</span>Symbol), ] <span class="co"># 95</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate Venn diagram</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggvenn</span>(<span class="fu">list</span>(<span class="st">"intOgen genes"</span> <span class="ot">=</span> all_intogen<span class="sc">$</span>Symbol, <span class="st">"SComatic mutated genes"</span> <span class="ot">=</span> all_mutated_scomatic<span class="sc">$</span>V1), <span class="at">fill_color =</span> <span class="fu">c</span>(<span class="st">"yellow"</span>, <span class="st">"blue"</span>))</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"venn_intersect/venn_scomatic_vs_intogen.svg"</span>, p,  <span class="at">device =</span> <span class="st">"svg"</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"venn_intersect/venn_scomatic_vs_intogen.pdf"</span>, p,  <span class="at">device =</span> <span class="st">"pdf"</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"venn_intersect/venn_scomatic_vs_intogen.png"</span>, p,  <span class="at">device =</span> <span class="st">"png"</span>, <span class="at">dpi =</span> <span class="dv">300</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>p</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="fu">write.table</span>(detected_genes, <span class="st">"venn_intersect/venn_scomatic_vs_intogen.csv"</span>, <span class="at">sep =</span> <span class="st">","</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
-<section id="detected-in-scomatic-vs.-common-cancer" class="level2">
-<h2 class="anchored" data-anchor-id="detected-in-scomatic-vs.-common-cancer">2. Detected in SComatic vs.&nbsp;common cancer</h2>
-<pre class="{r}"><code>detected_genes &lt;- all_mutated_scomatic[all_mutated_scomatic$V1 %in% intersect(all_mutated_scomatic$V1, common_cancer_genes), ] # 95
-
-# Generate Venn diagram
-p &lt;- ggvenn(list("common cancer genes" = common_cancer_genes, "SComatic mutated genes" = all_mutated_scomatic$V1), fill_color = c("green", "blue"))
-
-ggsave("venn_intersect/venn_scomatic_vs_common_cancer_genes.svg", p,  device = "svg")
-ggsave("venn_intersect/venn_scomatic_vs_common_cancer_genes.pdf", p,  device = "pdf")
-ggsave("venn_intersect/venn_scomatic_vs_common_cancer_genes.png", p,  device = "png", dpi = 300)
-p
-
-write.table(detected_genes, "venn_intersect/venn_scomatic_vs_common_cancer_genes.csv", sep = ",", quote = FALSE, row.names = FALSE)
-</code></pre>
+<section id="ii.-detected-in-scomatic-vs.-common-cancer" class="level3">
+<h3 class="anchored" data-anchor-id="ii.-detected-in-scomatic-vs.-common-cancer">ii. Detected in SComatic vs.&nbsp;common cancer</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>detected_genes <span class="ot">&lt;-</span> all_mutated_scomatic[all_mutated_scomatic<span class="sc">$</span>V1 <span class="sc">%in%</span> <span class="fu">intersect</span>(all_mutated_scomatic<span class="sc">$</span>V1, common_cancer_genes), ] <span class="co"># 95</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate Venn diagram</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggvenn</span>(<span class="fu">list</span>(<span class="st">"common cancer genes"</span> <span class="ot">=</span> common_cancer_genes, <span class="st">"SComatic mutated genes"</span> <span class="ot">=</span> all_mutated_scomatic<span class="sc">$</span>V1), <span class="at">fill_color =</span> <span class="fu">c</span>(<span class="st">"green"</span>, <span class="st">"blue"</span>))</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"venn_intersect/venn_scomatic_vs_common_cancer_genes.svg"</span>, p,  <span class="at">device =</span> <span class="st">"svg"</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"venn_intersect/venn_scomatic_vs_common_cancer_genes.pdf"</span>, p,  <span class="at">device =</span> <span class="st">"pdf"</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"venn_intersect/venn_scomatic_vs_common_cancer_genes.png"</span>, p,  <span class="at">device =</span> <span class="st">"png"</span>, <span class="at">dpi =</span> <span class="dv">300</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>p</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="fu">write.table</span>(detected_genes, <span class="st">"venn_intersect/venn_scomatic_vs_common_cancer_genes.csv"</span>, <span class="at">sep =</span> <span class="st">","</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
-<section id="detected-in-scomatic-vs-intogen-vs-common-cancer" class="level2">
-<h2 class="anchored" data-anchor-id="detected-in-scomatic-vs-intogen-vs-common-cancer">3. Detected in SComatic vs intogen vs common cancer</h2>
-<pre class="{r}"><code># Generate Venn diagram
-svglite("venn_intersect/venn_scomatic_vs_intogen_vs_common_cancer_genes.svg")
-p &lt;- ggvenn(list("intOgen genes" = all_intogen$Symbol, "common cancer genes" = common_cancer_genes, "SComatic mutated genes" = all_mutated_scomatic$V1), fill_color = c("yellow", "green", "blue"), text_size = 6)
-
-ggsave("venn_intersect/venn_scomatic_vs_intogen_vs_common_cancer_genes.svg", p,  device = "svg")
-ggsave("venn_intersect/venn_scomatic_vs_intogen_vs_common_cancer_genes.pdf", p,  device = "pdf")
-ggsave("venn_intersect/venn_scomatic_vs_intogen_vs_common_cancer_genes.png", p,  device = "png", dpi = 300)
-p
-</code></pre>
+<section id="iii.-detected-in-scomatic-vs-intogen-vs-common-cancer" class="level3">
+<h3 class="anchored" data-anchor-id="iii.-detected-in-scomatic-vs-intogen-vs-common-cancer">iii. Detected in SComatic vs intogen vs common cancer</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate Venn diagram</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">svglite</span>(<span class="st">"venn_intersect/venn_scomatic_vs_intogen_vs_common_cancer_genes.svg"</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggvenn</span>(<span class="fu">list</span>(<span class="st">"intOgen genes"</span> <span class="ot">=</span> all_intogen<span class="sc">$</span>Symbol, <span class="st">"common cancer genes"</span> <span class="ot">=</span> common_cancer_genes, <span class="st">"SComatic mutated genes"</span> <span class="ot">=</span> all_mutated_scomatic<span class="sc">$</span>V1), <span class="at">fill_color =</span> <span class="fu">c</span>(<span class="st">"yellow"</span>, <span class="st">"green"</span>, <span class="st">"blue"</span>), <span class="at">text_size =</span> <span class="dv">6</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"venn_intersect/venn_scomatic_vs_intogen_vs_common_cancer_genes.svg"</span>, p,  <span class="at">device =</span> <span class="st">"svg"</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"venn_intersect/venn_scomatic_vs_intogen_vs_common_cancer_genes.pdf"</span>, p,  <span class="at">device =</span> <span class="st">"pdf"</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"venn_intersect/venn_scomatic_vs_intogen_vs_common_cancer_genes.png"</span>, p,  <span class="at">device =</span> <span class="st">"png"</span>, <span class="at">dpi =</span> <span class="dv">300</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>p</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 
 
 </section>
