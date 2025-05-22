@@ -4,8 +4,8 @@ project:
   output-dir: docs
 
 book:
-  title: "Master thesis in Bioinformatics and Computational Biology"
-  subtitle: "Single-cell transcriptomics analysis of mutant competition during field cancerization in mouse esophagus" 
+  title: "Master's thesis in Bioinformatics and Computational Biology"
+  # subtitle: "Single-cell transcriptomics analysis of mutant competition during field cancerization in mouse esophagus" 
   author: "Alba Méndez Alejandre"
   date: last-modified
   date-format: "DD/MM/YYYY"
@@ -27,10 +27,10 @@ book:
         - Mouse/5_AnnotationVariants.qmd
         - Mouse/6_GOAnalysis.qmd
     - part: "Human HCA analysis"
-      # chapters:
+      chapters:
         # - Human/1_hca_esoph_inspection.qmd
         # - Human/2_GeneExpression_hca.qmd
-        # - Human/3_VennDiagrams_hca.qmd
+        - Human/3_VennDiagrams_hca.qmd
         # - Human/4_clones_UMAP_mappging_hca.qmd
         # - Human/mut_clones_analysis_hca.qmd
 
@@ -42,10 +42,10 @@ format:
   html:
     theme: cosmo
     number-sections: false       
-    code-fold: true              
+    code-fold: false               
     toc: true                    
     toc-depth: 5
-    toc-expand: 3
+    toc-expand: 4
     toc-location: right
     toc-title: "Index"
   pdf:
