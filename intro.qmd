@@ -1,12 +1,13 @@
 # Introduction
 
-This repository aims to be a log of the overall __ i did for my master's thesis. 
+This repository aims to be a log of the overall work i did for my master's thesis. 
 
 
 ## Computers
 I used mainly two computers for all the calculations, though the HCA dataset was in a third one, so i had to use it sporadically. 
 
 - **matterhorn:** main computer. Mainly used for storage and explorative analysis.
+- **nuptse:** used for storage and explorative analysis of HCA dataset.
 - **folia:** small computing server. Used for clusterization, alignment, etc. 
 
 All code was executed in computers running Ubuntu 22.04.4 LTS.
