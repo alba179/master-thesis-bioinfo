@@ -1,0 +1,1707 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.55">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>2. Clustering and Cell annotation – Master thesis in Bioinformatics and Computational Biology</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<link href="../Mouse/3_Velocity_inference.html" rel="next">
+<link href="../Mouse/1_DataProcessing.html" rel="prev">
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Mouse/1_DataProcessing.html">Mouse analysis</a></li><li class="breadcrumb-item"><a href="../Mouse/2_ClusteringCellAnnotation.html"><span class="chapter-title">2. Clustering and Cell annotation</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Master thesis in Bioinformatics and Computational Biology</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/alba179/master-thesis-bioinfo" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Mouse and Human SComatic analysis</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Introduction</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Mouse analysis</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Mouse/1_DataProcessing.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">1. Data Pre-processing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Mouse/2_ClusteringCellAnnotation.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">2. Clustering and Cell annotation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Mouse/3_Velocity_inference.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">3. Inference of velocity</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Mouse/4_VariantCalling.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">3. SComatic calling</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Mouse/5_AnnotationVariants.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">5. Functional annotation of variants</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Mouse/6_GOAnalysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">4. Functional Analysis</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Human HCA analysis</span></span>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="3">
+    <h2 id="toc-title">Index</h2>
+   
+  <ul>
+  <li><a href="#import-libraries" id="toc-import-libraries" class="nav-link active" data-scroll-target="#import-libraries">Import libraries</a></li>
+  <li><a href="#load-data" id="toc-load-data" class="nav-link" data-scroll-target="#load-data">Load data</a></li>
+  <li><a href="#qc-stats" id="toc-qc-stats" class="nav-link" data-scroll-target="#qc-stats">QC stats</a>
+  <ul>
+  <li><a href="#detect-mt-genes" id="toc-detect-mt-genes" class="nav-link" data-scroll-target="#detect-mt-genes">Detect MT genes</a></li>
+  </ul></li>
+  <li><a href="#normalization-feature-selection-scaling" id="toc-normalization-feature-selection-scaling" class="nav-link" data-scroll-target="#normalization-feature-selection-scaling">Normalization, feature selection, scaling</a>
+  <ul>
+  <li><a href="#dimensional-reduction-pca" id="toc-dimensional-reduction-pca" class="nav-link" data-scroll-target="#dimensional-reduction-pca">Dimensional reduction (PCA)</a></li>
+  <li><a href="#non-linear-dimensional-representation" id="toc-non-linear-dimensional-representation" class="nav-link" data-scroll-target="#non-linear-dimensional-representation">Non-linear dimensional representation</a></li>
+  <li><a href="#clustering-graph-based" id="toc-clustering-graph-based" class="nav-link" data-scroll-target="#clustering-graph-based">Clustering (graph-based)</a>
+  <ul>
+  <li><a href="#find-neighbours-knn" id="toc-find-neighbours-knn" class="nav-link" data-scroll-target="#find-neighbours-knn">Find Neighbours (KNN)</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#find-clusters" id="toc-find-clusters" class="nav-link" data-scroll-target="#find-clusters">Find Clusters</a></li>
+  <li><a href="#cell-annotation" id="toc-cell-annotation" class="nav-link" data-scroll-target="#cell-annotation">Cell annotation</a></li>
+  <li><a href="#re-normalization-and-clustering-of-filtered-object" id="toc-re-normalization-and-clustering-of-filtered-object" class="nav-link" data-scroll-target="#re-normalization-and-clustering-of-filtered-object">Re-normalization and clustering of filtered object</a></li>
+  <li><a href="#cell-cycle-scoring" id="toc-cell-cycle-scoring" class="nav-link" data-scroll-target="#cell-cycle-scoring">Cell cycle scoring</a></li>
+  <li><a href="#cluster-annotation-based-on-cellular-composition-dge-featureplots" id="toc-cluster-annotation-based-on-cellular-composition-dge-featureplots" class="nav-link" data-scroll-target="#cluster-annotation-based-on-cellular-composition-dge-featureplots">Cluster annotation based on cellular composition, DGE, FeaturePlots…</a></li>
+  <li><a href="#scomatic-preparation" id="toc-scomatic-preparation" class="nav-link" data-scroll-target="#scomatic-preparation">SComatic preparation</a>
+  <ul>
+  <li><a href="#save-cell-barcodes-with-cell-types-in-tsv-format-scomatic" id="toc-save-cell-barcodes-with-cell-types-in-tsv-format-scomatic" class="nav-link" data-scroll-target="#save-cell-barcodes-with-cell-types-in-tsv-format-scomatic">Save cell barcodes with cell types in TSV format (SComatic)</a></li>
+  </ul></li>
+  <li><a href="#annotation-of-clusters-based-on-known-canonical-markers-of-each-cluster" id="toc-annotation-of-clusters-based-on-known-canonical-markers-of-each-cluster" class="nav-link" data-scroll-target="#annotation-of-clusters-based-on-known-canonical-markers-of-each-cluster">Annotation of clusters (based on known canonical markers of each cluster)</a></li>
+  <li><a href="#scvelo-preparation" id="toc-scvelo-preparation" class="nav-link" data-scroll-target="#scvelo-preparation">scVelo preparation</a>
+  <ul>
+  <li><a href="#cluster-annotation-for-scvelo" id="toc-cluster-annotation-for-scvelo" class="nav-link" data-scroll-target="#cluster-annotation-for-scvelo">Cluster annotation for scvelo</a></li>
+  <li><a href="#conversion-into-h5ad-object-export-to-scvelo" id="toc-conversion-into-h5ad-object-export-to-scvelo" class="nav-link" data-scroll-target="#conversion-into-h5ad-object-export-to-scvelo">Conversion into h5ad object (export to scvelo)</a></li>
+  </ul></li>
+  <li><a href="#normalization-of-counts" id="toc-normalization-of-counts" class="nav-link" data-scroll-target="#normalization-of-counts">Normalization of counts</a></li>
+  <li><a href="#do-we-find-barcodes-from-epi_den-shared-in-other-clusters" id="toc-do-we-find-barcodes-from-epi_den-shared-in-other-clusters" class="nav-link" data-scroll-target="#do-we-find-barcodes-from-epi_den-shared-in-other-clusters">Do we find barcodes from Epi_DEN shared in other clusters?</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Mouse/1_DataProcessing.html">Mouse analysis</a></li><li class="breadcrumb-item"><a href="../Mouse/2_ClusteringCellAnnotation.html"><span class="chapter-title">2. Clustering and Cell annotation</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-title">2. Clustering and Cell annotation</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>We are going to perform the downstream analysis of single cell transcriptomics mainly with R package Seurat (https://satijalab.org/seurat/).</p>
+<p>The version 4 was used instead of the 5 due to version compatibility problems with other methods needed downstream.</p>
+<section id="import-libraries" class="level2">
+<h2 class="anchored" data-anchor-id="import-libraries">Import libraries</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.libPaths</span>(<span class="st">"/home/albax/miniforge3/envs/seurat_v4/lib/R/library"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(.Platform<span class="sc">$</span>OS.type <span class="sc">==</span> <span class="st">"linux"</span>) <span class="fu">Sys.setenv</span>(<span class="at">PATH=</span> <span class="fu">paste</span>(<span class="st">"/home/albax/miniforge3/envs/seurat_v4/lib"</span>,<span class="fu">Sys.getenv</span>()[<span class="st">"PATH"</span>],<span class="at">sep=</span><span class="st">";"</span>))</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(reticulate)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">use_condaenv</span>(<span class="st">"/home/albax/miniforge3/envs/seurat_v4"</span>, <span class="at">required =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">py_config</span>()</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">import</span>(<span class="st">"numpy"</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">import</span>(<span class="st">"leidenalg"</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">import</span>(<span class="st">"pandas"</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressMessages</span>(<span class="fu">library</span>(Seurat))</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressMessages</span>(<span class="fu">library</span>(dplyr))</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressMessages</span>(<span class="fu">library</span>(DropletUtils)) <span class="co">#QC filtering</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressMessages</span>(<span class="fu">library</span>(ggplot2))</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressMessages</span>(<span class="fu">library</span>(plotly))</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressMessages</span>(<span class="fu">library</span>(SingleCellExperiment))</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressMessages</span>(<span class="fu">library</span>(clustree))</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressMessages</span>(<span class="fu">library</span>(httpgd))</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressMessages</span>(<span class="fu">library</span>(patchwork))</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co"># suppressMessages(library(BPCells)) # for on-disk memory</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressMessages</span>(<span class="fu">library</span>(future))</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressMessages</span>(<span class="fu">library</span>(future.apply))</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressMessages</span>(<span class="fu">library</span>(BiocParallel))</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="co"># For data management</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressMessages</span>(<span class="fu">library</span>(tidyverse))</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressMessages</span>(<span class="fu">library</span>(Matrix))</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressMessages</span>(<span class="fu">library</span>(gtools))</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressMessages</span>(<span class="fu">library</span>(R.utils))</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="co"># For plotting</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressMessages</span>(<span class="fu">library</span>(RColorBrewer))</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressMessages</span>(<span class="fu">library</span>(viridis))</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressMessages</span>(<span class="fu">library</span>(gplots))</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressMessages</span>(<span class="fu">library</span>(gridExtra))</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressMessages</span>(<span class="fu">library</span>(ggrepel))</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressMessages</span>(<span class="fu">library</span>(ggridges))</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="co"># for matrix </span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Matrix)</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Matrix.utils)</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>color.list <span class="ot">&lt;-</span> RColorBrewer<span class="sc">::</span><span class="fu">brewer.pal</span>(<span class="dv">12</span>,<span class="st">"Paired"</span>)</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>color.list <span class="ot">&lt;-</span> <span class="fu">c</span>(color.list,RColorBrewer<span class="sc">::</span><span class="fu">brewer.pal</span>(<span class="dv">12</span>,<span class="st">"Set3"</span>))</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="co"># Palette from orange to violet</span></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>palette <span class="ot">&lt;-</span> <span class="fu">scale_color_viridis_c</span>(<span class="at">option =</span> <span class="st">"plasma"</span>, <span class="at">direction =</span> <span class="sc">-</span><span class="dv">1</span>) <span class="co"># continue colors palette</span></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>palette_d <span class="ot">&lt;-</span> <span class="fu">scale_color_viridis_d</span>(<span class="at">option =</span> <span class="st">"turbo"</span>, <span class="at">direction =</span> <span class="dv">1</span>) <span class="co"># discrete colors palette</span></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>name_order <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"lib1"</span>, <span class="st">"lib2"</span>, <span class="st">"lib3"</span>, <span class="st">"lib4"</span>, <span class="st">"lib5"</span>, <span class="st">"lib6"</span>, <span class="st">"lib6"</span>, <span class="st">"lib7"</span>) <span class="co"># fixed library order to plot the results</span></span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">"/home/albax/mcGinn_2021"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="load-data" class="level2">
+<h2 class="anchored" data-anchor-id="load-data">Load data</h2>
+<p>First, we load our rds object, and we get only the data from the assay “gene”. Note that we have different rds objects, each of them contains different step versions (non-filtered, filtered, annotated), in order to maintain consistency and avoid errors and accidental deletes.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Esoph &lt;- readRDS(file = "./results/esoph_star_filtfixed_mm10.rds") # this is with mm10 alignment</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>Esoph <span class="co"># 57186 genes genes accross 46321 cells</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># An object of class Seurat </span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 171558 features across 46321 samples within 3 assays </span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Active assay: gene (57186 features, 0 variable features)</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">#  2 layers present: counts, data</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">#  2 other assays present: spliced, unspliced</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Esoph_clusts &lt;- readRDS(file = "./output/esoph_star_clusts_mm10.rds") # after clustering, with PCA, tSNE, UMAP, etc. Without filtering. </span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Esoph_filt &lt;- readRDS(file = "./output/esoph_star_filtered_mm10_vep_annot.rds") # also load the already filtered seurat object (which doesnt contain clusters 4 and 7)</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>Esoph_filt <span class="co"># 57186 genes genes accross 39763 cells</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co"># An object of class Seurat </span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 250024 features across 39763 samples within 5 assays </span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Active assay: RNA (57186 features, 0 variable features)</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co">#  2 layers present: counts, data</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co">#  4 other assays present: gene, spliced, unspliced, SCT</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co">#  3 dimensional reductions calculated: pca, tsne, umap</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>Esoph_filt <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> <span class="st">"./output/esoph_star_filtered_mm10_vep_annot_rep.rds"</span>) <span class="co"># seurat object with annotated clones and additional info</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>Esoph_filt</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="co"># An object of class Seurat </span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co"># 250024 features across 39763 samples within 5 assays </span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Active assay: RNA (57186 features, 0 variable features)</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="co">#  2 layers present: counts, data</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="co">#  4 other assays present: gene, spliced, unspliced, SCT</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="co">#  3 dimensional reductions calculated: pca, tsne, umap</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>The features(genes) are automatically collapsed -&gt; there are no duplicated rows in any of the assays.</p>
+<p>Look for duplicated genes:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>gene_features <span class="ot">&lt;-</span> <span class="fu">rownames</span>(Esoph[[<span class="st">"unspliced"</span>]])</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>duplicated_genes <span class="ot">&lt;-</span> gene_features[<span class="fu">duplicated</span>(gene_features)]</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"Duplicated genes in the 'gene' assay:"</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(duplicated_genes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="qc-stats" class="level2">
+<h2 class="anchored" data-anchor-id="qc-stats">QC stats</h2>
+<p>We are going to perform everything only in the “spliced” assay.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">DefaultAssay</span>(Esoph) <span class="ot">&lt;-</span> <span class="st">"spliced"</span> <span class="co"># change active assay to spliced</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(Esoph<span class="sc">@</span>meta.data, <span class="dv">5</span>) <span class="co">#it contains nCount and nFeature for each assay</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Typically, we want to filter: - <strong>Blood cells (erythrocites)</strong> - The percentage of reads that map to the mitochondrial genome - Low-quality / dying cells often exhibit extensive mitochondrial contamination - We calculate mitochondrial QC metrics with the PercentageFeatureSet() function which calculates the percentage of counts originating from a set of features - We use the set of all genes starting with <strong>MT-(^MT)</strong> as a set of mitochondrial genes low quality barcodes (a treshold)</p>
+<ul>
+<li>Empty barcodes (using a treshold)</li>
+<li>The number of unique genes detected in each cell.
+<ul>
+<li><strong>Low-quality cells or empty droplets</strong> will often have very few genes</li>
+<li>Cell <strong>doublets</strong> or multiplets may exhibit an aberrantly high gene count</li>
+</ul></li>
+<li>Similarly, the total number of molecules detected within a cell (correlates strongly with unique genes)</li>
+</ul>
+<p><strong>We have already filtered our data with barcodes ranks, and now we are going to inspect the seurat object in order to decide how we filter it</strong> spoiler: we end up filtering using the clusterization (7 clusters) shown in umap with resolution 0.3 (which we decide viewing clustree), where we are going to delete clusters 4 and 7, as they belong to fibroblasts (Vim marker) or have really high mt percent.</p>
+<section id="detect-mt-genes" class="level3">
+<h3 class="anchored" data-anchor-id="detect-mt-genes">Detect MT genes</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">row.names</span>(Esoph)) <span class="co"># first genes</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>Esoph[[<span class="st">"percent.mt"</span>]] <span class="ot">&lt;-</span> <span class="fu">PercentageFeatureSet</span>(Esoph, <span class="at">assay =</span> <span class="st">"spliced"</span>, <span class="at">pattern =</span> <span class="st">"^mt-"</span>) <span class="co"># calculate mitochondrial percent</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(Esoph<span class="sc">@</span>meta.data, <span class="dv">5</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># we have NaN values in percent.mt because percentage is calculated by percentage is (x$nCount_RNA/x$percent.mt)*100  , and therefore there are 0 values for the nCount slot and 0 mitochondrial gene counts for the barcode. </span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Delete barcodes</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Esoph &lt;- subset(Esoph, subset = !is.na("percent.mt")) # exclude NaN values</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Visualize QC metrics</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">VlnPlot</span>(Esoph, <span class="at">features =</span> <span class="fu">c</span>(<span class="st">"nFeature_spliced"</span>, <span class="st">"nCount_spliced"</span>, <span class="st">"nFeature_unspliced"</span>, <span class="st">"nCount_unspliced"</span>, <span class="st">"percent.mt"</span>), <span class="at">ncol =</span> <span class="dv">5</span>)  </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># VlnPlot(Esoph, features =  "percent.mt", ncol = 1) +</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>       <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="at">by =</span> <span class="dv">5</span>)) </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># VlnPlot(Esoph, features =  "nFeature_spliced", ncol = 1) +</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>       <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">10000</span>, <span class="at">by =</span> <span class="dv">500</span>)) </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co"># VlnPlot(Esoph, features =  "nCount_spliced", ncol = 1) +</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>       <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1000000</span>, <span class="at">by =</span> <span class="dv">10000</span>))</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">VlnPlot</span>(Esoph, <span class="at">features =</span>  <span class="st">"nFeature_spliced"</span>, <span class="at">split.by =</span> <span class="st">"Sequencing_ID"</span>, <span class="at">ncol =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>       <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">10000</span>, <span class="at">by =</span> <span class="dv">500</span>)) <span class="co"># frecuencia genes en cada sequencing</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co"># plot(density(Esoph$nFeature_spliced)) # kernel density plot (alternative to hist())</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co"># plot(density(Esoph$percent.mt)) # kernel density plot (alternative to hist())</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="fu">VlnPlot</span>(Esoph_filt, <span class="at">features=</span><span class="st">"nFeature_spliced"</span>, <span class="at">split.by=</span><span class="st">"Sequencing_ID"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>plot1 <span class="ot">&lt;-</span> <span class="fu">FeatureScatter</span>(Esoph, <span class="at">feature1 =</span> <span class="st">"nCount_spliced"</span>, <span class="at">feature2 =</span> <span class="st">"percent.mt"</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>plot2 <span class="ot">&lt;-</span> <span class="fu">FeatureScatter</span>(Esoph, <span class="at">feature1 =</span> <span class="st">"nCount_spliced"</span>, <span class="at">feature2 =</span> <span class="st">"nFeature_spliced"</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>plot3 <span class="ot">&lt;-</span> <span class="fu">FeatureScatter</span>(Esoph, <span class="at">feature1 =</span> <span class="st">"nCount_spliced"</span>, <span class="at">feature2 =</span> <span class="st">"nCount_unspliced"</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>plot1 <span class="sc">+</span> plot2 <span class="sc">+</span> plot3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>According to the plots we have seen, we are going to filter the Esoph object (by eye).</p>
+<p>The original paper filtered the cells according to: - Cells that have &gt;15% mitochondrial counts - Cells that have unique feature counts less than 1200 - Genes expressed in fewer than 3 cells But we are not going to do this.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="do">## General statistics post-second filtering:</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Proportion of UMIs that are from unspliced transcripts:</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># (kallisto | bus counts reads that are partially intronic and partially exonic as unspliced while velocyto throws away many reads, reason why it ends with smaller proportion - see https://github.com/velocyto-team/velocyto.py/issues/148)</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(Esoph<span class="sc">$</span>nCount_unspliced) <span class="sc">/</span> (<span class="fu">sum</span>(Esoph<span class="sc">$</span>nCount_spliced) <span class="sc">+</span> <span class="fu">sum</span>(Esoph<span class="sc">$</span>nCount_unspliced)) <span class="co"># 0.1198788 mm39</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] 0.1281474 mm10</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Most barcodes now have &gt;&gt; 0 or 1 UMIs detected:</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>filt2_count <span class="ot">&lt;-</span> Matrix<span class="sc">::</span><span class="fu">colSums</span>(Esoph)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(filt2_count) <span class="co"># median genes = 13632 mm39</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co"># median genes = 11900 mm10</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Make a copy of spliced assay (for purpose of unambiguous exportation and interpretation in scvelo)</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>Esoph[[<span class="st">"RNA"</span>]] <span class="ot">&lt;-</span> Esoph[[<span class="st">"spliced"</span>]]</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>Esoph <span class="co"># spliced assay keeps as default assay used as input for downstream normalization etc. (but not modified)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+</section>
+<section id="normalization-feature-selection-scaling" class="level2">
+<h2 class="anchored" data-anchor-id="normalization-feature-selection-scaling">Normalization, feature selection, scaling</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>Esoph <span class="ot">&lt;-</span> <span class="fu">SCTransform</span>(Esoph, <span class="at">assay =</span> <span class="st">"spliced"</span>, <span class="at">new.assay.name =</span> <span class="st">"SCT"</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># creates SCT assay (that becomes default)</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Highly-variable features (between cells):  # 3000 by default</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Identify the 10 most highly variable genes</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>top10 <span class="ot">&lt;-</span> <span class="fu">head</span>(<span class="fu">VariableFeatures</span>(Esoph), <span class="dv">10</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Linear scaling is restricted to highly-variable features by default: Esoph[["SCT"]]@scale.data</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot variable features with labels</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">LabelPoints</span>(<span class="at">plot =</span> <span class="fu">VariableFeaturePlot</span>(<span class="at">object =</span> Esoph[[<span class="st">"SCT"</span>]], <span class="at">selection.method =</span> <span class="st">"sct"</span>), <span class="at">points =</span> top10, <span class="at">repel =</span> <span class="cn">TRUE</span>, <span class="at">xnudge =</span> <span class="dv">0</span>, <span class="at">ynudge =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="dimensional-reduction-pca" class="level3">
+<h3 class="anchored" data-anchor-id="dimensional-reduction-pca">Dimensional reduction (PCA)</h3>
+<p>Observation: Makes most sense to plot RNA velocity over cell embeddings from the SCT matrix (built from spliced, not unspliced counts; i.e.&nbsp;we seek arrows as predictions from CURRENT state)</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">DefaultAssay</span>(Esoph) <span class="ot">&lt;-</span> <span class="st">"SCT"</span> <span class="co"># already default, but just in case</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>Esoph <span class="ot">&lt;-</span> <span class="fu">RunPCA</span>(Esoph, <span class="at">verbose =</span> <span class="cn">FALSE</span>) <span class="co"># by default, based on variable features</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Summary of genes defining most variability: (higher PCA score)</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(Esoph[[<span class="st">"pca"</span>]], <span class="at">dims =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">nfeatures =</span> <span class="dv">5</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">VizDimLoadings</span>(Esoph, <span class="at">dims =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">reduction =</span> <span class="st">"pca"</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co"># PCA plot:</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="fu">DimPlot</span>(Esoph, <span class="at">dims =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), <span class="at">reduction =</span> <span class="st">"pca"</span>, <span class="at">pt.size =</span> <span class="fl">0.5</span>) <span class="co"># change the dimensions as you want</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Heatmap of genes and cells with highest PCA score (a quick supervised analysis of sources of variation)</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">DimHeatmap</span>(Esoph, <span class="at">dims =</span> <span class="dv">1</span>, <span class="at">cells =</span> <span class="dv">500</span>, <span class="at">balanced =</span> <span class="cn">TRUE</span>) <span class="co"># picks 500 most extreme cells on each end of PCA1 spectrum for 15 top differentiating genes</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">DimHeatmap</span>(Esoph, <span class="at">dims =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">15</span>, <span class="at">cells =</span> <span class="dv">500</span>, <span class="at">balanced =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set the threshold of significant dimensions based on conjunction of JackStraw, ElbowPlot and Supervised Heatmaps outcome before</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Significant dimensions: determine most relevant sources of variability</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Extensive technical noise is reduced when eliminating minor components, so top principal components represent a robust compression of the dataset.</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co"># ElbowPlot (heuristic; based on % variance explained by each PC component)</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ElbowPlot</span>(Esoph) <span class="co"># use 17</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="non-linear-dimensional-representation" class="level3">
+<h3 class="anchored" data-anchor-id="non-linear-dimensional-representation">Non-linear dimensional representation</h3>
+<p>Simplifies the complex manifold of the data in a super-reduced dimensional space for visualization. We should run this after PCA, in order to further reduce the dimensionality or our dataset. Later, we can run FindClusters() with whatever dimension we prefer.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="do">## tSNE</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>Esoph <span class="ot">&lt;-</span> <span class="fu">RunTSNE</span>(Esoph, <span class="at">dims =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">17</span>, <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(Esoph, file = "./output/esoph_star_tsne_mm10.rds")</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>tsne_plot_15 <span class="ot">&lt;-</span> <span class="fu">DimPlot</span>(Esoph, <span class="at">reduction =</span> <span class="st">"tsne"</span>, <span class="at">pt.size =</span> <span class="fl">0.5</span>) <span class="co"># _ clusters</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>tsne_plot_15</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Be careful when running this chunk, as umap can consume a lot of cpu:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="do">## UMAP</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>Esoph <span class="ot">&lt;-</span> <span class="fu">RunUMAP</span>(Esoph, <span class="at">reduction =</span> <span class="st">"pca"</span>, <span class="at">dims =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">17</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(Esoph, file = "./output/esoph_star_clusts_mm10.rds") # contains also FindNeighbours()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>umap_plot_15 <span class="ot">&lt;-</span> <span class="fu">DimPlot</span>(Esoph, <span class="at">reduction =</span> <span class="st">"umap"</span>, <span class="at">pt.size =</span> <span class="fl">0.5</span>, <span class="at">label=</span><span class="cn">TRUE</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>umap_plot_15</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>unique_names <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="fu">strsplit</span>(<span class="fu">colnames</span>(Esoph), <span class="st">"-"</span>), <span class="cf">function</span>(x) <span class="fu">paste</span>(x[<span class="dv">2</span>], x[<span class="dv">3</span>], <span class="at">sep =</span> <span class="st">"-"</span>))</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Add this information as metadata</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>Esoph<span class="sc">$</span>unique_name <span class="ot">&lt;-</span> unique_names</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a DimPlot colored by the unique names</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="fu">DimPlot</span>(Esoph, <span class="at">reduction =</span> <span class="st">"umap"</span>, <span class="at">pt.size =</span> <span class="fl">0.5</span>, <span class="at">label=</span><span class="cn">FALSE</span>, <span class="at">group.by =</span> <span class="st">'unique_name'</span>) <span class="co"># group by a column from metadata</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="clustering-graph-based" class="level3">
+<h3 class="anchored" data-anchor-id="clustering-graph-based">Clustering (graph-based)</h3>
+<ol type="1">
+<li>Cellular distance metric: euclidean distance (on PCAs)</li>
+<li>Embedding cells in a graph structure - for example a K-nearest neighbor (KNN) graph, with edges drawn between cells with similar feature expression patterns</li>
+</ol>
+<section id="find-neighbours-knn" class="level4">
+<h4 class="anchored" data-anchor-id="find-neighbours-knn">Find Neighbours (KNN)</h4>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>Esoph <span class="ot">&lt;-</span> <span class="fu">FindNeighbors</span>(Esoph, <span class="at">reduction =</span> <span class="st">"pca"</span>, <span class="at">dims =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">17</span>) <span class="co"># dims based on first N components (from pca reduction)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+</section>
+</section>
+<section id="find-clusters" class="level2">
+<h2 class="anchored" data-anchor-id="find-clusters">Find Clusters</h2>
+<p>Algorithm for modularity optimization (1 = original Louvain algorithm; 2 = Louvain algorithm with multilevel refinement; 3 = SLM algorithm; 4 = Leiden algorithm). Leiden requires the leidenalg python. - Louvain algorithm: Partitioning into highly interconnected ‘quasi-cliques’ or ‘communities’, optimizing a modularity target function. It may yield arbitrarily badly connected communities. In the worst case, communities may even be disconnected, especially when running the algorithm iteratively. - Leiden algorithm: when applied iteratively, it converges to a partition in which all subsets of all communities are locally optimally assigned. Furthermore, by relying on a fast local move approach, the Leiden algorithm runs faster than the Louvain algorithm.</p>
+<p>We will use Leiden algorith (algorithm = 4, method = “igraph”) https://www.nature.com/articles/s41598-019-41695-z</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Esoph &lt;- FindClusters(Esoph, resolution = seq(0.2, 1.2, by = 0.2), algorithm = 4) # this consumed too much memory...</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>Esoph <span class="ot">&lt;-</span> <span class="fu">FindClusters</span>(Esoph, <span class="at">resolution =</span> <span class="fl">0.1</span>, <span class="at">algorithm =</span> <span class="dv">4</span>, <span class="at">method =</span> <span class="st">"igraph"</span>) </span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>Esoph <span class="ot">&lt;-</span> <span class="fu">FindClusters</span>(Esoph, <span class="at">resolution =</span> <span class="fl">0.2</span>, <span class="at">algorithm =</span> <span class="dv">4</span>, <span class="at">method =</span> <span class="st">"igraph"</span>) </span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>Esoph <span class="ot">&lt;-</span> <span class="fu">FindClusters</span>(Esoph, <span class="at">resolution =</span> <span class="fl">0.3</span>, <span class="at">algorithm =</span> <span class="dv">4</span>, <span class="at">method =</span> <span class="st">"igraph"</span>) </span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>Esoph <span class="ot">&lt;-</span> <span class="fu">FindClusters</span>(Esoph, <span class="at">resolution =</span> <span class="fl">0.4</span>, <span class="at">algorithm =</span> <span class="dv">4</span>, <span class="at">method =</span> <span class="st">"igraph"</span>) </span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>Esoph <span class="ot">&lt;-</span> <span class="fu">FindClusters</span>(Esoph, <span class="at">resolution =</span> <span class="fl">0.6</span>, <span class="at">algorithm =</span> <span class="dv">4</span>, <span class="at">method =</span> <span class="st">"igraph"</span>) </span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>Esoph <span class="ot">&lt;-</span> <span class="fu">FindClusters</span>(Esoph, <span class="at">resolution =</span> <span class="fl">0.8</span>, <span class="at">algorithm =</span> <span class="dv">4</span>, <span class="at">method =</span> <span class="st">"igraph"</span>) </span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>Esoph <span class="ot">&lt;-</span> <span class="fu">FindClusters</span>(Esoph, <span class="at">resolution =</span> <span class="fl">1.0</span>, <span class="at">algorithm =</span> <span class="dv">4</span>, <span class="at">method =</span> <span class="st">"igraph"</span>) </span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>Esoph <span class="ot">&lt;-</span> <span class="fu">FindClusters</span>(Esoph, <span class="at">resolution =</span> <span class="fl">1.2</span>, <span class="at">algorithm =</span> <span class="dv">4</span>, <span class="at">method =</span> <span class="st">"igraph"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To decide how many clusters we should annotate, with the signatures we decide</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">clustree</span>(Esoph, <span class="at">prefix =</span> <span class="st">"SCT_snn_res."</span>) <span class="co"># we are going to use resolution 0.2 for Esoph in mm10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Idents() contains cluster info</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">Idents</span>(Esoph), <span class="dv">10</span>) <span class="co"># looks at cluster IDs of the first 10 cells</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">DimPlot</span>(Esoph, <span class="at">group.by =</span> <span class="st">"SCT_snn_res.0.2"</span>) <span class="sc">&amp;</span> palette_d</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">DimPlot</span>(Esoph, <span class="at">group.by =</span> <span class="st">"SCT_snn_res.0.3"</span>) <span class="sc">&amp;</span> palette_d</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="fu">DimPlot</span>(Esoph, <span class="at">group.by =</span> <span class="st">"SCT_snn_res.0.4"</span>) <span class="sc">&amp;</span> palette_d</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="fu">DimPlot</span>(Esoph, <span class="at">group.by =</span> <span class="st">"SCT_snn_res.0.2"</span>, <span class="at">split.by =</span> <span class="st">"condition"</span>) <span class="sc">&amp;</span> palette_d</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Finding different cell types that may not be epithelial, due to contamination, experiment design, whatever…</p>
+<p>Cell markers (they may vary between mouse/human): - Hematopoetic cells -&gt; Cd34 - Fibroblasts -&gt; Vim</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">FeaturePlot</span>(Esoph, <span class="at">features =</span> <span class="st">"Cd34"</span>) <span class="sc">&amp;</span> palette <span class="co"># marker for hematopoietic stem cells (immune)</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">FeaturePlot</span>(Esoph, <span class="at">features =</span> <span class="st">"Vim"</span>) <span class="sc">&amp;</span> palette <span class="co"># marker for fibroblasts</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Thanks to the plots above, we can clearly see that we have fibroblast cells that belong to cluster number 7 (when using resolution 0.2).</p>
+<p>Quality control plots with umap:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># number of genes per cell</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">FeaturePlot</span>(Esoph, <span class="at">features =</span> <span class="st">"nFeature_spliced"</span>) <span class="sc">&amp;</span> palette <span class="co"># no huge heterogeneities</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="fu">FeaturePlot</span>(Esoph, <span class="at">features =</span> <span class="st">"percent.mt"</span>) <span class="sc">&amp;</span> palette </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>We an see that the top “leaf” of our umap has low-quality cells, with few genes, and very high MT%. These cells belong to cluster 4 (when using resolution 0.2).</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select resolution for Seurat Clusters:</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Idents</span>(Esoph) <span class="ot">=</span> Esoph<span class="sc">$</span>SCT_snn_res.<span class="fl">0.2</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>Esoph<span class="sc">$</span>seurat_clusters <span class="ot">=</span> Esoph<span class="sc">$</span>SCT_snn_res.<span class="fl">0.2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Remaining annotation using top markers for every cluster compared to all remaining ones, reporting only the positive ones</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Esoph.markers &lt;- FindAllMarkers(Esoph, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25) # restrict to features with a min of 0.25 logFC</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="co"># write.table(Esoph.markers, file = './output/Esoph_markers.txt', col.names = TRUE, row.names = TRUE, sep = '\t')</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>RESULTS:</p>
+<p>When we plot the UMAP, we can see that there are: - Region with high MT proportion (belongs to cluster 4) - Two regions that seem to be different type of cells. - The region from the upper-left seems to be fibroblasts, bc if we run DimPlot(Esoph, features = features = c(“Vim”)), it colours. Vim(vimentin) is a typical fibroblast marker. - The other region must be further investigated to detect what is it. - Also, the cluster 4 looks like a “batch” that represents the whole data - Cluster 6 is specific of sample Old_DEN, which could be biological evidences!!</p>
+<p>After annotating and saving the preliminar results, we proceed by deleting the cluster number 4, as it is very heterogenous and somehow represents all the clusters in the data.</p>
+<p>We also delete cluster number 7, as they are fibroblasts.</p>
+<p>Delete cluster 4 and 7:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>Esoph_filt <span class="ot">&lt;-</span> <span class="fu">subset</span>(<span class="at">x =</span> Esoph, <span class="at">idents =</span> <span class="fu">c</span>(<span class="st">"4"</span>, <span class="st">"7"</span>), <span class="at">invert =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="co"># mm10</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="co"># An object of class Seurat </span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 250504 features across 39763 samples within 5 assays </span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Active assay: SCT (21760 features, 3000 variable features)</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="co">#  3 layers present: counts, data, scale.data</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="co">#  4 other assays present: gene, spliced, unspliced, RNA</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="co">#  3 dimensional reductions calculated: pca, tsne, umap</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="cell-annotation" class="level2">
+<h2 class="anchored" data-anchor-id="cell-annotation">Cell annotation</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>Esoph.markers <span class="ot">&lt;-</span> <span class="fu">FindAllMarkers</span>(Esoph_filt, <span class="at">only.pos =</span> <span class="cn">TRUE</span>, <span class="at">min.pct =</span> <span class="fl">0.25</span>, <span class="at">logfc.threshold =</span> <span class="fl">0.25</span>)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="fu">write.table</span>(Esoph.markers, <span class="at">file =</span> <span class="st">'./output/Esoph_markers_clusts.txt'</span>, <span class="at">col.names =</span> <span class="cn">TRUE</span>, <span class="at">row.names =</span> <span class="cn">TRUE</span>, <span class="at">sep =</span> <span class="st">'</span><span class="sc">\t</span><span class="st">'</span>)</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>TopMarkers <span class="ot">&lt;-</span> Esoph.markers <span class="sc">%&gt;%</span> </span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cluster) <span class="sc">%&gt;%</span> <span class="fu">top_n</span>(<span class="at">n =</span> <span class="dv">5</span>, <span class="at">wt =</span> avg_log2FC) <span class="co"># show just top 5 per cluster</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>TopMarkers <span class="sc">%&gt;%</span> <span class="fu">write.csv</span>(<span class="st">"./output/Esoph_TopMarkers.csv"</span>)</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>cluster3_markers <span class="ot">&lt;-</span> TopMarkers[TopMarkers<span class="sc">$</span>cluster <span class="sc">==</span> <span class="dv">3</span>, ]  <span class="co"># Suprabasal</span></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>cluster4_markers <span class="ot">&lt;-</span> TopMarkers[TopMarkers<span class="sc">$</span>cluster <span class="sc">==</span> <span class="dv">4</span>, ]  <span class="co"># Mito-rich</span></span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>cluster6_markers <span class="ot">&lt;-</span> TopMarkers[TopMarkers<span class="sc">$</span>cluster <span class="sc">==</span> <span class="dv">6</span>, ]  <span class="co"># Epi_DEN</span></span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>cluster7_markers <span class="ot">&lt;-</span> TopMarkers[TopMarkers<span class="sc">$</span>cluster <span class="sc">==</span> <span class="dv">7</span>, ]  <span class="co"># Fibroblasts</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="re-normalization-and-clustering-of-filtered-object" class="level2">
+<h2 class="anchored" data-anchor-id="re-normalization-and-clustering-of-filtered-object">Re-normalization and clustering of filtered object</h2>
+<p>Repeat normalization, PCA, tSNE and umap:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>Esoph_filt <span class="ot">&lt;-</span> <span class="fu">SCTransform</span>(Esoph_filt, <span class="at">assay =</span> <span class="st">"spliced"</span>, <span class="at">new.assay.name =</span> <span class="st">"SCT"</span>)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">DefaultAssay</span>(Esoph_filt) <span class="ot">&lt;-</span> <span class="st">"SCT"</span> <span class="co"># already default, but just in case</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>Esoph_filt <span class="ot">&lt;-</span> <span class="fu">RunPCA</span>(Esoph_filt, <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ElbowPlot</span>(Esoph_filt) <span class="co"># 17 dimensions</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>Esoph_filt <span class="ot">&lt;-</span> <span class="fu">RunTSNE</span>(Esoph_filt, <span class="at">dims =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">17</span>, <span class="at">verbose =</span> <span class="cn">FALSE</span>, <span class="at">reduction =</span> <span class="st">"pca"</span>, <span class="at">reduction.name =</span> <span class="st">"tsne"</span>, <span class="at">reduction.key =</span> <span class="st">"tSNE"</span>)</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>Esoph_filt <span class="ot">&lt;-</span> <span class="fu">RunUMAP</span>(Esoph_filt, <span class="at">reduction =</span> <span class="st">"pca"</span>, <span class="at">dims =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">17</span>, <span class="at">reduction.name =</span> <span class="st">"umap"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>Esoph_filt <span class="ot">&lt;-</span> <span class="fu">FindNeighbors</span>(Esoph_filt, <span class="at">reduction =</span> <span class="st">"pca"</span>, <span class="at">dims =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">17</span>)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>Esoph_filt <span class="ot">&lt;-</span> <span class="fu">FindClusters</span>(Esoph_filt, <span class="at">resolution =</span> <span class="fl">0.1</span>, <span class="at">algorithm =</span> <span class="dv">4</span>, <span class="at">method =</span> <span class="st">"igraph"</span>) </span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>Esoph_filt <span class="ot">&lt;-</span> <span class="fu">FindClusters</span>(Esoph_filt, <span class="at">resolution =</span> <span class="fl">0.2</span>, <span class="at">algorithm =</span> <span class="dv">4</span>, <span class="at">method =</span> <span class="st">"igraph"</span>) </span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>Esoph_filt <span class="ot">&lt;-</span> <span class="fu">FindClusters</span>(Esoph_filt, <span class="at">resolution =</span> <span class="fl">0.3</span>, <span class="at">algorithm =</span> <span class="dv">4</span>, <span class="at">method =</span> <span class="st">"igraph"</span>) </span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>Esoph_filt <span class="ot">&lt;-</span> <span class="fu">FindClusters</span>(Esoph_filt, <span class="at">resolution =</span> <span class="fl">0.4</span>, <span class="at">algorithm =</span> <span class="dv">4</span>, <span class="at">method =</span> <span class="st">"igraph"</span>) </span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>Esoph_filt <span class="ot">&lt;-</span> <span class="fu">FindClusters</span>(Esoph_filt, <span class="at">resolution =</span> <span class="fl">0.6</span>, <span class="at">algorithm =</span> <span class="dv">4</span>, <span class="at">method =</span> <span class="st">"igraph"</span>) </span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>Esoph_filt <span class="ot">&lt;-</span> <span class="fu">FindClusters</span>(Esoph_filt, <span class="at">resolution =</span> <span class="fl">0.8</span>, <span class="at">algorithm =</span> <span class="dv">4</span>, <span class="at">method =</span> <span class="st">"igraph"</span>) </span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>Esoph_filt <span class="ot">&lt;-</span> <span class="fu">FindClusters</span>(Esoph_filt, <span class="at">resolution =</span> <span class="fl">1.0</span>, <span class="at">algorithm =</span> <span class="dv">4</span>, <span class="at">method =</span> <span class="st">"igraph"</span>) </span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>Esoph_filt <span class="ot">&lt;-</span> <span class="fu">FindClusters</span>(Esoph_filt, <span class="at">resolution =</span> <span class="fl">1.2</span>, <span class="at">algorithm =</span> <span class="dv">4</span>, <span class="at">method =</span> <span class="st">"igraph"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">clustree</span>(Esoph_filt, <span class="at">prefix =</span> <span class="st">"SCT_snn_res."</span>) <span class="co"># we are going to use resolution 0.2 for Esoph in mm10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">DimPlot</span>(Esoph_filt, <span class="at">group.by =</span> <span class="st">"SCT_snn_res.0.2"</span>) <span class="sc">&amp;</span> palette_d</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="fu">DimPlot</span>(Esoph_filt, <span class="at">group.by =</span> <span class="st">"SCT_snn_res.0.3"</span>) <span class="sc">&amp;</span> palette_d</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="fu">DimPlot</span>(Esoph_filt, <span class="at">group.by =</span> <span class="st">"SCT_snn_res.0.4"</span>) <span class="sc">&amp;</span> palette_d</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="fu">DimPlot</span>(Esoph_filt, <span class="at">group.by =</span> <span class="st">"SCT_snn_res.0.2"</span>, <span class="at">split.by =</span> <span class="st">"condition"</span>) <span class="sc">&amp;</span> palette_d</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># number of genes per cell</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">FeaturePlot</span>(Esoph_filt, <span class="at">features =</span> <span class="st">"nFeature_spliced"</span>) <span class="sc">&amp;</span> palette <span class="co"># no huge heterogeneities</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="fu">FeaturePlot</span>(Esoph_filt, <span class="at">features =</span> <span class="st">"percent.mt"</span>) <span class="sc">&amp;</span> palette </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Seeing again the plots after rerunning the analysis without the cells from clusters 4 and 7, we choose resolution 0.2 with 5 clusters.</p>
+<p>Also, very important: cluster 5 is specific to condition Old_DEN</p>
+<p>Now, we have 5 clusters in our data (resolution 0.2), which, after seeing their genes, could be annotated like: - Cluster 1: Basal (B) - Cluster 2 and 4: Basal prolifetaring (BP) - Cluster 3: differentiated (DIF) - Cluster 5: basal (B)</p>
+<p>This is a premature proposal, we will decide this later.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># We use resolution 0.2</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Select resolution for Seurat Clusters:</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="fu">Idents</span>(Esoph_filt) <span class="ot">=</span> Esoph_filt<span class="sc">$</span>SCT_snn_res.<span class="fl">0.2</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>Esoph_filt<span class="sc">$</span>seurat_clusters <span class="ot">=</span> Esoph_filt<span class="sc">$</span>SCT_snn_res.<span class="fl">0.2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="cell-cycle-scoring" class="level2">
+<h2 class="anchored" data-anchor-id="cell-cycle-scoring">Cell cycle scoring</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Perform cell cycle scoring on Esoph_filt</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">"/home/albax/mcGinn_2021"</span>)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>exp.mat <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="at">file =</span> <span class="st">"./cell_cycle_vignette_files/nestorawa_forcellcycle_expressionMatrix.txt"</span>, <span class="at">header =</span> <span class="cn">TRUE</span>, <span class="at">as.is =</span> <span class="cn">TRUE</span>, <span class="at">row.names =</span> <span class="dv">1</span>)</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="co"># A list of cell cycle markers, from Tirosh et al, 2015, is loaded with Seurat.  We can</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="co"># segregate this list into markers of G2/M phase and markers of S phase</span></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>s.genes <span class="ot">&lt;-</span> cc.genes<span class="sc">$</span>s.genes</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>g2m.genes <span class="ot">&lt;-</span> cc.genes<span class="sc">$</span>g2m.genes</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>Esoph_filt <span class="ot">&lt;-</span> <span class="fu">CellCycleScoring</span>(Esoph_filt, <span class="at">s.features =</span> s.genes, <span class="at">g2m.features =</span> g2m.genes, <span class="at">set.ident =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">DimPlot</span>(Esoph_filt, <span class="at">group.by =</span> <span class="st">"Phase"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="cluster-annotation-based-on-cellular-composition-dge-featureplots" class="level2">
+<h2 class="anchored" data-anchor-id="cluster-annotation-based-on-cellular-composition-dge-featureplots">Cluster annotation based on cellular composition, DGE, FeaturePlots…</h2>
+<p>The mouse esophageal mucosa consists of three layers: stratified epithelium, lamina propia with connective tissue, and muscularis mucosa with smooth muscle. In our data, the authors peeled the muscle (the muscularis mucosa) from the esophagi. So, we should only have the stratified epithelium and maybe lamina propia. The epithelium, in the lumen, is keratinized in mice.</p>
+<p>We are going to create different signatures depending on: 1. Cell state (resting basal, cycling basal, differentiated) -&gt; this is what the authors did in McGinn, 2021; or basal, differentiated, cell cycle - Basal: Cdh3, Itgb1, Krt15, Krt14, Krt5, Col17a1, Sox2, Trp63, Itga6 - Cell cycle: Gmnn, Mcm6, Mcm2, Cdt1, Pcna, Ccne1, E2f1, Ccne1, Cdc6, Aurkb, Top2a, Ccnb2, Bub1, Ube2c, Aurka, Kif23, Ccnb1, Mki67, Mad2l1, Birc5 - Differentiating: Krt13, Klf4, Tgm3, Sbsn, Grhl3, Krt4, Notch3, Krtdap</p>
+<ol start="2" type="1">
+<li><p>Structure of the epithelium: Stratified epithelium: Lumen</p>
+<ul>
+<li>Keratinized cells (final stage of granular): ; Lor, Ivl, Envoplakin, Periplakin, Sprr1a, Sprr1b, Sprr2a1, Sprr2a2, Sprr2a3, Sprr2b, Sprr2d, Sprr2e, Sprr2f, Sprr3; Lor, Flg, Tchp, Ivl, Capza1, S100A1, Sprr1a, Sprr1b, Sprr2a1, Sprr2a2, Sprr2a3, Sprr2b, Sprr2d, Sprr2e, Sprr2f, Sprr3</li>
+<li>Suprabasal cells -&gt; differentiation
+<ul>
+<li>Granular: Lor, Flg, Ivl; Tgm3, Krt1, Krt2e, Krt9, Krt10, Dsg1, Dsc1</li>
+<li>Spinous: Krt10, Krt1, Tgm1, Tgm5; Tgm1, Tgm5, Dsg2, Dsg3, Dsg4</li>
+</ul></li>
+<li>Basal cells (can be differentiating or be progenitor cells) -&gt; proliferation, p63+,krt5+,krt7-; Bmi1 progenitor cells, Krt5, Krt14, Krt15; Krt5, Krt14, Tgm2, Bpag1; Itgb1, Trp63, Krt5, Krt14, Krt15; Krt5, Krt14, Bpag1, Tgm2</li>
+<li>Basal lamina: Lama5, Itga6, Itgb4, Bpag2 Basal</li>
+</ul>
+<p>Disclaimer: keratinized cells and granular cells could be grouped in one category, the cornified envelope.</p>
+<p>Summarised by taking the genes in common from the literature: Lumen</p>
+<ul>
+<li>Keratinized cells (final stage of granular): Lor, Ivl, Sprr1a, Sprr1b, Sprr2a1, Sprr2a2, Sprr2a3, Sprr2b, Sprr2d, Sprr2e, Sprr2f, Sprr3, Tchp, Capza1, S100A1, Evpl, Ppl</li>
+<li>Suprabasal cells -&gt; differentiation
+<ul>
+<li>Granular: Tgm3, Krt1, Krt2e, Krt9, Krt10, Dsg1, Dsc1</li>
+<li>Spinous: Krt10, Krt1, Tgm1, Tgm5, Dsg2, Dsg3, Dsg4</li>
+</ul></li>
+<li>Basal cells (can be differentiating or be progenitor cells) -&gt; proliferation: Krt5, Krt14, Krt15, Tgm2, Bpag1, Tp63, Itgb1</li>
+<li>Basal lamina: Lama5, Itga6, Itgb4 Basal</li>
+</ul></li>
+</ol>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Taking into account the different sub-levels of the oesophagus epithelium; from Figure S1 Mendeley and Candi E, 2005 (The cornified envelope: a model of cell death in the skin):</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Lumen</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Keratinized cells (final stage of granular) :</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a><span class="co"># FeaturePlot(Esoph_filt, features = c("Sprr1a", "Sprr1b", "Sprr3", "Evpl", "Ppl")) &amp; palette &amp; plot_annotation(title = "Keratinization markers") &amp; theme(plot.title = element_text(size = 15, face = "bold", hjust = 0.5))</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Differentiation markers:</span></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a><span class="fu">FeaturePlot</span>(Esoph_filt, <span class="at">features =</span> <span class="fu">c</span>(<span class="st">"Krt13"</span>,  <span class="st">"Tgm3"</span>, <span class="st">"Grhl3"</span>, <span class="st">"Krt4"</span>, <span class="st">"Notch3"</span>, <span class="st">"Klf4"</span>, <span class="st">"Sbsn"</span>, <span class="st">"Krtdap"</span>)) <span class="sc">&amp;</span> palette <span class="sc">&amp;</span> <span class="fu">plot_annotation</span>(<span class="at">title =</span> <span class="st">"Differentiation markers"</span>) <span class="sc">&amp;</span> <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">15</span>, <span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">hjust =</span> <span class="fl">0.5</span>))</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Suprabasal cell markers</span></span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a><span class="co"># FeaturePlot(Esoph_filt, features = c("Krt15", "Trp63", "Krt5", "Krt14")) &amp; palette &amp; plot_annotation(title = "Suprabasal cell markers") &amp; theme(plot.title = element_text(size = 15, face = "bold", hjust = 0.5))</span></span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Basal cell markers (can be proliferating or be progenitor cells):</span></span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a><span class="fu">FeaturePlot</span>(Esoph_filt, <span class="at">features =</span> <span class="fu">c</span>(<span class="st">"Krt5"</span>, <span class="st">"Krt14"</span>, <span class="st">"Krt15"</span>, <span class="st">"Trp63"</span>, <span class="st">"Itgb1"</span>, <span class="st">"Itgb4"</span>, <span class="st">"Col17a1"</span>)) <span class="sc">&amp;</span> <span class="fu">plot_annotation</span>(<span class="at">title =</span> <span class="st">"Basal cell markers"</span>) <span class="sc">&amp;</span></span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">15</span>, <span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">hjust =</span> <span class="fl">0.5</span>)) <span class="sc">&amp;</span> palette <span class="co">#Mki67 are proliferating cells!!!!!</span></span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a><span class="fu">FeaturePlot</span>(Esoph_filt, <span class="at">features =</span> <span class="fu">c</span>(<span class="st">"Mki67"</span>, <span class="st">"Cenpf"</span>, <span class="st">"Cenpa"</span>)) <span class="sc">&amp;</span> <span class="fu">plot_annotation</span>(<span class="at">title =</span> <span class="st">"Proliferating basal cell markers"</span>) <span class="sc">&amp;</span> <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">15</span>, <span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">hjust =</span> <span class="fl">0.5</span>)) <span class="sc">&amp;</span> palette <span class="co">#Mki67 are proliferating cells!!!!!</span></span>
+<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Basal lamina cell markers</span></span>
+<span id="cb38-20"><a href="#cb38-20" aria-hidden="true" tabindex="-1"></a><span class="co"># FeaturePlot(Esoph_filt, features = c("Lama5", "Itga6", "Itgb4")) + plot_annotation(title = "Basal lamina cell markers") &amp;</span></span>
+<span id="cb38-21"><a href="#cb38-21" aria-hidden="true" tabindex="-1"></a><span class="co">#  theme(plot.title = element_text(size = 15, face = "bold", hjust = 0.5)) &amp; palette</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Taking into account the three clusters from McGinn et al 2021 (CB, RB and DIF):</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Cycling basal markers(CB), cells that have high expression of cell cycle genes:</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="fu">FeaturePlot</span>(Esoph, <span class="at">features =</span> <span class="fu">c</span>(<span class="st">"Gmnn"</span>, <span class="st">"Mcm6"</span>, <span class="st">"Mcm2"</span>, <span class="st">"Cdt1"</span>, <span class="st">"Pcna"</span>, <span class="st">"Ccne1"</span>, <span class="st">"E2f1"</span>, <span class="st">"Cdc6"</span>, <span class="st">"Aurkb"</span>, <span class="st">"Top2a"</span>, <span class="st">"Ccnb2"</span>, <span class="st">"Bub1"</span>, <span class="st">"Ube2c"</span>, <span class="st">"Aurka"</span>, <span class="st">"Kif23"</span>, <span class="st">"Ccnb1"</span>, <span class="st">"Mki67"</span>, <span class="st">"Mad2l1"</span>, <span class="st">"Birc5"</span>)) <span class="sc">&amp;</span> <span class="fu">plot_annotation</span>(<span class="at">title =</span> <span class="st">"Cycling basal markers(CB)"</span>) <span class="sc">&amp;</span> <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">15</span>, <span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">hjust =</span> <span class="fl">0.5</span>)) <span class="sc">&amp;</span> palette</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Resting basal markers (RB):</span></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a><span class="fu">FeaturePlot</span>(Esoph_filt, <span class="at">features =</span> <span class="fu">c</span>(<span class="st">"Col17a1"</span>, <span class="st">"Trp63"</span>, <span class="st">"Krt14"</span>, <span class="st">"Itga6"</span>, <span class="st">"Itgb1"</span>)) <span class="sc">&amp;</span> <span class="fu">plot_annotation</span>(<span class="at">title =</span> <span class="st">"Resting basal markers (RB)"</span>) <span class="sc">&amp;</span> <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">15</span>, <span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">hjust =</span> <span class="fl">0.5</span>)) <span class="sc">&amp;</span> palette</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Differentiation markers (DIF):</span></span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a><span class="fu">FeaturePlot</span>(Esoph_filt, <span class="at">features =</span> <span class="fu">c</span>(<span class="st">"Tgm3"</span>, <span class="st">"Krt13"</span>, <span class="st">"Grhl3"</span>, <span class="st">"Krt4"</span>, <span class="st">"Notch3"</span>, <span class="st">"Klf4"</span>, <span class="st">"Sbsn"</span>, <span class="st">"Krtdap"</span>)) <span class="sc">&amp;</span> <span class="fu">plot_annotation</span>(<span class="at">title =</span> <span class="st">"Differentiation markers (DIF)"</span>) <span class="sc">&amp;</span> <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">15</span>, <span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">hjust =</span> <span class="fl">0.5</span>)) <span class="sc">&amp;</span> palette</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Dot plot of some characteristic markers:</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="fu">DotPlot</span>(Esoph, <span class="at">features =</span> <span class="fu">c</span>(<span class="st">"Mki67"</span>,<span class="st">"Krt14"</span>,<span class="st">"Col17a1"</span>,<span class="st">"Krt5"</span>,<span class="st">"Sbsn"</span>,<span class="st">"Krtdap"</span>), <span class="at">cols =</span> <span class="fu">c</span>(<span class="st">"grey"</span>, <span class="st">"red"</span>),<span class="at">dot.scale =</span> <span class="dv">10</span>) <span class="sc">+</span> <span class="fu">RotatedAxis</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="scomatic-preparation" class="level2">
+<h2 class="anchored" data-anchor-id="scomatic-preparation">SComatic preparation</h2>
+<p>SComatic needs a TSV metadata file that relates each cell barcode with each “Cell type” annotation. The annotation will depend on how much granularity we need or is adequate to cal lsomatic variants from single cell transcriptomics. Here, the library design plays a very important role.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://github.com/alba179/master-thesis-bioinfo/main/pics/library_design_mouse.png" class="img-fluid figure-img"></p>
+<figcaption>Library design</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://github.com/alba179/master-thesis-bioinfo/main/pics/CCF_mouse.png" class="img-fluid figure-img"></p>
+<figcaption>Cancer cell fraction relation</figcaption>
+</figure>
+</div>
+<section id="save-cell-barcodes-with-cell-types-in-tsv-format-scomatic" class="level3">
+<h3 class="anchored" data-anchor-id="save-cell-barcodes-with-cell-types-in-tsv-format-scomatic">Save cell barcodes with cell types in TSV format (SComatic)</h3>
+<p>For SComatic, save cell barcodes with cell types: (first column is barcode and second column is cell type)</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># colnames &lt;- c("Index","Cell_type")</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="co">#df &lt;- data.frame(Index = Cells(Esoph_filt), Cell_type = Esoph_filt@meta.data$cellType)</span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="co"># delete suffix??</span></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a><span class="co"># df$"Index" &lt;- sapply(strsplit(df$"Index", "-"), `[`, 1)</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a><span class="co"># write.table(df, file = './output/esoph_celltype.tsv', col.names = TRUE, row.names = FALSE, sep = '\t')</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+</section>
+<section id="annotation-of-clusters-based-on-known-canonical-markers-of-each-cluster" class="level2">
+<h2 class="anchored" data-anchor-id="annotation-of-clusters-based-on-known-canonical-markers-of-each-cluster">Annotation of clusters (based on known canonical markers of each cluster)</h2>
+<p>Annotate each mouse .tsv “Cell_type” as: Epi; so that in Step 3 of SComatic we obtain a .tsv with 1 “cluster”</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a> <span class="do">## Rearrange cluster order to follow differentiation axis (for visualization purposes) # 9 clusters</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(Esoph_filt) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">5</span>) <span class="co"># from less differentiated to most (basal to luminal)</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="co"># we have 5 clusters in Esoph_filt</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="co"># now, we want to just annotate Epi (all the cells in our Esoph_filt are Epithelial)</span></span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>new.cluster.id <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Epi"</span>, <span class="st">"Epi"</span>, <span class="st">"Epi"</span>, <span class="st">"Epi"</span>, <span class="st">"Epi"</span>)</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(new.cluster.id) <span class="ot">&lt;-</span> <span class="fu">levels</span>(Esoph_filt)</span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>Esoph_filt <span class="ot">&lt;-</span> <span class="fu">RenameIdents</span>(Esoph_filt, new.cluster.id)</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>Esoph_filt[[<span class="st">"cellType"</span>]] <span class="ot">&lt;-</span> <span class="fu">Idents</span>(Esoph_filt) <span class="co"># include it in the metadata</span></span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a new meta.data column named cellType_B that adds _lib1 if the library_ID is llib1, and adds _lib4 if the Library_ID is lib2</span></span>
+<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>Esoph_filt<span class="sc">$</span>cellType_B <span class="ot">&lt;-</span> <span class="fu">paste0</span>(Esoph_filt<span class="sc">$</span>Library_ID, <span class="st">"_"</span>, Esoph_filt<span class="sc">$</span>cellType)</span>
+<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a>Esoph_filt<span class="sc">$</span>cellType_B <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(Esoph_filt<span class="sc">$</span>cellType_B)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the unique sample IDs</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>sample_names <span class="ot">&lt;-</span> <span class="fu">unique</span>(Esoph_filt<span class="sc">@</span>meta.data<span class="sc">$</span>Sample_name)</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the .tsv files for each sample (we will have 16 different tsv files, one for each .bam)</span></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>tsv_file <span class="ot">&lt;-</span> <span class="cf">function</span>(seurat_obj, sample_names) {</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (sample <span class="cf">in</span> sample_names) {</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Filter the data for the current sample</span></span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>    sample_data <span class="ot">&lt;-</span> seurat_obj<span class="sc">@</span>meta.data <span class="sc">%&gt;%</span></span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(Sample_name <span class="sc">==</span> sample)</span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Add the Index column with the correct rownames and apply the transformation</span></span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>    sample_data<span class="sc">$</span>Index <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="fu">strsplit</span>(<span class="fu">rownames</span>(sample_data), <span class="st">"-"</span>), <span class="st">`</span><span class="at">[</span><span class="st">`</span>, <span class="dv">1</span>)</span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Select the required columns</span></span>
+<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a>    sample_data <span class="ot">&lt;-</span> sample_data <span class="sc">%&gt;%</span></span>
+<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">select</span>(Index, <span class="at">Cell_type =</span> cellType_B) <span class="co"># Cell_type is a meta.data feature like "cellType_B"</span></span>
+<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb43-18"><a href="#cb43-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Define the file name</span></span>
+<span id="cb43-19"><a href="#cb43-19" aria-hidden="true" tabindex="-1"></a>    sample_parts <span class="ot">&lt;-</span> <span class="fu">strsplit</span>(sample, <span class="st">"_"</span>)[[<span class="dv">1</span>]]</span>
+<span id="cb43-20"><a href="#cb43-20" aria-hidden="true" tabindex="-1"></a>    file_name <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"./output/esoph_markers_scomatic_"</span>, sample_parts[<span class="dv">2</span>], <span class="st">"_"</span>, sample_parts[<span class="dv">1</span>], <span class="st">".tsv"</span>)</span>
+<span id="cb43-21"><a href="#cb43-21" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb43-22"><a href="#cb43-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Write the data to a .tsv file</span></span>
+<span id="cb43-23"><a href="#cb43-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">write.table</span>(sample_data, <span class="at">file =</span> file_name, <span class="at">sep =</span> <span class="st">"</span><span class="sc">\t</span><span class="st">"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>, <span class="at">col.names =</span> <span class="cn">TRUE</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb43-24"><a href="#cb43-24" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb43-25"><a href="#cb43-25" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb43-26"><a href="#cb43-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-27"><a href="#cb43-27" aria-hidden="true" tabindex="-1"></a><span class="fu">tsv_file</span>(Esoph_filt, sample_names)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if we have taken all the rows:</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>output_dir <span class="ot">&lt;-</span> <span class="st">"./output/"</span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Get a list of all .tsv files in the directory</span></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>tsv_files <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="at">path =</span> output_dir, <span class="at">pattern =</span> <span class="st">"^esoph_markers_scomatic_.*</span><span class="sc">\\</span><span class="st">.tsv$"</span>, <span class="at">full.names =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize a data frame to store the file names and row counts</span></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>row_counts <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">File =</span> <span class="fu">character</span>(), <span class="at">Rows =</span> <span class="fu">integer</span>(), <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Loop through each file, read the data, and count the rows</span></span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (file <span class="cf">in</span> tsv_files) {</span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Read the data from the .tsv file</span></span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>  data <span class="ot">&lt;-</span> <span class="fu">read.table</span>(file, <span class="at">sep =</span> <span class="st">"</span><span class="sc">\t</span><span class="st">"</span>, <span class="at">header =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Get the number of rows</span></span>
+<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a>  num_rows <span class="ot">&lt;-</span> <span class="fu">nrow</span>(data)</span>
+<span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb44-18"><a href="#cb44-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add the file name and row count to the data frame</span></span>
+<span id="cb44-19"><a href="#cb44-19" aria-hidden="true" tabindex="-1"></a>  row_counts <span class="ot">&lt;-</span> row_counts <span class="sc">%&gt;%</span></span>
+<span id="cb44-20"><a href="#cb44-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">add_row</span>(<span class="at">File =</span> <span class="fu">basename</span>(file), <span class="at">Rows =</span> num_rows)</span>
+<span id="cb44-21"><a href="#cb44-21" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb44-22"><a href="#cb44-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-23"><a href="#cb44-23" aria-hidden="true" tabindex="-1"></a>total_rows <span class="ot">&lt;-</span> <span class="fu">sum</span>(row_counts<span class="sc">$</span>Rows)</span>
+<span id="cb44-24"><a href="#cb44-24" aria-hidden="true" tabindex="-1"></a>total_rows</span>
+<span id="cb44-25"><a href="#cb44-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-26"><a href="#cb44-26" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(Esoph_filt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="scvelo-preparation" class="level2">
+<h2 class="anchored" data-anchor-id="scvelo-preparation">scVelo preparation</h2>
+<section id="cluster-annotation-for-scvelo" class="level3">
+<h3 class="anchored" data-anchor-id="cluster-annotation-for-scvelo">Cluster annotation for scvelo</h3>
+<p>Looking at our umap, with resolution 0.2, we will take 3 clusters (Basal, Suprabasal, Epi_DEN), but annotated differently, in 5 names: - Cluster 1: “Basal 1” - Cluster 2: “Basal 2” - Cluster 3: “Suprabasal” - Cluster 4: “Basal 3” - Cluster 5: “Epithelial_DEN”</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">DimPlot</span>(Esoph_filt, <span class="at">group.by =</span> <span class="st">"SCT_snn_res.0.2"</span>) <span class="sc">&amp;</span> palette_d</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># make sure we are using the idents we want right now:</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Idents</span>(Esoph_filt) <span class="ot">&lt;-</span> Esoph_filt<span class="sc">$</span>SCT_snn_res.<span class="fl">0.2</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>Esoph_filt<span class="sc">$</span>seurat_clusters <span class="ot">&lt;-</span> Esoph_filt<span class="sc">$</span>SCT_snn_res.<span class="fl">0.2</span></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Rearrange cluster order to follow differentiation axis (for visualization purposes) </span></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(Esoph_filt) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">5</span>) <span class="co"># from less differentiated to most (basal to luminal)</span></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a><span class="co"># clusters 1 2 and 4 are basal (red, orange and blue)</span></span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a><span class="co"># cluster 3 (green) is suprabasal</span></span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a><span class="co"># cluster 5 is specific of condition sample_DEN </span></span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>new.cluster.ids <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Basal_1"</span>, <span class="st">"Basal_2"</span>, <span class="st">"Basal_3"</span>, <span class="st">"Suprabasal"</span>, <span class="st">"Epithelial_DEN"</span>) <span class="co"># 1, 2, 4, 3, 5</span></span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(new.cluster.ids) <span class="ot">&lt;-</span> <span class="fu">levels</span>(Esoph_filt)</span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>Esoph_filt <span class="ot">&lt;-</span> <span class="fu">RenameIdents</span>(Esoph_filt, new.cluster.ids)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Idents</span>(Esoph_filt) <span class="ot">&lt;-</span> Esoph_filt<span class="sc">$</span>annot_scvelo</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Annotated PCA and UMAP plots:</span></span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a><span class="fu">DimPlot</span>(Esoph_filt, <span class="at">reduction =</span> <span class="st">"pca"</span>, <span class="at">label =</span> <span class="cn">TRUE</span>, <span class="at">pt.size =</span> <span class="fl">0.5</span>) <span class="sc">+</span> <span class="fu">NoLegend</span>() <span class="sc">&amp;</span> palette_d</span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a><span class="fu">DimPlot</span>(Esoph_filt, <span class="at">reduction =</span> <span class="st">"umap"</span>, <span class="at">label =</span> <span class="cn">TRUE</span>, <span class="at">pt.size =</span> <span class="fl">0.5</span>) <span class="sc">&amp;</span> palette_d</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">DimPlot</span>(Esoph_filt, <span class="at">reduction =</span> <span class="st">"umap"</span>, <span class="at">label =</span> <span class="cn">TRUE</span>, <span class="at">pt.size =</span> <span class="fl">0.5</span>, <span class="at">split.by =</span> <span class="st">"condition"</span>) <span class="sc">&amp;</span> palette_d</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Remaining annotation using top markers for every cluster compared to all remaining ones, reporting only the positive ones</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>Esoph_filt.markers <span class="ot">&lt;-</span> <span class="fu">FindAllMarkers</span>(Esoph_filt, <span class="at">only.pos =</span> <span class="cn">TRUE</span>, <span class="at">min.pct =</span> <span class="fl">0.25</span>, <span class="at">logfc.threshold =</span> <span class="fl">0.25</span>) <span class="co"># restrict to features with a min of 0.25 logFC</span></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a><span class="co"># write.table(Esoph_filt.markers, file = './output/Esoph_markers_filt.txt', col.names = TRUE, row.names = TRUE, sep = '\t')</span></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>Esoph_filt.markers <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"./output/Esoph_markers_filt.txt"</span>, <span class="at">sep =</span> <span class="st">"</span><span class="sc">\t</span><span class="st">"</span>)</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>TopMarkers <span class="ot">&lt;-</span> Esoph_filt.markers <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(cluster) <span class="sc">%&gt;%</span> <span class="fu">top_n</span>(<span class="at">n =</span> <span class="dv">25</span>, <span class="at">wt =</span> avg_log2FC) <span class="co"># show just top 25 per cluster</span></span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>TopMarkers <span class="sc">%&gt;%</span> <span class="fu">write.csv</span>(<span class="st">"/home/albax/mcGinn_2021/output/Esoph_TopMarkers.csv"</span>)</span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a>clusterB1_markers <span class="ot">&lt;-</span> TopMarkers[TopMarkers<span class="sc">$</span>cluster <span class="sc">==</span> <span class="st">"Basal_1"</span>, ]  <span class="co"># Basal_1</span></span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a>clusterB2_markers <span class="ot">&lt;-</span> TopMarkers[TopMarkers<span class="sc">$</span>cluster <span class="sc">==</span> <span class="st">"Basal_2"</span>, ]  <span class="co"># Basal_2</span></span>
+<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a>clusterB3_markers <span class="ot">&lt;-</span> TopMarkers[TopMarkers<span class="sc">$</span>cluster <span class="sc">==</span> <span class="st">"Basal_3"</span>, ]  <span class="co"># Basal_3</span></span>
+<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>clusterSB_markers <span class="ot">&lt;-</span> TopMarkers[TopMarkers<span class="sc">$</span>cluster <span class="sc">==</span> <span class="st">"Suprabasal"</span>, ]  <span class="co"># Suprabasal</span></span>
+<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a>clusterEpDEN_markers <span class="ot">&lt;-</span> TopMarkers[TopMarkers<span class="sc">$</span>cluster <span class="sc">==</span> <span class="st">"Epithelial_DEN"</span>, ]  <span class="co"># Epithelial_DEN</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>Esoph_filt.markers <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"./output/Esoph_markers_clusts.txt"</span>, <span class="at">sep =</span> <span class="st">"</span><span class="sc">\t</span><span class="st">"</span>)</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>TopMarkers <span class="ot">&lt;-</span> Esoph_filt.markers <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(cluster) <span class="sc">%&gt;%</span> <span class="fu">top_n</span>(<span class="at">n =</span> <span class="dv">25</span>, <span class="at">wt =</span> avg_log2FC) <span class="co"># show just top 25 per cluster</span></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>B1_markers <span class="ot">&lt;-</span> TopMarkers[TopMarkers<span class="sc">$</span>cluster <span class="sc">==</span> <span class="st">'Basal_1'</span>, ]</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>B2_markers <span class="ot">&lt;-</span> TopMarkers[TopMarkers<span class="sc">$</span>cluster <span class="sc">==</span> <span class="st">'Basal_2'</span>, ]</span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>B3_markers <span class="ot">&lt;-</span> TopMarkers[TopMarkers<span class="sc">$</span>cluster <span class="sc">==</span> <span class="st">'Basal_3'</span>, ]</span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>DEN_markers <span class="ot">&lt;-</span> TopMarkers[TopMarkers<span class="sc">$</span>cluster <span class="sc">==</span> <span class="st">'Epithelial_DEN'</span>, ]</span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>suprabasal_markers <span class="ot">&lt;-</span> TopMarkers[TopMarkers<span class="sc">$</span>cluster <span class="sc">==</span> <span class="st">'Suprabasal'</span>, ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="conversion-into-h5ad-object-export-to-scvelo" class="level3">
+<h3 class="anchored" data-anchor-id="conversion-into-h5ad-object-export-to-scvelo">Conversion into h5ad object (export to scvelo)</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.libPaths</span>(<span class="st">"/home/albax/miniforge3/envs/seuratdisk/lib/R/library"</span>)</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Esoph_filt@meta.data$annot_scvelo &lt;- as.factor(Esoph_filt@meta.data$annot_scvelo)</span></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SeuratDisk) <span class="co"># facilitates conversion between h5Seurat and AnnData objects, i.e. interoperability between Seurat and Scanpy</span></span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Make RNA assay (raw counts, which is a copy of spliced assay) default:</span></span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a><span class="fu">DefaultAssay</span>(Esoph_filt) <span class="ot">&lt;-</span> <span class="st">"RNA"</span></span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>remove_scaledata <span class="ot">&lt;-</span> <span class="cf">function</span>(assay) {</span>
+<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>    assay<span class="sc">@</span>scale.data <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">nrow =</span> <span class="dv">0</span>, <span class="at">ncol =</span> <span class="dv">0</span>)</span>
+<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(assay)</span>
+<span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-15"><a href="#cb51-15" aria-hidden="true" tabindex="-1"></a>counts_to_integer <span class="ot">&lt;-</span> <span class="cf">function</span>(assay) {</span>
+<span id="cb51-16"><a href="#cb51-16" aria-hidden="true" tabindex="-1"></a>    assay<span class="sc">@</span>counts<span class="sc">@</span>x <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(assay<span class="sc">@</span>counts<span class="sc">@</span>x)</span>
+<span id="cb51-17"><a href="#cb51-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(assay)</span>
+<span id="cb51-18"><a href="#cb51-18" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb51-19"><a href="#cb51-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-20"><a href="#cb51-20" aria-hidden="true" tabindex="-1"></a>remove_normalization <span class="ot">&lt;-</span> <span class="cf">function</span>(assay) {</span>
+<span id="cb51-21"><a href="#cb51-21" aria-hidden="true" tabindex="-1"></a>    assay<span class="sc">@</span>data <span class="ot">&lt;-</span> assay<span class="sc">@</span>counts</span>
+<span id="cb51-22"><a href="#cb51-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(assay)</span>
+<span id="cb51-23"><a href="#cb51-23" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb51-24"><a href="#cb51-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-25"><a href="#cb51-25" aria-hidden="true" tabindex="-1"></a>Esoph_filt<span class="sc">@</span>assays <span class="ot">&lt;-</span> <span class="fu">lapply</span>(Esoph_filt<span class="sc">@</span>assays, remove_scaledata)</span>
+<span id="cb51-26"><a href="#cb51-26" aria-hidden="true" tabindex="-1"></a>Esoph_filt<span class="sc">@</span>assays <span class="ot">&lt;-</span> <span class="fu">lapply</span>(Esoph_filt<span class="sc">@</span>assays, counts_to_integer)</span>
+<span id="cb51-27"><a href="#cb51-27" aria-hidden="true" tabindex="-1"></a>Esoph_filt<span class="sc">@</span>assays <span class="ot">&lt;-</span> <span class="fu">lapply</span>(Esoph_filt<span class="sc">@</span>assays, remove_normalization)</span>
+<span id="cb51-28"><a href="#cb51-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-29"><a href="#cb51-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Add a new metadata column so that cell types are stored as strings, and not as numbers in the anndata</span></span>
+<span id="cb51-30"><a href="#cb51-30" aria-hidden="true" tabindex="-1"></a>Esoph_filt<span class="sc">@</span>meta.data<span class="sc">$</span>annot_scvelo_names <span class="ot">&lt;-</span> <span class="fu">as.character</span>(Esoph_filt<span class="sc">@</span>meta.data<span class="sc">$</span>annot_scvelo)</span>
+<span id="cb51-31"><a href="#cb51-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-32"><a href="#cb51-32" aria-hidden="true" tabindex="-1"></a><span class="co"># File conversion:</span></span>
+<span id="cb51-33"><a href="#cb51-33" aria-hidden="true" tabindex="-1"></a><span class="fu">SaveH5Seurat</span>(Esoph_filt, <span class="at">filename =</span> <span class="st">"Esoph.h5Seurat"</span>, <span class="at">overwrite=</span><span class="cn">TRUE</span>)</span>
+<span id="cb51-34"><a href="#cb51-34" aria-hidden="true" tabindex="-1"></a><span class="fu">Convert</span>(<span class="st">"Esoph.h5Seurat"</span>, <span class="at">dest =</span> <span class="st">"h5ad"</span>, <span class="at">overwrite=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Save seurat object:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(Esoph_filt, <span class="at">file =</span> <span class="st">"./output/esoph_star_filtered_mm10.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+</section>
+<section id="normalization-of-counts" class="level2">
+<h2 class="anchored" data-anchor-id="normalization-of-counts">Normalization of counts</h2>
+<p>We are going to normalize the data by total counts (in each library-Sequencing ID). For that, we have to sum all the columns.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(Esoph_filt<span class="sc">@</span>meta.data<span class="sc">$</span>Sample_name)</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(Esoph_filt[,Esoph_filt<span class="sc">@</span>meta.data<span class="sc">$</span>Sample_name <span class="sc">==</span> <span class="st">'lib2_run1'</span>]<span class="sc">@</span>meta.data<span class="sc">$</span>Sample_name)</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>results_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Sample_name =</span> <span class="fu">character</span>(), <span class="at">Sum_nCount_gene =</span> <span class="fu">numeric</span>(), <span class="at">Sum_nFeature_gene =</span> <span class="fu">numeric</span>(), <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>cell_counts_per_sample <span class="ot">&lt;-</span> <span class="fu">table</span>(Esoph_filt<span class="sc">@</span>meta.data<span class="sc">$</span>Sample_name) <span class="co"># number of cells per sample_name</span></span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a><span class="co"># suma de los nCount_gene para cada Sample_name</span></span>
+<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">unique</span>(Esoph_filt<span class="sc">$</span>Sample_name)) {</span>
+<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Subset the data based on the current sample name and calculate the sum of nCount_gene</span></span>
+<span id="cb53-10"><a href="#cb53-10" aria-hidden="true" tabindex="-1"></a>  sum_count <span class="ot">&lt;-</span> <span class="fu">sum</span>(Esoph_filt[, Esoph_filt<span class="sc">$</span>Sample_name <span class="sc">==</span> i]<span class="sc">$</span>nCount_gene)</span>
+<span id="cb53-11"><a href="#cb53-11" aria-hidden="true" tabindex="-1"></a>  sum_feature <span class="ot">&lt;-</span> <span class="fu">sum</span>(Esoph_filt[, Esoph_filt<span class="sc">$</span>Sample_name <span class="sc">==</span> i]<span class="sc">$</span>nFeature_gene)</span>
+<span id="cb53-12"><a href="#cb53-12" aria-hidden="true" tabindex="-1"></a>  num_cells <span class="ot">&lt;-</span> cell_counts_per_sample[i]</span>
+<span id="cb53-13"><a href="#cb53-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-14"><a href="#cb53-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Append the results to the results_df</span></span>
+<span id="cb53-15"><a href="#cb53-15" aria-hidden="true" tabindex="-1"></a>  results_df <span class="ot">&lt;-</span> <span class="fu">rbind</span>(results_df, <span class="fu">data.frame</span>(<span class="at">Sample_name =</span> i, <span class="at">Sum_nCount_gene =</span> sum_count, <span class="at">Num_cells =</span> num_cells, <span class="at">Sum_nFeature_gene =</span> sum_feature, <span class="at">Num_reads_per_cell =</span> sum_count<span class="sc">/</span>num_cells, <span class="at">Num_genes_per_cell =</span> sum_feature<span class="sc">/</span>num_cells ))</span>
+<span id="cb53-16"><a href="#cb53-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb53-17"><a href="#cb53-17" aria-hidden="true" tabindex="-1"></a>numeric_medians <span class="ot">&lt;-</span> <span class="fu">apply</span>(results_df[, <span class="sc">-</span><span class="dv">1</span>], <span class="dv">2</span>, median)</span>
+<span id="cb53-18"><a href="#cb53-18" aria-hidden="true" tabindex="-1"></a>median_row <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">Sample_name =</span> <span class="st">"Median"</span>, numeric_medians)</span>
+<span id="cb53-19"><a href="#cb53-19" aria-hidden="true" tabindex="-1"></a>results_df <span class="ot">&lt;-</span> <span class="fu">rbind</span>(results_df, median_row)</span>
+<span id="cb53-20"><a href="#cb53-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-21"><a href="#cb53-21" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(results_df, <span class="st">"nCounts_per_Sample_name_Esophfilt.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><strong>Supplementary table from the original paper</strong> nCount total is going to ve similar to column 4 * column 6</p>
+<p>Supplementary Table 1 - QC Statistics of scRNAseq data (https://www.nature.com/articles/s41556-021-00679-w#Sec31)</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 4%">
+<col style="width: 11%">
+<col style="width: 7%">
+<col style="width: 12%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 16%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Stage</th>
+<th>Replicate no.</th>
+<th>Batch no.</th>
+<th>Number of cells</th>
+<th>Median genes/cell</th>
+<th>Median UMIs/cell</th>
+<th>Total genes detected</th>
+<th>Median % mito counts/cell</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Adult</td>
+<td>1</td>
+<td>1</td>
+<td>2796</td>
+<td>5153</td>
+<td>30737</td>
+<td>17419</td>
+<td>3.66549437744719</td>
+</tr>
+<tr class="even">
+<td>Adult</td>
+<td>2</td>
+<td>1</td>
+<td>3344</td>
+<td>5232</td>
+<td>32745.5</td>
+<td>17574</td>
+<td>3.76114454638533</td>
+</tr>
+<tr class="odd">
+<td>Adult</td>
+<td>3</td>
+<td>1</td>
+<td>4059</td>
+<td>5070</td>
+<td>29744</td>
+<td>17843</td>
+<td>4.14769410907473</td>
+</tr>
+<tr class="even">
+<td>Adult</td>
+<td>1</td>
+<td>2</td>
+<td>1230</td>
+<td>5215</td>
+<td>33187.5</td>
+<td>16440</td>
+<td>3.63571622273852</td>
+</tr>
+<tr class="odd">
+<td>Adult</td>
+<td>2</td>
+<td>2</td>
+<td>2614</td>
+<td>5219</td>
+<td>33970</td>
+<td>17191</td>
+<td>3.25793271016975</td>
+</tr>
+<tr class="even">
+<td>Adult</td>
+<td>3</td>
+<td>2</td>
+<td><em>676</em></td>
+<td>5438</td>
+<td><em>36246.5</em></td>
+<td>15707</td>
+<td>3.5389684657119</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-simple callout-warning no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning:
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>SCTransform corrects the counts from your equivalent RNA assay and creates a new assay (typically SCT) where the counts slot is a corrected counts, data is a log transformation of corrected counts+1 and the scale.data are pearson residuals. Typically, the scale.data slot is only generated for the features listed in VariableFeatures(your_object) which is why it’s usually smaller than your SCT data slot. You can tell SCTransform to scale all genes, but whether that’s something you need or not is up to you.</p>
+</div>
+</div>
+</section>
+<section id="do-we-find-barcodes-from-epi_den-shared-in-other-clusters" class="level2">
+<h2 class="anchored" data-anchor-id="do-we-find-barcodes-from-epi_den-shared-in-other-clusters">Do we find barcodes from Epi_DEN shared in other clusters?</h2>
+<ul>
+<li>Is each clone contained completely inside the Epithelial_DEN cluster?(“Epi_DEN_cells”)</li>
+<li>How are these clones shared with other clusters? How many cells of the clone fall inside Epi_DEN_cells cluster?</li>
+<li></li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>epi_den_CBs <span class="ot">&lt;-</span> <span class="fu">WhichCells</span>(Esoph_filt, <span class="at">idents =</span> <span class="st">"Epithelial_DEN"</span>)</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(epi_den_CBs, <span class="st">"Epithelial_DEN_CBS.txt"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>metadata <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(Esoph_filt<span class="sc">@</span>meta.data)</span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>metadata_cols <span class="ot">&lt;-</span> metadata[,<span class="fu">c</span>(<span class="st">"clones"</span>, <span class="st">"annot_scvelo"</span>), drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(metadata_cols, <span class="st">"clones_clusters.csv"</span>, <span class="at">row.names =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>clones_data <span class="ot">&lt;-</span> metadata[epi_den_CBs, <span class="fu">c</span>(<span class="st">"clones"</span>, <span class="st">"annot_scvelo"</span>), drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
+<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a>clones_in_Epi_DEN <span class="ot">&lt;-</span> <span class="fu">as.character</span>(clones_data[[<span class="st">"clones"</span>]])</span>
+<span id="cb54-11"><a href="#cb54-11" aria-hidden="true" tabindex="-1"></a>clones_in_Epi_DEN <span class="ot">&lt;-</span> <span class="fu">unique</span>(<span class="fu">unlist</span>(<span class="fu">strsplit</span>(clones_in_Epi_DEN, <span class="st">","</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../Mouse/1_DataProcessing.html" class="pagination-link" aria-label="1. Data Pre-processing">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">1. Data Pre-processing</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../Mouse/3_Velocity_inference.html" class="pagination-link" aria-label="3. Inference of velocity">
+        <span class="nav-page-text"><span class="chapter-title">3. Inference of velocity</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
