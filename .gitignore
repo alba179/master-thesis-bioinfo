@@ -1,1 +1,8 @@
 /.quarto/
+/docs/
+/_quarto.yml
+/index.aux
+/index.log
+/index.pdf
+/index.tex
+/index.toc
