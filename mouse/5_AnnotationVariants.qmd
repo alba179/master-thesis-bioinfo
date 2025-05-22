@@ -1,7 +1,7 @@
 # 5. Functional annotation of variants
 We are going to perfom functional annotation of variants with Ensembl's VEP (variant effect predictor).
 
-```{bash}
+```bash
 # [folia]
 cd ~/scripts/variant_annotation
 
@@ -10,7 +10,7 @@ cd ~/scripts/variant_annotation
 
 
 
-# 5.1. Analysis of annotations
+## 5.1. Analysis of annotations
 We are going to view the genes that are drivers, as well as those that are found in the 192 gene panel from Colom 2021 and in the WES data from 9-18 weeks tumos from DEN mice from the same paper.
 
 Also, we would like to view if the filtering of repetitive regions filters out variants that have low impact.
@@ -26,15 +26,15 @@ Abcb11,Abcc2,Adam10,Adam29,Adcy10,Aff3,Ajuba,Akap9,Akt1,Akt2,Apob,Arid1a,Arid2,A
 Allele|Consequence|IMPACT|SYMBOL|Gene|Feature_type|Feature|BIOTYPE|EXON|INTRON|HGVSc|HGVSp|cDNA_position|CDS_position|Protein_position|Amino_acids|Codons|Existing_variation|DISTANCE|STRAND|FLAGS|VARIANT_CLASS|SYMBOL_SOURCE|HGNC_ID|CANONICAL|MANE|TSL|APPRIS|CCDS|ENSP|SWISSPROT|TREMBL|UNIPARC|UNIPROT_ISOFORM|GENE_PHENO|SIFT|DOMAINS|miRNA|AF|AFR_AF|AMR_AF|EAS_AF|EUR_AF|SAS_AF|AA_AF|EA_AF|gnomAD_AF|gnomAD_AFR_AF|gnomAD_AMR_AF|gnomAD_ASJ_AF|gnomAD_EAS_AF|gnomAD_FIN_AF|gnomAD_NFE_AF|gnomAD_OTH_AF|gnomAD_SAS_AF|MAX_AF|MAX_AF_POPS|CLIN_SIG|SOMATIC|PHENO|PUBMED|MOTIF_NAME|MOTIF_POS|HIGH_INF_POS|MOTIF_SCORE_CHANGE|TRANSCRIPTION_FACTORS
 :::
 
-```{bash}
+```bash
 
 ```
 
 
-# 5.2.  
+## 5.2.  
 
 
-## Wordcloud of genes
+### Wordcloud of genes
 
 ```{r}
 library("wordcloud")

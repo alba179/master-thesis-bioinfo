@@ -20,14 +20,52 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
 <link href="../Mouse/2_ClusteringCellAnnotation.html" rel="next">
 <link href="../intro.html" rel="prev">
-<script src="../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -38,6 +76,18 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -68,6 +118,9 @@ ul.task-list li input[type="checkbox"] {
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Mouse/1_DataProcessing.html">Mouse analysis</a></li><li class="breadcrumb-item"><a href="../Mouse/1_DataProcessing.html"><span class="chapter-title">1. Data Pre-processing</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
     </div>
   </nav>
 </header>
@@ -83,16 +136,21 @@ ul.task-list li input[type="checkbox"] {
 </div>
     </div>
       </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Mouse and Human SComatic analysis</span></a>
+  <a href="../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Introduction</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Introduction</span></a>
+  <a href="../intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Set-up and installations</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
@@ -121,7 +179,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../Mouse/4_VariantCalling.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">3. SComatic calling</span></a>
+  <a href="../Mouse/4_VariantCalling.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">4. SComatic calling</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -131,20 +189,20 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../Mouse/6_GOAnalysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">4. Functional Analysis</span></a>
+  <a href="../Mouse/6_GOAnalysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">6. Gene Ontology Analysis</span></a>
   </div>
 </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
  <span class="menu-text">Human HCA analysis</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Human/3_VennDiagrams_hca.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">3 - Visualization of intersected genes with Venn diagrams in esophagus HCA dataset</span></a>
@@ -194,161 +252,159 @@ ul.task-list li input[type="checkbox"] {
 <p>This notebook contains the bash scripts used to download the fastq, quality control with fastQC and multiQC and alignment of the sequences.</p>
 <section id="download-fastq-files-from-ena" class="level2">
 <h2 class="anchored" data-anchor-id="download-fastq-files-from-ena">1.1. Download fastQ files from ENA</h2>
-<p>https://www.ebi.ac.uk/biostudies/arrayexpress/studies/E-MTAB-8662</p>
-<pre class="{bash}"><code>#!/bin/bash
-# [matterhorn]
-# AUTHOR: Alba Mendez Alejandre
-# DESCRIPTION: Download the raw fastQ via ftp from ENA. The metadata is stored in the downloaded csv. 
-# DATE: 10/06/2024
-
-seq_ids=("run1" "run2")
-
-for seq_number in "${seq_ids[@]}"; do
-
-    # Path to our CSV file
-    CSV_FILE="/mnt/D/mcGinn_2021/data_info/${seq_number}_download.csv"
-
-    # Directory where we are going to download the data (bam and fastq)
-    DOWNLOAD_DIR="./${seq_number}_run1/${seq_number}_adult_P70"
-
-    # Create the directory if it doesn't exist
-    mkdir -p "$DOWNLOAD_DIR"
-
-    # Iterate through each line in the CSV file
-    { 
-        read # skip header
-        while IFS=, read -r name source_name bam_uri R1_fastq_uri R2_fastq_uri I1_fastq_uri # these are the columns of the file
-        do
-            # Skip header
-            if [[ $name == "name" ]]; then
-            continue
-            fi
-
-            # Ensure the URI is not empty
-            if [[ -z $R1_fastq_uri ]]; then
-            echo "Empty URI for name: $name"
-            continue
-            fi
-
-            # Download R1_fastq_uri
-            curl -L -o "${DOWNLOAD_DIR}/${name}_$(basename "$R1_fastq_uri")" "$R1_fastq_uri"
-            
-            if [[ -z $R2_fastq_uri ]]; then
-            echo "Empty URI for name: $name"
-            continue
-            fi
-
-            # Download R2_fastq_uri
-            curl -L -o "${DOWNLOAD_DIR}/${name}_$(basename "$R2_fastq_uri")" "$R2_fastq_uri"
-            
-            if [[ -z $I1_fastq_uri ]]; then
-            echo "Empty URI for name: $name"
-            continue
-            fi
-
-            # Download I1_fastq_uri
-            curl -L -o "${DOWNLOAD_DIR}/${name}_$(basename "$I1_fastq_uri")" "$I1_fastq_uri"
-        
-            if [[ -z $bam_uri ]]; then
-            echo "Empty URI for name: $name"
-            continue
-            fi
-
-        done &lt; "$CSV_FILE"
-    }
-done
-</code></pre>
-<pre class="{bash}"><code>./</code></pre>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># [matterhorn]</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># AUTHOR: Alba Mendez Alejandre</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># DESCRIPTION: Download the raw fastQ via ftp from ENA. The metadata is stored in the downloaded csv. </span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># DATE: 10/06/2024</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="va">seq_ids</span><span class="op">=</span><span class="va">(</span><span class="st">"run1"</span> <span class="st">"run2"</span><span class="va">)</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> seq_number <span class="kw">in</span> <span class="st">"</span><span class="va">${seq_ids</span><span class="op">[@]</span><span class="va">}</span><span class="st">"</span><span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Path to our CSV file</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="va">CSV_FILE</span><span class="op">=</span><span class="st">"/mnt/D/mcGinn_2021/data_info/</span><span class="va">${seq_number}</span><span class="st">_download.csv"</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Directory where we are going to download the data (bam and fastq)</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="va">DOWNLOAD_DIR</span><span class="op">=</span><span class="st">"./</span><span class="va">${seq_number}</span><span class="st">_run1/</span><span class="va">${seq_number}</span><span class="st">_adult_P70"</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create the directory if it doesn't exist</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mkdir</span> <span class="at">-p</span> <span class="st">"</span><span class="va">$DOWNLOAD_DIR</span><span class="st">"</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Iterate through each line in the CSV file</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">{</span> </span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>        <span class="bu">read</span> <span class="co"># skip header</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span> <span class="va">IFS</span><span class="op">=</span>, <span class="bu">read</span> <span class="at">-r</span> <span class="va">name</span> <span class="va">source_name</span> <span class="va">bam_uri</span> <span class="va">R1_fastq_uri</span> <span class="va">R2_fastq_uri</span> <span class="va">I1_fastq_uri</span> <span class="co"># these are the columns of the file</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">do</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Skip header</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="kw">[[</span> <span class="va">$name</span> <span class="ot">==</span> <span class="st">"name"</span> <span class="kw">]];</span> <span class="cf">then</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>            <span class="cf">continue</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>            <span class="cf">fi</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Ensure the URI is not empty</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="kw">[[</span> <span class="ot">-z</span> <span class="va">$R1_fastq_uri</span> <span class="kw">]];</span> <span class="cf">then</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>            <span class="bu">echo</span> <span class="st">"Empty URI for name: </span><span class="va">$name</span><span class="st">"</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>            <span class="cf">continue</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>            <span class="cf">fi</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Download R1_fastq_uri</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>            <span class="ex">curl</span> <span class="at">-L</span> <span class="at">-o</span> <span class="st">"</span><span class="va">${DOWNLOAD_DIR}</span><span class="st">/</span><span class="va">${name}</span><span class="st">_</span><span class="va">$(</span><span class="fu">basename</span> <span class="st">"</span><span class="va">$R1_fastq_uri</span><span class="st">"</span><span class="va">)</span><span class="st">"</span> <span class="st">"</span><span class="va">$R1_fastq_uri</span><span class="st">"</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="kw">[[</span> <span class="ot">-z</span> <span class="va">$R2_fastq_uri</span> <span class="kw">]];</span> <span class="cf">then</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>            <span class="bu">echo</span> <span class="st">"Empty URI for name: </span><span class="va">$name</span><span class="st">"</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>            <span class="cf">continue</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>            <span class="cf">fi</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Download R2_fastq_uri</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>            <span class="ex">curl</span> <span class="at">-L</span> <span class="at">-o</span> <span class="st">"</span><span class="va">${DOWNLOAD_DIR}</span><span class="st">/</span><span class="va">${name}</span><span class="st">_</span><span class="va">$(</span><span class="fu">basename</span> <span class="st">"</span><span class="va">$R2_fastq_uri</span><span class="st">"</span><span class="va">)</span><span class="st">"</span> <span class="st">"</span><span class="va">$R2_fastq_uri</span><span class="st">"</span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="kw">[[</span> <span class="ot">-z</span> <span class="va">$I1_fastq_uri</span> <span class="kw">]];</span> <span class="cf">then</span></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>            <span class="bu">echo</span> <span class="st">"Empty URI for name: </span><span class="va">$name</span><span class="st">"</span></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>            <span class="cf">continue</span></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>            <span class="cf">fi</span></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Download I1_fastq_uri</span></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>            <span class="ex">curl</span> <span class="at">-L</span> <span class="at">-o</span> <span class="st">"</span><span class="va">${DOWNLOAD_DIR}</span><span class="st">/</span><span class="va">${name}</span><span class="st">_</span><span class="va">$(</span><span class="fu">basename</span> <span class="st">"</span><span class="va">$I1_fastq_uri</span><span class="st">"</span><span class="va">)</span><span class="st">"</span> <span class="st">"</span><span class="va">$I1_fastq_uri</span><span class="st">"</span></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="kw">[[</span> <span class="ot">-z</span> <span class="va">$bam_uri</span> <span class="kw">]];</span> <span class="cf">then</span></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>            <span class="bu">echo</span> <span class="st">"Empty URI for name: </span><span class="va">$name</span><span class="st">"</span></span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>            <span class="cf">continue</span></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>            <span class="cf">fi</span></span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>        <span class="cf">done</span> <span class="op">&lt;</span> <span class="st">"</span><span class="va">$CSV_FILE</span><span class="st">"</span></span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>    <span class="kw">}</span></span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./download_fastq.sh</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>After the download of fastQ files, they were concatenated in order to obtain</p>
 </section>
 <section id="quality-control-with-multiqc" class="level2">
 <h2 class="anchored" data-anchor-id="quality-control-with-multiqc">1.2 Quality control with MultiQC</h2>
-<p><a href="..\docs/Mouse/fastQC/run1/multiqc_report.html">View MultiQC report for sequencing run 2</a></p>
-<p><a href="..\docs/Mouse/fastQC/run2/multiqc_report.html">View MultiQC report for sequencing run 1</a></p>
+<p><a href="fastQC/run1/multiqc_report.html">View MultiQC report for sequencing run 2</a></p>
+<p><a href="fastQC/run2/multiqc_report.html">View MultiQC report for sequencing run 1</a></p>
 </section>
 <section id="star-aligment" class="level2">
 <h2 class="anchored" data-anchor-id="star-aligment">1.3. STAR aligment</h2>
 <p>Separate scripts were used for each sequencing session (names as run1 and run2 for simplification).</p>
-<pre class="{bash}"><code>#!/bin/bash
-# [folia]
-# This script must be executed in the server where we want to run STAR
-
-# activate env where we have installed STAR
-source /home/albax/miniforge3/bin/activate STAR
-
-FOLIA_BASE="/home/albax/mcGinn_2021"
-MATTERHORN_BASE="/media/storage/mcGinn_2021"
-CONCATENATED_RUNS_DIR="${MATTERHORN_BASE}/concatenated_runs/sample_concatenated"
-
-
-SAMPLE_NAMES=("lib1" "lib2" "lib3" "lib4" "lib5" "lib6" "lib7" "lib8") # list of samples to proccess
-
-i=0
-for SAMPLE in "${SAMPLE_NAMES[@]}"; 
-do
-    i=$((i + 1))
-
-    SAMPLE_DIR="${CONCATENATED_RUNS_DIR}/${SAMPLE}"
-    LOCAL_SAMPLE_DIR="${FOLIA_BASE}${SAMPLE_DIR}"
-    echo "Processing sample: ${SAMPLE}"
-
-    R2_FILE="${SAMPLE_DIR}/${SAMPLE}*R2*run1.fastq.gz"
-    R1_FILE="${SAMPLE_DIR}/${SAMPLE}*R1*run1.fastq.gz"
-
-    # Files' pull from matterhorn to folia
-    rsync -avR --progress -hh "alba@matterhorn:${R2_FILE}" "${FOLIA_BASE}"
-    rsync -avR --progress -hh "alba@matterhorn:${R1_FILE}" "${FOLIA_BASE}"
-
-    LOCAL_R2_FILE="${FOLIA_BASE}${R2_FILE}"
-    LOCAL_R1_FILE="${FOLIA_BASE}${R1_FILE}"
-
-    echo "R2 file (folia): ${LOCAL_R2_FILE}"
-    echo "R1 file (folia): ${LOCAL_R1_FILE}"
-    
-    cd ${FOLIA_BASE}
-    mkdir -p "${FOLIA_BASE}/STAR_out/${SAMPLE}"
-
-  # Process files
-#   ~/miniforge3/envs/STAR/bin/STAR \
-    STAR --runMode alignReads --genomeDir /home/albax/reference_genomes/STAR_indexes/Mus_musculus/mm10 --outFileNamePrefix STAR_out/SLX-17937_${SAMPLE} --readFilesCommand zcat --readFilesIn ${LOCAL_R2_FILE} ${LOCAL_R1_FILE} --soloType CB_UMI_Simple --soloCBwhitelist /home/albax/mcGinn_2021/STAR_whitelist/3M-february-2018.txt --soloCBstart 1 --soloCBlen 16 --soloUMIstart 17 --soloUMIlen 12 --soloStrand Forward --soloFeatures Gene GeneFull Velocyto --outSAMattributes NH HI AS nM CR UR CB UB GX GN sM sS sQ --outSAMtype BAM SortedByCoordinate --runThreadN 4
-
-    if [[ $? -ne 0 ]]; then
-        echo "STAR alignment failed for sample ${SAMPLE}."
-        continue
-    fi
-
-        # Transfer back to matterhorn
-    ssh alba@matterhorn "mkdir -p /media/storage/mcGinn_2021/STARalignment/${SAMPLE}/"
-
-    rsync -av --progress -hh ${FOLIA_BASE}/STAR_out/*${SAMPLE}* alba@matterhorn:${MATTERHORN_BASE}/STARalignment/${SAMPLE}/
-
-    # Remove to save space
-    echo -e "\n[ $(date +'%Y/%m/%d %T.%3N') ] Finished processing ${SAMPLE}"
-    rm ${LOCAL_R1_FILE} ${LOCAL_R2_FILE}
-    rm -r ${FOLIA_BASE}/STAR_out/*${SAMPLE}*/
-
-done
-
-# clean up base directory
-rm -r ${FOLIA_BASE}/STAR_out
-
-conda deactivate
-</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># [folia]</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># This script must be executed in the server where we want to run STAR</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># activate env where we have installed STAR</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /home/albax/miniforge3/bin/activate STAR</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="va">FOLIA_BASE</span><span class="op">=</span><span class="st">"/home/albax/mcGinn_2021"</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="va">MATTERHORN_BASE</span><span class="op">=</span><span class="st">"/media/storage/mcGinn_2021"</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="va">CONCATENATED_RUNS_DIR</span><span class="op">=</span><span class="st">"</span><span class="va">${MATTERHORN_BASE}</span><span class="st">/concatenated_runs/sample_concatenated"</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="va">SAMPLE_NAMES</span><span class="op">=</span><span class="va">(</span><span class="st">"lib1"</span> <span class="st">"lib2"</span> <span class="st">"lib3"</span> <span class="st">"lib4"</span> <span class="st">"lib5"</span> <span class="st">"lib6"</span> <span class="st">"lib7"</span> <span class="st">"lib8"</span><span class="va">)</span> <span class="co"># list of samples to proccess</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="va">i</span><span class="op">=</span>0</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> SAMPLE <span class="kw">in</span> <span class="st">"</span><span class="va">${SAMPLE_NAMES</span><span class="op">[@]</span><span class="va">}</span><span class="st">"</span><span class="kw">;</span> </span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="cf">do</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="va">i</span><span class="op">=</span><span class="va">$((i</span> <span class="op">+</span> <span class="dv">1</span><span class="va">))</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="va">SAMPLE_DIR</span><span class="op">=</span><span class="st">"</span><span class="va">${CONCATENATED_RUNS_DIR}</span><span class="st">/</span><span class="va">${SAMPLE}</span><span class="st">"</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="va">LOCAL_SAMPLE_DIR</span><span class="op">=</span><span class="st">"</span><span class="va">${FOLIA_BASE}${SAMPLE_DIR}</span><span class="st">"</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> <span class="st">"Processing sample: </span><span class="va">${SAMPLE}</span><span class="st">"</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    <span class="va">R2_FILE</span><span class="op">=</span><span class="st">"</span><span class="va">${SAMPLE_DIR}</span><span class="st">/</span><span class="va">${SAMPLE}</span><span class="st">*R2*run1.fastq.gz"</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    <span class="va">R1_FILE</span><span class="op">=</span><span class="st">"</span><span class="va">${SAMPLE_DIR}</span><span class="st">/</span><span class="va">${SAMPLE}</span><span class="st">*R1*run1.fastq.gz"</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Files' pull from matterhorn to folia</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rsync</span> <span class="at">-avR</span> <span class="at">--progress</span> <span class="at">-hh</span> <span class="st">"alba@matterhorn:</span><span class="va">${R2_FILE}</span><span class="st">"</span> <span class="st">"</span><span class="va">${FOLIA_BASE}</span><span class="st">"</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rsync</span> <span class="at">-avR</span> <span class="at">--progress</span> <span class="at">-hh</span> <span class="st">"alba@matterhorn:</span><span class="va">${R1_FILE}</span><span class="st">"</span> <span class="st">"</span><span class="va">${FOLIA_BASE}</span><span class="st">"</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    <span class="va">LOCAL_R2_FILE</span><span class="op">=</span><span class="st">"</span><span class="va">${FOLIA_BASE}${R2_FILE}</span><span class="st">"</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    <span class="va">LOCAL_R1_FILE</span><span class="op">=</span><span class="st">"</span><span class="va">${FOLIA_BASE}${R1_FILE}</span><span class="st">"</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> <span class="st">"R2 file (folia): </span><span class="va">${LOCAL_R2_FILE}</span><span class="st">"</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> <span class="st">"R1 file (folia): </span><span class="va">${LOCAL_R1_FILE}</span><span class="st">"</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>    <span class="bu">cd</span> <span class="va">${FOLIA_BASE}</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mkdir</span> <span class="at">-p</span> <span class="st">"</span><span class="va">${FOLIA_BASE}</span><span class="st">/STAR_out/</span><span class="va">${SAMPLE}</span><span class="st">"</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Process files</span></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a><span class="co">#   ~/miniforge3/envs/STAR/bin/STAR \</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>    <span class="ex">STAR</span> <span class="at">--runMode</span> alignReads <span class="at">--genomeDir</span> /home/albax/reference_genomes/STAR_indexes/Mus_musculus/mm10 <span class="at">--outFileNamePrefix</span> STAR_out/SLX-17937_<span class="va">${SAMPLE}</span> <span class="at">--readFilesCommand</span> zcat <span class="at">--readFilesIn</span> <span class="va">${LOCAL_R2_FILE}</span> <span class="va">${LOCAL_R1_FILE}</span> <span class="at">--soloType</span> CB_UMI_Simple <span class="at">--soloCBwhitelist</span> /home/albax/mcGinn_2021/STAR_whitelist/3M-february-2018.txt <span class="at">--soloCBstart</span> 1 <span class="at">--soloCBlen</span> 16 <span class="at">--soloUMIstart</span> 17 <span class="at">--soloUMIlen</span> 12 <span class="at">--soloStrand</span> Forward <span class="at">--soloFeatures</span> Gene GeneFull Velocyto <span class="at">--outSAMattributes</span> NH HI AS nM CR UR CB UB GX GN sM sS sQ <span class="at">--outSAMtype</span> BAM SortedByCoordinate <span class="at">--runThreadN</span> 4</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">[[</span> <span class="va">$?</span> <span class="ot">-ne</span> 0 <span class="kw">]];</span> <span class="cf">then</span></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>        <span class="bu">echo</span> <span class="st">"STAR alignment failed for sample </span><span class="va">${SAMPLE}</span><span class="st">."</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>        <span class="cf">continue</span></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>    <span class="cf">fi</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Transfer back to matterhorn</span></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ssh</span> alba@matterhorn <span class="st">"mkdir -p /media/storage/mcGinn_2021/STARalignment/</span><span class="va">${SAMPLE}</span><span class="st">/"</span></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rsync</span> <span class="at">-av</span> <span class="at">--progress</span> <span class="at">-hh</span> <span class="va">${FOLIA_BASE}</span>/STAR_out/<span class="pp">*</span><span class="va">${SAMPLE}</span><span class="pp">*</span> alba@matterhorn:<span class="va">${MATTERHORN_BASE}</span>/STARalignment/<span class="va">${SAMPLE}</span>/</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Remove to save space</span></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> <span class="at">-e</span> <span class="st">"\n[ </span><span class="va">$(</span><span class="fu">date</span> +<span class="st">'%Y/%m/%d %T.%3N'</span><span class="va">)</span><span class="st"> ] Finished processing </span><span class="va">${SAMPLE}</span><span class="st">"</span></span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rm</span> <span class="va">${LOCAL_R1_FILE}</span> <span class="va">${LOCAL_R2_FILE}</span></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rm</span> <span class="at">-r</span> <span class="va">${FOLIA_BASE}</span>/STAR_out/<span class="pp">*</span><span class="va">${SAMPLE}</span><span class="pp">*</span>/</span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a><span class="co"># clean up base directory</span></span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> <span class="at">-r</span> <span class="va">${FOLIA_BASE}</span>/STAR_out</span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> deactivate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./STAR_alignment.sh</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Generate the reference genome indexed file</p>
-<pre class="{bash}"><code>#!/bin/bash
-
-cd ~/reference_genomes/
-mkdir STAR_indexes
-mkdir logs
-
-# path to star
-~/miniforge3/envs/STAR/bin/STAR \
-            --runThreadN 4 \
-        --runMode genomeGenerate \
-        --genomeDir ./STAR_indexes/Mus_musculus/mm10 \
-        --genomeFastaFiles ./Mus_musculus_C57BL-6J/Mus_musculus.GRCm38.dna.primary_assembly.fa \
-        --sjdbGTFfile ./Mus_musculus_C57BL-6J/Mus_musculus.GRCm38.97.gtf \
-                                |&amp; tee logs/star_index.log</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/reference_genomes/</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> STAR_indexes</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> logs</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># path to star</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="ex">~/miniforge3/envs/STAR/bin/STAR</span> <span class="dt">\</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">--runThreadN</span> 4 <span class="dt">\</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">--runMode</span> genomeGenerate <span class="dt">\</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">--genomeDir</span> ./STAR_indexes/Mus_musculus/mm10 <span class="dt">\</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">--genomeFastaFiles</span> ./Mus_musculus_C57BL-6J/Mus_musculus.GRCm38.dna.primary_assembly.fa <span class="dt">\</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">--sjdbGTFfile</span> ./Mus_musculus_C57BL-6J/Mus_musculus.GRCm38.97.gtf <span class="dt">\</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>                                <span class="kw">|&amp;</span> <span class="fu">tee</span> logs/star_index.log</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="create-seurat-object" class="level2">
 <h2 class="anchored" data-anchor-id="create-seurat-object">1.4. Create Seurat object</h2>
@@ -793,8 +849,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../intro.html" class="pagination-link" aria-label="Introduction">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Introduction</span></span>
+      <a href="../intro.html" class="pagination-link" aria-label="Set-up and installations">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Set-up and installations</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

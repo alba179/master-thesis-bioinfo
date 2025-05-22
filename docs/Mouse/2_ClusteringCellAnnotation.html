@@ -59,9 +59,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
 <link href="../Mouse/3_Velocity_inference.html" rel="next">
 <link href="../Mouse/1_DataProcessing.html" rel="prev">
-<script src="../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -72,6 +76,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -102,6 +118,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Mouse/1_DataProcessing.html">Mouse analysis</a></li><li class="breadcrumb-item"><a href="../Mouse/2_ClusteringCellAnnotation.html"><span class="chapter-title">2. Clustering and Cell annotation</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
     </div>
   </nav>
 </header>
@@ -117,6 +136,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
     </div>
       </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -155,7 +179,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../Mouse/4_VariantCalling.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">3. SComatic calling</span></a>
+  <a href="../Mouse/4_VariantCalling.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">4. SComatic calling</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -165,20 +189,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../Mouse/6_GOAnalysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">4. Functional Analysis</span></a>
+  <a href="../Mouse/6_GOAnalysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">6. Gene Ontology Analysis</span></a>
   </div>
 </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
  <span class="menu-text">Human HCA analysis</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Human/3_VennDiagrams_hca.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">3 - Visualization of intersected genes with Venn diagrams in esophagus HCA dataset</span></a>
@@ -198,24 +222,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#import-libraries" id="toc-import-libraries" class="nav-link active" data-scroll-target="#import-libraries">Import libraries</a></li>
   <li><a href="#load-data" id="toc-load-data" class="nav-link" data-scroll-target="#load-data">Load data</a></li>
-  <li><a href="#qc-stats" id="toc-qc-stats" class="nav-link" data-scroll-target="#qc-stats">QC stats</a>
+  <li><a href="#qc-stats" id="toc-qc-stats" class="nav-link" data-scroll-target="#qc-stats">2.1. QC stats</a>
   <ul>
   <li><a href="#detect-mt-genes" id="toc-detect-mt-genes" class="nav-link" data-scroll-target="#detect-mt-genes">Detect MT genes</a></li>
   </ul></li>
-  <li><a href="#normalization-feature-selection-scaling" id="toc-normalization-feature-selection-scaling" class="nav-link" data-scroll-target="#normalization-feature-selection-scaling">Normalization, feature selection, scaling</a>
+  <li><a href="#normalization-feature-selection-scaling" id="toc-normalization-feature-selection-scaling" class="nav-link" data-scroll-target="#normalization-feature-selection-scaling">2.2. Normalization, feature selection, scaling</a>
   <ul>
-  <li><a href="#dimensional-reduction-pca" id="toc-dimensional-reduction-pca" class="nav-link" data-scroll-target="#dimensional-reduction-pca">Dimensional reduction (PCA)</a></li>
-  <li><a href="#non-linear-dimensional-representation" id="toc-non-linear-dimensional-representation" class="nav-link" data-scroll-target="#non-linear-dimensional-representation">Non-linear dimensional representation</a></li>
-  <li><a href="#clustering-graph-based" id="toc-clustering-graph-based" class="nav-link" data-scroll-target="#clustering-graph-based">Clustering (graph-based)</a>
+  <li><a href="#i.-dimensional-reduction-pca" id="toc-i.-dimensional-reduction-pca" class="nav-link" data-scroll-target="#i.-dimensional-reduction-pca">i. Dimensional reduction (PCA)</a></li>
+  <li><a href="#ii.-non-linear-dimensional-representation" id="toc-ii.-non-linear-dimensional-representation" class="nav-link" data-scroll-target="#ii.-non-linear-dimensional-representation">ii. Non-linear dimensional representation</a></li>
+  <li><a href="#iii.-clustering-graph-based" id="toc-iii.-clustering-graph-based" class="nav-link" data-scroll-target="#iii.-clustering-graph-based">iii. Clustering (graph-based)</a>
   <ul>
   <li><a href="#find-neighbours-knn" id="toc-find-neighbours-knn" class="nav-link" data-scroll-target="#find-neighbours-knn">Find Neighbours (KNN)</a></li>
   </ul></li>
   </ul></li>
-  <li><a href="#find-clusters" id="toc-find-clusters" class="nav-link" data-scroll-target="#find-clusters">Find Clusters</a></li>
-  <li><a href="#cell-annotation" id="toc-cell-annotation" class="nav-link" data-scroll-target="#cell-annotation">Cell annotation</a></li>
-  <li><a href="#re-normalization-and-clustering-of-filtered-object" id="toc-re-normalization-and-clustering-of-filtered-object" class="nav-link" data-scroll-target="#re-normalization-and-clustering-of-filtered-object">Re-normalization and clustering of filtered object</a></li>
-  <li><a href="#cell-cycle-scoring" id="toc-cell-cycle-scoring" class="nav-link" data-scroll-target="#cell-cycle-scoring">Cell cycle scoring</a></li>
-  <li><a href="#cluster-annotation-based-on-cellular-composition-dge-featureplots" id="toc-cluster-annotation-based-on-cellular-composition-dge-featureplots" class="nav-link" data-scroll-target="#cluster-annotation-based-on-cellular-composition-dge-featureplots">Cluster annotation based on cellular composition, DGE, FeaturePlots…</a></li>
+  <li><a href="#find-clusters" id="toc-find-clusters" class="nav-link" data-scroll-target="#find-clusters">2.3. Find Clusters</a></li>
+  <li><a href="#cell-annotation" id="toc-cell-annotation" class="nav-link" data-scroll-target="#cell-annotation">2.4. Cell annotation</a></li>
+  <li><a href="#re-normalization-and-clustering-of-filtered-object" id="toc-re-normalization-and-clustering-of-filtered-object" class="nav-link" data-scroll-target="#re-normalization-and-clustering-of-filtered-object">2.5. Re-normalization and clustering of filtered object</a></li>
+  <li><a href="#cell-cycle-scoring" id="toc-cell-cycle-scoring" class="nav-link" data-scroll-target="#cell-cycle-scoring">2.6. Cell cycle scoring</a></li>
+  <li><a href="#cluster-annotation-based-on-cellular-composition-dge-featureplots" id="toc-cluster-annotation-based-on-cellular-composition-dge-featureplots" class="nav-link" data-scroll-target="#cluster-annotation-based-on-cellular-composition-dge-featureplots">2.7. Cluster annotation based on cellular composition, DGE, FeaturePlots…</a></li>
   <li><a href="#scomatic-preparation" id="toc-scomatic-preparation" class="nav-link" data-scroll-target="#scomatic-preparation">SComatic preparation</a>
   <ul>
   <li><a href="#save-cell-barcodes-with-cell-types-in-tsv-format-scomatic" id="toc-save-cell-barcodes-with-cell-types-in-tsv-format-scomatic" class="nav-link" data-scroll-target="#save-cell-barcodes-with-cell-types-in-tsv-format-scomatic">Save cell barcodes with cell types in TSV format (SComatic)</a></li>
@@ -360,7 +384,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </section>
 <section id="qc-stats" class="level2">
-<h2 class="anchored" data-anchor-id="qc-stats">QC stats</h2>
+<h2 class="anchored" data-anchor-id="qc-stats">2.1. QC stats</h2>
 <p>We are going to perform everything only in the “spliced” assay.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">DefaultAssay</span>(Esoph) <span class="ot">&lt;-</span> <span class="st">"spliced"</span> <span class="co"># change active assay to spliced</span></span>
@@ -433,7 +457,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 </section>
 <section id="normalization-feature-selection-scaling" class="level2">
-<h2 class="anchored" data-anchor-id="normalization-feature-selection-scaling">Normalization, feature selection, scaling</h2>
+<h2 class="anchored" data-anchor-id="normalization-feature-selection-scaling">2.2. Normalization, feature selection, scaling</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>Esoph <span class="ot">&lt;-</span> <span class="fu">SCTransform</span>(Esoph, <span class="at">assay =</span> <span class="st">"spliced"</span>, <span class="at">new.assay.name =</span> <span class="st">"SCT"</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># creates SCT assay (that becomes default)</span></span>
@@ -447,8 +471,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot variable features with labels</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">LabelPoints</span>(<span class="at">plot =</span> <span class="fu">VariableFeaturePlot</span>(<span class="at">object =</span> Esoph[[<span class="st">"SCT"</span>]], <span class="at">selection.method =</span> <span class="st">"sct"</span>), <span class="at">points =</span> top10, <span class="at">repel =</span> <span class="cn">TRUE</span>, <span class="at">xnudge =</span> <span class="dv">0</span>, <span class="at">ynudge =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<section id="dimensional-reduction-pca" class="level3">
-<h3 class="anchored" data-anchor-id="dimensional-reduction-pca">Dimensional reduction (PCA)</h3>
+<section id="i.-dimensional-reduction-pca" class="level3">
+<h3 class="anchored" data-anchor-id="i.-dimensional-reduction-pca">i. Dimensional reduction (PCA)</h3>
 <p>Observation: Makes most sense to plot RNA velocity over cell embeddings from the SCT matrix (built from spliced, not unspliced counts; i.e.&nbsp;we seek arrows as predictions from CURRENT state)</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">DefaultAssay</span>(Esoph) <span class="ot">&lt;-</span> <span class="st">"SCT"</span> <span class="co"># already default, but just in case</span></span>
@@ -476,8 +500,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ElbowPlot</span>(Esoph) <span class="co"># use 17</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="non-linear-dimensional-representation" class="level3">
-<h3 class="anchored" data-anchor-id="non-linear-dimensional-representation">Non-linear dimensional representation</h3>
+<section id="ii.-non-linear-dimensional-representation" class="level3">
+<h3 class="anchored" data-anchor-id="ii.-non-linear-dimensional-representation">ii. Non-linear dimensional representation</h3>
 <p>Simplifies the complex manifold of the data in a super-reduced dimensional space for visualization. We should run this after PCA, in order to further reduce the dimensionality or our dataset. Later, we can run FindClusters() with whatever dimension we prefer.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="do">## tSNE</span></span>
@@ -507,8 +531,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="fu">DimPlot</span>(Esoph, <span class="at">reduction =</span> <span class="st">"umap"</span>, <span class="at">pt.size =</span> <span class="fl">0.5</span>, <span class="at">label=</span><span class="cn">FALSE</span>, <span class="at">group.by =</span> <span class="st">'unique_name'</span>) <span class="co"># group by a column from metadata</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="clustering-graph-based" class="level3">
-<h3 class="anchored" data-anchor-id="clustering-graph-based">Clustering (graph-based)</h3>
+<section id="iii.-clustering-graph-based" class="level3">
+<h3 class="anchored" data-anchor-id="iii.-clustering-graph-based">iii. Clustering (graph-based)</h3>
 <ol type="1">
 <li>Cellular distance metric: euclidean distance (on PCAs)</li>
 <li>Embedding cells in a graph structure - for example a K-nearest neighbor (KNN) graph, with edges drawn between cells with similar feature expression patterns</li>
@@ -522,7 +546,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 </section>
 <section id="find-clusters" class="level2">
-<h2 class="anchored" data-anchor-id="find-clusters">Find Clusters</h2>
+<h2 class="anchored" data-anchor-id="find-clusters">2.3. Find Clusters</h2>
 <p>Algorithm for modularity optimization (1 = original Louvain algorithm; 2 = Louvain algorithm with multilevel refinement; 3 = SLM algorithm; 4 = Leiden algorithm). Leiden requires the leidenalg python. - Louvain algorithm: Partitioning into highly interconnected ‘quasi-cliques’ or ‘communities’, optimizing a modularity target function. It may yield arbitrarily badly connected communities. In the worst case, communities may even be disconnected, especially when running the algorithm iteratively. - Leiden algorithm: when applied iteratively, it converges to a partition in which all subsets of all communities are locally optimally assigned. Furthermore, by relying on a fast local move approach, the Leiden algorithm runs faster than the Louvain algorithm.</p>
 <p>We will use Leiden algorith (algorithm = 4, method = “igraph”) https://www.nature.com/articles/s41598-019-41695-z</p>
 <div class="cell">
@@ -594,7 +618,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </section>
 <section id="cell-annotation" class="level2">
-<h2 class="anchored" data-anchor-id="cell-annotation">Cell annotation</h2>
+<h2 class="anchored" data-anchor-id="cell-annotation">2.4. Cell annotation</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>Esoph.markers <span class="ot">&lt;-</span> <span class="fu">FindAllMarkers</span>(Esoph_filt, <span class="at">only.pos =</span> <span class="cn">TRUE</span>, <span class="at">min.pct =</span> <span class="fl">0.25</span>, <span class="at">logfc.threshold =</span> <span class="fl">0.25</span>)</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -612,7 +636,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </section>
 <section id="re-normalization-and-clustering-of-filtered-object" class="level2">
-<h2 class="anchored" data-anchor-id="re-normalization-and-clustering-of-filtered-object">Re-normalization and clustering of filtered object</h2>
+<h2 class="anchored" data-anchor-id="re-normalization-and-clustering-of-filtered-object">2.5. Re-normalization and clustering of filtered object</h2>
 <p>Repeat normalization, PCA, tSNE and umap:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>Esoph_filt <span class="ot">&lt;-</span> <span class="fu">SCTransform</span>(Esoph_filt, <span class="at">assay =</span> <span class="st">"spliced"</span>, <span class="at">new.assay.name =</span> <span class="st">"SCT"</span>)</span>
@@ -665,7 +689,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </section>
 <section id="cell-cycle-scoring" class="level2">
-<h2 class="anchored" data-anchor-id="cell-cycle-scoring">Cell cycle scoring</h2>
+<h2 class="anchored" data-anchor-id="cell-cycle-scoring">2.6. Cell cycle scoring</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Perform cell cycle scoring on Esoph_filt</span></span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">"/home/albax/mcGinn_2021"</span>)</span>
@@ -683,11 +707,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </section>
 <section id="cluster-annotation-based-on-cellular-composition-dge-featureplots" class="level2">
-<h2 class="anchored" data-anchor-id="cluster-annotation-based-on-cellular-composition-dge-featureplots">Cluster annotation based on cellular composition, DGE, FeaturePlots…</h2>
+<h2 class="anchored" data-anchor-id="cluster-annotation-based-on-cellular-composition-dge-featureplots">2.7. Cluster annotation based on cellular composition, DGE, FeaturePlots…</h2>
 <p>The mouse esophageal mucosa consists of three layers: stratified epithelium, lamina propia with connective tissue, and muscularis mucosa with smooth muscle. In our data, the authors peeled the muscle (the muscularis mucosa) from the esophagi. So, we should only have the stratified epithelium and maybe lamina propia. The epithelium, in the lumen, is keratinized in mice.</p>
-<p>We are going to create different signatures depending on: 1. Cell state (resting basal, cycling basal, differentiated) -&gt; this is what the authors did in McGinn, 2021; or basal, differentiated, cell cycle - Basal: Cdh3, Itgb1, Krt15, Krt14, Krt5, Col17a1, Sox2, Trp63, Itga6 - Cell cycle: Gmnn, Mcm6, Mcm2, Cdt1, Pcna, Ccne1, E2f1, Ccne1, Cdc6, Aurkb, Top2a, Ccnb2, Bub1, Ube2c, Aurka, Kif23, Ccnb1, Mki67, Mad2l1, Birc5 - Differentiating: Krt13, Klf4, Tgm3, Sbsn, Grhl3, Krt4, Notch3, Krtdap</p>
-<ol start="2" type="1">
-<li><p>Structure of the epithelium: Stratified epithelium: Lumen</p>
+<p>We are going to create different signatures depending on:</p>
+<ol type="1">
+<li>Cell state (resting basal, cycling basal, differentiated) This is what the authors did in McGinn, 2021; or basal, differentiated, cell cycle
+<ul>
+<li>Basal: Cdh3, Itgb1, Krt15, Krt14, Krt5, Col17a1, Sox2, Trp63, Itga6</li>
+<li>Cell cycle: Gmnn, Mcm6, Mcm2, Cdt1, Pcna, Ccne1, E2f1, Ccne1, Cdc6, Aurkb, Top2a, Ccnb2, Bub1, Ube2c, Aurka, Kif23, Ccnb1, Mki67, Mad2l1, Birc5</li>
+<li>Differentiating: Krt13, Klf4, Tgm3, Sbsn, Grhl3, Krt4, Notch3, Krtdap</li>
+</ul></li>
+<li>Structure of the epithelium. Stratified epithelium:
+<ul>
+<li>Lumen
 <ul>
 <li>Keratinized cells (final stage of granular): ; Lor, Ivl, Envoplakin, Periplakin, Sprr1a, Sprr1b, Sprr2a1, Sprr2a2, Sprr2a3, Sprr2b, Sprr2d, Sprr2e, Sprr2f, Sprr3; Lor, Flg, Tchp, Ivl, Capza1, S100A1, Sprr1a, Sprr1b, Sprr2a1, Sprr2a2, Sprr2a3, Sprr2b, Sprr2d, Sprr2e, Sprr2f, Sprr3</li>
 <li>Suprabasal cells -&gt; differentiation
@@ -696,10 +728,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Spinous: Krt10, Krt1, Tgm1, Tgm5; Tgm1, Tgm5, Dsg2, Dsg3, Dsg4</li>
 </ul></li>
 <li>Basal cells (can be differentiating or be progenitor cells) -&gt; proliferation, p63+,krt5+,krt7-; Bmi1 progenitor cells, Krt5, Krt14, Krt15; Krt5, Krt14, Tgm2, Bpag1; Itgb1, Trp63, Krt5, Krt14, Krt15; Krt5, Krt14, Bpag1, Tgm2</li>
-<li>Basal lamina: Lama5, Itga6, Itgb4, Bpag2 Basal</li>
-</ul>
-<p>Disclaimer: keratinized cells and granular cells could be grouped in one category, the cornified envelope.</p>
-<p>Summarised by taking the genes in common from the literature: Lumen</p>
+<li>Basal lamina: Lama5, Itga6, Itgb4, Bpag2</li>
+</ul></li>
+<li>Basal</li>
+</ul></li>
+</ol>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>keratinized cells and granular cells could be grouped in one category, the cornified envelope.</p>
+</div>
+</div>
+<p>Summarised by taking the genes in common from the literature:</p>
+<ul>
+<li>Lumen
 <ul>
 <li>Keratinized cells (final stage of granular): Lor, Ivl, Sprr1a, Sprr1b, Sprr2a1, Sprr2a2, Sprr2a3, Sprr2b, Sprr2d, Sprr2e, Sprr2f, Sprr3, Tchp, Capza1, S100A1, Evpl, Ppl</li>
 <li>Suprabasal cells -&gt; differentiation
@@ -708,9 +757,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Spinous: Krt10, Krt1, Tgm1, Tgm5, Dsg2, Dsg3, Dsg4</li>
 </ul></li>
 <li>Basal cells (can be differentiating or be progenitor cells) -&gt; proliferation: Krt5, Krt14, Krt15, Tgm2, Bpag1, Tp63, Itgb1</li>
-<li>Basal lamina: Lama5, Itga6, Itgb4 Basal</li>
+<li>Basal lamina: Lama5, Itga6, Itgb4</li>
 </ul></li>
-</ol>
+<li>Basal</li>
+</ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Taking into account the different sub-levels of the oesophagus epithelium; from Figure S1 Mendeley and Candi E, 2005 (The cornified envelope: a model of cell death in the skin):</span></span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a></span>

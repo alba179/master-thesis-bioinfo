@@ -1,4 +1,4 @@
-# 4. Functional Analysis
+# 6. Gene Ontology Analysis
 
 ```{r}
 gene_list <- read_tsv("mutated_genes_mouse.tsv")

@@ -4,9 +4,7 @@ This notebook contains the bash scripts used to download the fastq, quality cont
 
 ## 1.1. Download fastQ files from ENA
 
-https://www.ebi.ac.uk/biostudies/arrayexpress/studies/E-MTAB-8662
-
-```{bash}
+```bash
 #!/bin/bash
 # [matterhorn]
 # AUTHOR: Alba Mendez Alejandre
@@ -72,23 +70,23 @@ done
 
 ```
 
-```{bash}
-./
+```bash
+./download_fastq.sh
 ```
 
 After the download of fastQ files, they were concatenated in order to obtain 
 
 ## 1.2 Quality control with MultiQC
 
-[View MultiQC report for sequencing run 2](/docs/Mouse/fastQC/run1/multiqc_report.html)
+[View MultiQC report for sequencing run 2](fastQC/run1/multiqc_report.html)
 
-[View MultiQC report for sequencing run 1](/docs/Mouse/fastQC/run2/multiqc_report.html)
+[View MultiQC report for sequencing run 1](fastQC/run2/multiqc_report.html)
 
 
 ## 1.3. STAR aligment
 
 Separate scripts were used for each sequencing session (names as run1 and run2 for simplification).
-```{bash}
+```bash
 #!/bin/bash
 # [folia]
 # This script must be executed in the server where we want to run STAR
@@ -156,10 +154,13 @@ conda deactivate
 
 ```
 
+```bash
+./STAR_alignment.sh
+```
 
 Generate the reference genome indexed file
 
-```{bash}
+```bash
 #!/bin/bash
 
 cd ~/reference_genomes/

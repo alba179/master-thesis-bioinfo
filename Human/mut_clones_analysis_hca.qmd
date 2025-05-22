@@ -607,7 +607,7 @@ print(top_clones)
 ```
 
 
-```{bash}
+```bash
 # [matterhorn]
 
 conda activate d_scanpy

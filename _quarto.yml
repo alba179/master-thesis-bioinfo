@@ -9,11 +9,11 @@ book:
   author: "Alba Méndez Alejandre"
   date: last-modified
   date-format: "DD/MM/YYYY"
-  search: false
+  search: true
   repo-url: https://github.com/alba179/master-thesis-bioinfo
   sidebar:
     style: floating
-    collapse-level: 1
+    collapse-level: 2
   page-navigation: true
   chapters:
     - index.qmd

@@ -116,7 +116,7 @@ print(duplicated_genes)
 ```
 
 
-## QC stats
+## 2.1. QC stats
 We are going to perform everything only in the "spliced" assay.
 
 ```{r, eval=FALSE}
@@ -209,7 +209,7 @@ Esoph # spliced assay keeps as default assay used as input for downstream normal
 ```
 
 
-## Normalization, feature selection, scaling
+## 2.2. Normalization, feature selection, scaling
 
 ```{r SCTransform, eval=FALSE}
 Esoph <- SCTransform(Esoph, assay = "spliced", new.assay.name = "SCT")
@@ -227,7 +227,7 @@ LabelPoints(plot = VariableFeaturePlot(object = Esoph[["SCT"]], selection.method
 ```
 
 
-### Dimensional reduction (PCA)
+### i. Dimensional reduction (PCA)
 Observation: Makes most sense to plot RNA velocity over cell embeddings from the SCT matrix (built from spliced, not unspliced counts; i.e. we seek arrows as predictions from CURRENT state)
 
 ```{r, eval=FALSE}
@@ -261,7 +261,7 @@ ElbowPlot(Esoph) # use 17
 ```
 
 
-### Non-linear dimensional representation
+### ii. Non-linear dimensional representation
 Simplifies the complex manifold of the data in a super-reduced dimensional space for visualization. We should run this after PCA, in order to further reduce the dimensionality or our dataset. Later, we can run FindClusters() with whatever dimension we prefer. 
 
 ```{r tsne, eval=FALSE}
@@ -298,7 +298,7 @@ DimPlot(Esoph, reduction = "umap", pt.size = 0.5, label=FALSE, group.by = 'uniqu
 ```
 
 
-### Clustering (graph-based)
+### iii. Clustering (graph-based)
 1. Cellular distance metric: euclidean distance (on PCAs)
 2. Embedding cells in a graph structure - for example a K-nearest neighbor (KNN) graph, with edges drawn between cells with similar feature expression patterns
 
@@ -309,7 +309,7 @@ Esoph <- FindNeighbors(Esoph, reduction = "pca", dims = 1:17) # dims based on fi
 ```
 
 
-## Find Clusters
+## 2.3. Find Clusters
 Algorithm for modularity optimization (1 = original Louvain algorithm; 2 = Louvain algorithm with multilevel refinement; 3 = SLM algorithm; 4 = Leiden algorithm). Leiden requires the leidenalg python.
   - Louvain algorithm: Partitioning into highly interconnected ‘quasi-cliques’ or ‘communities’, optimizing a modularity target function. It may yield arbitrarily badly connected communities. In the worst case, communities may even be disconnected, especially when running the algorithm iteratively.
   - Leiden algorithm: when applied iteratively, it converges to a partition in which all subsets of all communities are locally optimally assigned. Furthermore, by relying on a fast local move approach, the Leiden algorithm runs faster than the Louvain algorithm.
@@ -419,7 +419,7 @@ Esoph_filt <- subset(x = Esoph, idents = c("4", "7"), invert = TRUE)
 
 ```
 
-## Cell annotation
+## 2.4. Cell annotation
 ```{r, eval=FALSE}
 Esoph.markers <- FindAllMarkers(Esoph_filt, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
 
@@ -436,7 +436,7 @@ cluster6_markers <- TopMarkers[TopMarkers$cluster == 6, ]  # Epi_DEN
 cluster7_markers <- TopMarkers[TopMarkers$cluster == 7, ]  # Fibroblasts
 ```
 
-## Re-normalization and clustering of filtered object
+## 2.5. Re-normalization and clustering of filtered object
 Repeat normalization, PCA, tSNE and umap:
 
 ```{r, eval= FALSE}
@@ -510,7 +510,7 @@ Esoph_filt$seurat_clusters = Esoph_filt$SCT_snn_res.0.2
 
 ```
 
-## Cell cycle scoring
+## 2.6. Cell cycle scoring
 
 ```{r, eval = FALSE}
 # Perform cell cycle scoring on Esoph_filt
@@ -530,37 +530,44 @@ Esoph_filt <- CellCycleScoring(Esoph_filt, s.features = s.genes, g2m.features = 
 DimPlot(Esoph_filt, group.by = "Phase")
 ```
 
-## Cluster annotation based on cellular composition, DGE, FeaturePlots...
+## 2.7. Cluster annotation based on cellular composition, DGE, FeaturePlots...
 The mouse esophageal mucosa consists of three layers: stratified epithelium, lamina propia with connective tissue, and muscularis mucosa with smooth muscle. In our data, the authors peeled the muscle (the muscularis mucosa) from the esophagi. So, we should only have the stratified epithelium and maybe lamina propia. The epithelium, in the lumen, is keratinized in mice. 
 
 We are going to create different signatures depending on:
-1. Cell state (resting basal, cycling basal, differentiated) -> this is what the authors did in McGinn, 2021; or basal, differentiated, cell cycle
+
+1. Cell state (resting basal, cycling basal, differentiated)
+   This is what the authors did in McGinn, 2021; or basal, differentiated, cell cycle
     - Basal: Cdh3, Itgb1, Krt15, Krt14, Krt5, Col17a1, Sox2, Trp63, Itga6
     - Cell cycle: Gmnn, Mcm6, Mcm2, Cdt1, Pcna, Ccne1, E2f1, Ccne1, Cdc6, Aurkb, Top2a, Ccnb2, Bub1, Ube2c, Aurka, Kif23, Ccnb1, Mki67, Mad2l1, Birc5
     - Differentiating: Krt13, Klf4, Tgm3, Sbsn, Grhl3, Krt4, Notch3, Krtdap
 
-2. Structure of the epithelium:
+2. Structure of the epithelium.
     Stratified epithelium:
-    Lumen
+    - Lumen
       - Keratinized cells (final stage of granular): ; Lor, Ivl, Envoplakin, Periplakin, Sprr1a, Sprr1b, Sprr2a1, Sprr2a2, Sprr2a3, Sprr2b, Sprr2d, Sprr2e, Sprr2f, Sprr3; Lor, Flg, Tchp, Ivl, Capza1, S100A1, Sprr1a, Sprr1b, Sprr2a1, Sprr2a2, Sprr2a3, Sprr2b, Sprr2d, Sprr2e, Sprr2f, Sprr3
       - Suprabasal cells -> differentiation
-          - Granular: Lor, Flg, Ivl; Tgm3, Krt1, Krt2e, Krt9, Krt10, Dsg1, Dsc1
-          - Spinous: Krt10, Krt1, Tgm1, Tgm5; Tgm1, Tgm5, Dsg2, Dsg3, Dsg4
+        - Granular: Lor, Flg, Ivl; Tgm3, Krt1, Krt2e, Krt9, Krt10, Dsg1, Dsc1
+        - Spinous: Krt10, Krt1, Tgm1, Tgm5; Tgm1, Tgm5, Dsg2, Dsg3, Dsg4
       - Basal cells (can be differentiating or be progenitor cells) -> proliferation, p63+,krt5+,krt7-; Bmi1 progenitor cells, Krt5, Krt14, Krt15; Krt5, Krt14, Tgm2, Bpag1; Itgb1, Trp63, Krt5, Krt14, Krt15; Krt5, Krt14, Bpag1, Tgm2
       - Basal lamina: Lama5, Itga6, Itgb4, Bpag2
-    Basal
+    - Basal
 
-    Disclaimer: keratinized cells and granular cells could be grouped in one category, the cornified envelope. 
+::: {.callout-tip}
+## Tip
 
-    Summarised by taking the genes in common from the literature: 
-    Lumen
-      - Keratinized cells (final stage of granular): Lor, Ivl, Sprr1a, Sprr1b, Sprr2a1, Sprr2a2, Sprr2a3, Sprr2b, Sprr2d, Sprr2e, Sprr2f, Sprr3, Tchp, Capza1, S100A1, Evpl, Ppl
-      - Suprabasal cells -> differentiation
-          - Granular: Tgm3, Krt1, Krt2e, Krt9, Krt10, Dsg1, Dsc1
-          - Spinous: Krt10, Krt1, Tgm1, Tgm5, Dsg2, Dsg3, Dsg4
-      - Basal cells (can be differentiating or be progenitor cells) -> proliferation: Krt5, Krt14, Krt15, Tgm2, Bpag1, Tp63, Itgb1
-      - Basal lamina: Lama5, Itga6, Itgb4
-    Basal
+keratinized cells and granular cells could be grouped in one category, the cornified envelope. 
+:::
+
+Summarised by taking the genes in common from the literature: 
+
+- Lumen
+  - Keratinized cells (final stage of granular): Lor, Ivl, Sprr1a, Sprr1b, Sprr2a1, Sprr2a2, Sprr2a3, Sprr2b, Sprr2d, Sprr2e, Sprr2f, Sprr3, Tchp, Capza1, S100A1, Evpl, Ppl
+  - Suprabasal cells -> differentiation
+    - Granular: Tgm3, Krt1, Krt2e, Krt9, Krt10, Dsg1, Dsc1
+    - Spinous: Krt10, Krt1, Tgm1, Tgm5, Dsg2, Dsg3, Dsg4
+  - Basal cells (can be differentiating or be progenitor cells) -> proliferation: Krt5, Krt14, Krt15, Tgm2, Bpag1, Tp63, Itgb1
+  - Basal lamina: Lama5, Itga6, Itgb4
+- Basal
 
 
 ```{r, eval=FALSE}
@@ -610,12 +617,12 @@ DotPlot(Esoph, features = c("Mki67","Krt14","Col17a1","Krt5","Sbsn","Krtdap"), c
 ```
 
 
-## SComatic preparation
+## 2.8. SComatic preparation
 SComatic needs a TSV metadata file that relates each cell barcode with each "Cell type" annotation. The annotation will depend on how much granularity we need or is adequate to cal lsomatic variants from single cell transcriptomics. Here, the library design plays a very important role.
 
-![Library design](https://github.com/alba179/master-thesis-bioinfo/main/pics/library_design_mouse.png)
+<!-- ![Library design](https://github.com/alba179/master-thesis-bioinfo/main/pics/library_design_mouse.png) -->
 
-![Cancer cell fraction relation](https://github.com/alba179/master-thesis-bioinfo/main/pics/CCF_mouse.png)
+<!-- ![Cancer cell fraction relation](https://github.com/alba179/master-thesis-bioinfo/main/pics/CCF_mouse.png) -->
 
 
 ### Save cell barcodes with cell types in TSV format (SComatic)
@@ -633,7 +640,7 @@ For SComatic, save cell barcodes with cell types:
 
 ```
 
-## Annotation of clusters (based on known canonical markers of each cluster)
+## 2.9. Annotation of clusters (based on known canonical markers of each cluster)
 
 Annotate each mouse .tsv "Cell_type" as: Epi; so that in Step 3 of SComatic we obtain a .tsv with 1 "cluster"
 
@@ -719,7 +726,7 @@ dim(Esoph_filt)
 ```
 
 
-## scVelo preparation
+## 2.10. scVelo preparation
 
 ### Cluster annotation for scvelo
 Looking at our umap, with resolution 0.2, we will take 3 clusters (Basal, Suprabasal, Epi_DEN), but annotated differently, in 5 names:
@@ -842,7 +849,7 @@ saveRDS(Esoph_filt, file = "./output/esoph_star_filtered_mm10.rds")
 ```
 
 
-## Normalization of counts
+## 2.11. Normalization of counts
 We are going to normalize the data by total counts (in each library-Sequencing ID). For that, we have to sum all the columns.
 
 ```{r, eval=FALSE}
@@ -893,7 +900,7 @@ SCTransform corrects the counts from your equivalent RNA assay and creates a new
 :::
 
 
-## Do we find barcodes from Epi_DEN shared in other clusters?
+## 2.12. Do we find barcodes from Epi_DEN shared in other clusters?
 - Is each clone contained completely inside the Epithelial_DEN cluster?("Epi_DEN_cells")
 - How are these clones shared with other clusters? How many cells of the clone fall inside Epi_DEN_cells cluster?
 - 

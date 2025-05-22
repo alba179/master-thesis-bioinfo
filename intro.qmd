@@ -1,7 +1,6 @@
-# Introduction
-
-This repository aims to be a log of the overall work i did for my master's thesis. 
-
+---
+title: "Set-up and installations"
+---
 
 ## Computers
 I used mainly two computers for all the calculations, though the HCA dataset was in a third one, so i had to use it sporadically. 
@@ -16,7 +15,7 @@ All code was executed in computers running Ubuntu 22.04.4 LTS.
 
 Most of the software was installed using mamba/conda environments when possible. 
 
-```{bash}
+```bash
 mamba config --add channels bioconda
 mamba config --add channels conda-forge
 ```
@@ -27,7 +26,7 @@ mamba config --add channels conda-forge
 **Purpose:** to have a functional RStudio/VSCode installation along with the packages for the kallisto-bustools velocity workflow.
 **Creation:** run the following commands to install RStudio along with the packages needed for data analysis.
 
-```{bash}
+```bash
 mamba create -n d_rstudio -c conda-forge rstudio-desktop jupyter r-seurat
 
 conda activate d_rstudio
@@ -70,7 +69,7 @@ mamba install -c conda-forge r-ggvenn r-ggvenndiagram r-venn r-venndiagram
 **Computer:** nuptse, folia, matterhorn
 **Purpose:**  to have an isolated environment with SComatic for scRNA-seq mutation calling
 
-```{bash}
+```bash
 mamba create -n d_scomatic -c bioconda python=3.7 r-base=3.6.1 samtools datamash bedtools
 
 # You can download a zip file with the repository "Code" button in the web

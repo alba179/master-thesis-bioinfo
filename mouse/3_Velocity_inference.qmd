@@ -1,8 +1,9 @@
 # 3. Inference of velocity
 
 
-## Slingshot
+## 3.1. Slingshot
 
+### Import libraries
 ```{r}
 .libPaths("/home/albax/miniforge3/envs/seurat_v4/lib/R/library")
 
@@ -150,7 +151,7 @@ dev.off()
 
 
 
-## scVelo
+## 3.2. scVelo
 
 ### Load of .h5ad file
 
@@ -256,7 +257,7 @@ palette_d = sns.color_palette(colors_d)
 
 ```
 
-### Stochastic model
+### i. Stochastic model
 ```{python}
 
 scv.tl.velocity(adata, mode ="stochastic") # not good model
@@ -308,7 +309,7 @@ adata.write(filename = "scvelo_results/Esoph_stochastic_mm10.h5ad", compression=
 ```
 
 
-### Deterministic model
+### ii. Deterministic model
 
 ```{python}
 scv.tl.velocity(adata, mode = "deterministic")
@@ -363,7 +364,7 @@ adata.write(filename = "scvelo_results/Esoph_deterministic_mm10.h5ad", compressi
 ```
 
 
-### Dynamical model
+### iii. Dynamical model
 
 ```{python}
 adata = adata[:, adata.var['highly_variable']]  # Only use highly variable genes
@@ -487,7 +488,7 @@ plt.show()
 ```
 
 
-### Cycling progenitors
+### iv. Cycling progenitors
 
 ```{python}
 scv.tl.score_genes_cell_cycle(adata_re)

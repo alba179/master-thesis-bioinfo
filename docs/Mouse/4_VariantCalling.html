@@ -20,14 +20,52 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
 <link href="../Mouse/5_AnnotationVariants.html" rel="next">
 <link href="../Mouse/3_Velocity_inference.html" rel="prev">
-<script src="../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -38,6 +76,18 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -65,9 +115,12 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Mouse/1_DataProcessing.html">Mouse analysis</a></li><li class="breadcrumb-item"><a href="../Mouse/4_VariantCalling.html"><span class="chapter-title">3. SComatic calling</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Mouse/1_DataProcessing.html">Mouse analysis</a></li><li class="breadcrumb-item"><a href="../Mouse/4_VariantCalling.html"><span class="chapter-title">4. SComatic calling</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
     </div>
   </nav>
 </header>
@@ -83,6 +136,11 @@ ul.task-list li input[type="checkbox"] {
 </div>
     </div>
       </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -121,7 +179,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../Mouse/4_VariantCalling.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">3. SComatic calling</span></a>
+  <a href="../Mouse/4_VariantCalling.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">4. SComatic calling</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -138,13 +196,13 @@ ul.task-list li input[type="checkbox"] {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
  <span class="menu-text">Human HCA analysis</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Human/3_VennDiagrams_hca.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">3 - Visualization of intersected genes with Venn diagrams in esophagus HCA dataset</span></a>
@@ -183,7 +241,7 @@ ul.task-list li input[type="checkbox"] {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Mouse/1_DataProcessing.html">Mouse analysis</a></li><li class="breadcrumb-item"><a href="../Mouse/4_VariantCalling.html"><span class="chapter-title">3. SComatic calling</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Mouse/1_DataProcessing.html">Mouse analysis</a></li><li class="breadcrumb-item"><a href="../Mouse/4_VariantCalling.html"><span class="chapter-title">4. SComatic calling</span></a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title"><span class="chapter-title">3. SComatic calling</span></h1>
 </div>
@@ -210,294 +268,291 @@ ul.task-list li input[type="checkbox"] {
 <li>min_cell_types = 2</li>
 <li>max_cell_types = 1</li>
 </ul>
-<pre class="{bash}"><code>#!/bin/bash
-# Script with bams separated by run (run1 vs run2). Each run bams are analyzed in a scomatic pipeline. This means, the output of this script will give two final .tsv: one for the run of run1, and another one for the run of run2. Each of these runs/.tsv, will have 8 samples: sample1_Epi, samp2_Epi, samp3_Epi, samp4_Epi, samp5_Epi, samp6_Epi, samp7_Epi, samp8_Epi. 
-# There are 6 sample which are control adult, + one sample is old CTL, and + one sample is old DEN. 
-# Each of the sample has the key like "sample1_Epi", "samp2_Epi", etc. 
-# DISCLAIMER: ALWAYS USE THE SAME REFERENCE GENOME!!! If you have aligned you rreads with mm10, scomatic will have to be ran with mm10. No coordinates' change with bedtools nor similar strange things. 
-# SComatic nowadays has only panel of normales (PON) and editing sites (A-to-I events) for: GRCh38 and mm10. There aren't PON nor editing sites for mouse assembly mm39. 
-# The PON for human has been made with GATK data 1000 genomes project. No info of how they did it.
-# The PON for mouse mm10 was done in July 20, using mm10 Tabula muris data. No info of how exactly they did it. 
-
-# Run this script in a environment with scomatic installed. 
-
-SCOMATIC=~/bin/SComatic-main
-
-run_names=("run1" "run2") # list of runs
-
-echo "Starting Scomatic analysis."
-
-
-i=0
-for run in "${run_names[@]}";
-do
-    i=$((i + 1)) 
-
-  # iterate though each bam in the directory where they are located
-  bam_dir="/media/storage/mcGinn_2021/STARalignment/bam/${run}"
-  output_dir="/media/storage/mcGinn_2021/scomatic/output/${run}"
-
-  mkdir -p $output_dir
-
-  logfile="$output_dir/scomatic_log.txt"
-  mkdir -p "$(dirname "$logfile")"
-
-  log_message() {
-      local log_time
-      log_time=$(date +"%Y-%m-%d %H:%M:%S")
-      local message="[$log_time] $1"
-      echo "$message" &gt;&gt; "$logfile"
-      echo "$message"
-  }
-
-  # Initialize log file
-  echo "### Scomatic Pipeline Log ###" &gt; "$logfile"
-  log_message "Running scomatic pipeline for run: ${run}"
-
-
-  # Step 1: Splitting alignment file in cell type specific bams
-  log_message "Step 1: Splitting alignment file in cell type specific bams..."
-
-  output_dir1=$output_dir/Step1_BamCellTypes
-  mkdir -p $output_dir1
-  meta_dir="/media/storage/mcGinn_2021/scomatic/markers"
-
-  # Iterate through each BAM file in the bam_dir
-  for bam_file in "$bam_dir"/*.bam
-  do
-      # Extract the sample name from the file name
-      base_name=$(basename "$bam_file" Aligned.sortedByCoord.out.bam) # run1_lib1
-      sample=${base_name#*_} # remove the prefix up to '_', so that we get only lib1
-
-      echo "Started sample: $sample"
-
-      meta_file="$meta_dir/${run}/esoph_markers_scomatic_${base_name}.tsv"
-      
-      # Run the Python script with the appropriate arguments
-      python $SCOMATIC/scripts/SplitBam/SplitBamCellTypes.py --bam "$bam_file" \
-          --meta "$meta_file" \
-          --id "$sample" \
-          --n_trim 5 \
-          --max_nM 5 \
-          --max_NH 1 \
-          --outdir "$output_dir1"
-
-      log_message "Finished sample: $sample"
-
-      sample_list+=("$sample")
-  done
-
-  # Now, we have each .bam file for each sample located in =$output_dir/Step1_BamCellTypes. In total, 16 .tsv
-  # The bam file will be like: run1_lib1.lib1_Epi.bam
-
-
-  #######################################
-  # Step 2: Collecting base count information
-  
-  REF=/media/storage/reference_genomes/Mus_musculus.GRCm38.dna.primary_assembly.fa
-
-  output_dir2=$output_dir/Step2_BaseCellCounts
-  mkdir -p $output_dir2
-
-  for bam in "$output_dir1"/*.bam
-  do
-    
-    # Cell type, which will be lib1 in this case
-    cell_type=$(basename $bam | awk -F'.' '{print $(NF-1)}') # this takes the cell_type from the bam name (the second field to last by separating by '.')
-
-    # Temp folder
-    temp=$output_dir2/temp_${cell_type}
-    mkdir -p $temp
-
-    log_message "Processing base counts for cell type: $cell_type"
-
-    # Command line to submit to cluster
-    python $SCOMATIC/scripts/BaseCellCounter/BaseCellCounter.py --bam $bam \
-      --ref $REF \
-      --chrom all \
-      --out_folder $output_dir2 \
-      --min_bq 30 \
-      --tmp_dir $temp \
-      --nprocs 10
-
-    rm -rf $temp
-
-    log_message "Finished base count processing for cell type: $cell_type"
-  done
-
-  log_message "Listing files in $output_dir2 before renaming:"
-  ls "$output_dir2"
-  # Now, we have each .tsv for each sample in output_dir2=$output_dir/Step2_BaseCellCounts
-  # We are going to move both .tsv from the same sample to a new folder inside output_dir2, named after the sample name.
-
-  # echo "Organizing .tsv files into sample-specific folders..."
-  log_message "Renaming .tsv files..."
-
-
-  for tsv in "$output_dir2"/*.tsv
-  do
-      # Create a new directory for the sample
-      # Move the .tsv files corresponding to the sample into the sample directory
- 
-      base_name=$(basename "$tsv")
-      
-      # lib1.lib1_Epi.tsv ; we want lib1.tsv -&gt; this will be our unique "cell types"
-    
-      # Extract run name, and spec cell
-      sample_run=$(echo "$base_name" | awk -F'.' '{print $1}') # extracts lib1
-      spec_cell=$(echo "$base_name" | awk -F'_' '{print $2}') # extracts Epi.tsv
-
-      new_filename="${output_dir2}/${sample_run}_${spec_cell}" # lib1_Epi.tsv
-
-      # Change each name of the .tsv files by adding its run
-      # mv "$output_dir2/${sample_name}"*.tsv "$sample_dir/${run_name}${sample_name}"*.tsv
-      mv "$tsv" "$new_filename"
-
-      # echo "Moved .tsv files for sample: $sample to $sample_dir"
-      log_message "Renamed $tsv to $new_filename"
-  done
-
-  log_message "Listing files in $output_dir2 after renaming:"
-  ls "$output_dir2"
-
-  # echo "Moved the files successfully!"
-  log_message "Renamed the files successfully!"
-
-  #######################################
-  # Step 3: Merging base count matrices
-  log_message "Step 3: Merging base count matrices..."
-
-  output_dir3=$output_dir/Step3_BaseCellCountsMerged
-  mkdir -p $output_dir3
-
-  log_message "Merging base count matrices into a single .tsv file..."
-
-  python $SCOMATIC/scripts/MergeCounts/MergeBaseCellCounts.py \
-    --tsv_folder ${output_dir2} \
-    --outfile ${output_dir3}/${run}.BaseCellCounts.AllCellTypes.tsv
-
-
-  #######################################
-  # Step 4: Detection of somatic mutations
-  log_message "Step 4: Detection of somatic mutations..."
-
-  # Step 4.1
-  log_message "Step 4.1: Variant calling..."
-  output_dir4=$output_dir/Step4_VariantCalling
-  mkdir -p $output_dir4
-
-  python $SCOMATIC/scripts/BaseCellCalling/BaseCellCalling.step1.py \
-            --infile ${output_dir3}/${run}.BaseCellCounts.AllCellTypes.tsv \
-            --outfile ${output_dir4}/${run} \
-        --max_cell_types 1 \
-        --min_cell_types 2 \
-            --ref $REF
-
-
-  # Step 4.2
-  log_message "Step 4.2: Somatic mutation detection..."
-  editing=$SCOMATIC/RNAediting/AllEditingSites.mm10.txt
-  PON=$SCOMATIC/PoNs/PoN.scRNAseq.mm10.tsv
-
-  python $SCOMATIC/scripts/BaseCellCalling/BaseCellCalling.step2.py \
-            --infile ${output_dir4}/${run}.calling.step1.tsv \
-            --outfile ${output_dir4}/${run}.calling.step2.tsv \
-            --editing $editing \
-            --pon $PON
-
-  # extra step: Intersection with bed file
-  log_message "Extra step: Intersection with bed file..."
-  bedtools intersect -header -a ${output_dir4}/${run}.calling.step2.tsv -b $SCOMATIC/bed_files_of_interest/UCSC.mm10.without.repeatmasker.bed | awk '$1 ~ /^#/ || $6 == "PASS"' &gt; ${output_dir4}/${run}.calling.step2.pass.tsv
-
-  log_message "Finished scomatic pipeline for ${run} successfully!"
-
-done
-
-log_message "Pipeline completed successfully for both runs!"
-
-# Display log file
-echo "Log file saved to: $logfile"
-cat "$logfile"
-
-</code></pre>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Script with bams separated by run (run1 vs run2). Each run bams are analyzed in a scomatic pipeline. This means, the output of this script will give two final .tsv: one for the run of run1, and another one for the run of run2. Each of these runs/.tsv, will have 8 samples: sample1_Epi, samp2_Epi, samp3_Epi, samp4_Epi, samp5_Epi, samp6_Epi, samp7_Epi, samp8_Epi. </span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># There are 6 sample which are control adult, + one sample is old CTL, and + one sample is old DEN. </span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Each of the sample has the key like "sample1_Epi", "samp2_Epi", etc. </span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># DISCLAIMER: ALWAYS USE THE SAME REFERENCE GENOME!!! If you have aligned you rreads with mm10, scomatic will have to be ran with mm10. No coordinates' change with bedtools nor similar strange things. </span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># SComatic nowadays has only panel of normales (PON) and editing sites (A-to-I events) for: GRCh38 and mm10. There aren't PON nor editing sites for mouse assembly mm39. </span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># The PON for human has been made with GATK data 1000 genomes project. No info of how they did it.</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># The PON for mouse mm10 was done in July 20, using mm10 Tabula muris data. No info of how exactly they did it. </span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Run this script in a environment with scomatic installed. </span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="va">SCOMATIC</span><span class="op">=</span>~/bin/SComatic-main</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="va">run_names</span><span class="op">=</span><span class="va">(</span><span class="st">"run1"</span> <span class="st">"run2"</span><span class="va">)</span> <span class="co"># list of runs</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Starting Scomatic analysis."</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="va">i</span><span class="op">=</span>0</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> run <span class="kw">in</span> <span class="st">"</span><span class="va">${run_names</span><span class="op">[@]</span><span class="va">}</span><span class="st">"</span><span class="kw">;</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="cf">do</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="va">i</span><span class="op">=</span><span class="va">$((i</span> <span class="op">+</span> <span class="dv">1</span><span class="va">))</span> </span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="co"># iterate though each bam in the directory where they are located</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="va">bam_dir</span><span class="op">=</span><span class="st">"/media/storage/mcGinn_2021/STARalignment/bam/</span><span class="va">${run}</span><span class="st">"</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="va">output_dir</span><span class="op">=</span><span class="st">"/media/storage/mcGinn_2021/scomatic/output/</span><span class="va">${run}</span><span class="st">"</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mkdir</span> <span class="at">-p</span> <span class="va">$output_dir</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  <span class="va">logfile</span><span class="op">=</span><span class="st">"</span><span class="va">$output_dir</span><span class="st">/scomatic_log.txt"</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mkdir</span> <span class="at">-p</span> <span class="st">"</span><span class="va">$(</span><span class="fu">dirname</span> <span class="st">"</span><span class="va">$logfile</span><span class="st">"</span><span class="va">)</span><span class="st">"</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">log_message()</span> <span class="kw">{</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>      <span class="bu">local</span> <span class="va">log_time</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>      <span class="va">log_time</span><span class="op">=</span><span class="va">$(</span><span class="fu">date</span> +<span class="st">"%Y-%m-%d %H:%M:%S"</span><span class="va">)</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>      <span class="bu">local</span> <span class="va">message</span><span class="op">=</span><span class="st">"[</span><span class="va">$log_time</span><span class="st">] </span><span class="va">$1</span><span class="st">"</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>      <span class="bu">echo</span> <span class="st">"</span><span class="va">$message</span><span class="st">"</span> <span class="op">&gt;&gt;</span> <span class="st">"</span><span class="va">$logfile</span><span class="st">"</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>      <span class="bu">echo</span> <span class="st">"</span><span class="va">$message</span><span class="st">"</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>  <span class="kw">}</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Initialize log file</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>  <span class="bu">echo</span> <span class="st">"### Scomatic Pipeline Log ###"</span> <span class="op">&gt;</span> <span class="st">"</span><span class="va">$logfile</span><span class="st">"</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>  <span class="ex">log_message</span> <span class="st">"Running scomatic pipeline for run: </span><span class="va">${run}</span><span class="st">"</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 1: Splitting alignment file in cell type specific bams</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>  <span class="ex">log_message</span> <span class="st">"Step 1: Splitting alignment file in cell type specific bams..."</span></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>  <span class="va">output_dir1</span><span class="op">=</span><span class="va">$output_dir</span>/Step1_BamCellTypes</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mkdir</span> <span class="at">-p</span> <span class="va">$output_dir1</span></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>  <span class="va">meta_dir</span><span class="op">=</span><span class="st">"/media/storage/mcGinn_2021/scomatic/markers"</span></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Iterate through each BAM file in the bam_dir</span></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> bam_file <span class="kw">in</span> <span class="st">"</span><span class="va">$bam_dir</span><span class="st">"</span>/<span class="pp">*</span>.bam</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>  <span class="cf">do</span></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Extract the sample name from the file name</span></span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>      <span class="va">base_name</span><span class="op">=</span><span class="va">$(</span><span class="fu">basename</span> <span class="st">"</span><span class="va">$bam_file</span><span class="st">"</span> Aligned.sortedByCoord.out.bam<span class="va">)</span> <span class="co"># run1_lib1</span></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>      <span class="va">sample</span><span class="op">=</span><span class="va">${base_name</span><span class="op">#</span><span class="pp">*</span>_<span class="va">}</span> <span class="co"># remove the prefix up to '_', so that we get only lib1</span></span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>      <span class="bu">echo</span> <span class="st">"Started sample: </span><span class="va">$sample</span><span class="st">"</span></span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>      <span class="va">meta_file</span><span class="op">=</span><span class="st">"</span><span class="va">$meta_dir</span><span class="st">/</span><span class="va">${run}</span><span class="st">/esoph_markers_scomatic_</span><span class="va">${base_name}</span><span class="st">.tsv"</span></span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Run the Python script with the appropriate arguments</span></span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>      <span class="ex">python</span> <span class="va">$SCOMATIC</span>/scripts/SplitBam/SplitBamCellTypes.py <span class="at">--bam</span> <span class="st">"</span><span class="va">$bam_file</span><span class="st">"</span> <span class="dt">\</span></span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>          <span class="at">--meta</span> <span class="st">"</span><span class="va">$meta_file</span><span class="st">"</span> <span class="dt">\</span></span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>          <span class="at">--id</span> <span class="st">"</span><span class="va">$sample</span><span class="st">"</span> <span class="dt">\</span></span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>          <span class="at">--n_trim</span> 5 <span class="dt">\</span></span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>          <span class="at">--max_nM</span> 5 <span class="dt">\</span></span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>          <span class="at">--max_NH</span> 1 <span class="dt">\</span></span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>          <span class="at">--outdir</span> <span class="st">"</span><span class="va">$output_dir1</span><span class="st">"</span></span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a>      <span class="ex">log_message</span> <span class="st">"Finished sample: </span><span class="va">$sample</span><span class="st">"</span></span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>      <span class="va">sample_list</span><span class="op">+=</span><span class="va">(</span><span class="st">"</span><span class="va">$sample</span><span class="st">"</span><span class="va">)</span></span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>  <span class="cf">done</span></span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Now, we have each .bam file for each sample located in =$output_dir/Step1_BamCellTypes. In total, 16 .tsv</span></span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>  <span class="co"># The bam file will be like: run1_lib1.lib1_Epi.bam</span></span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>  <span class="co">#######################################</span></span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 2: Collecting base count information</span></span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>  <span class="va">REF</span><span class="op">=</span>/media/storage/reference_genomes/Mus_musculus.GRCm38.dna.primary_assembly.fa</span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>  <span class="va">output_dir2</span><span class="op">=</span><span class="va">$output_dir</span>/Step2_BaseCellCounts</span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mkdir</span> <span class="at">-p</span> <span class="va">$output_dir2</span></span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> bam <span class="kw">in</span> <span class="st">"</span><span class="va">$output_dir1</span><span class="st">"</span>/<span class="pp">*</span>.bam</span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>  <span class="cf">do</span></span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Cell type, which will be lib1 in this case</span></span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a>    <span class="va">cell_type</span><span class="op">=</span><span class="va">$(</span><span class="fu">basename</span> <span class="va">$bam</span> <span class="kw">|</span> <span class="fu">awk</span> <span class="at">-F</span><span class="st">'.'</span> <span class="st">'{print $(NF-1)}'</span><span class="va">)</span> <span class="co"># this takes the cell_type from the bam name (the second field to last by separating by '.')</span></span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Temp folder</span></span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>    <span class="va">temp</span><span class="op">=</span><span class="va">$output_dir2</span>/temp_<span class="va">${cell_type}</span></span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mkdir</span> <span class="at">-p</span> <span class="va">$temp</span></span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>    <span class="ex">log_message</span> <span class="st">"Processing base counts for cell type: </span><span class="va">$cell_type</span><span class="st">"</span></span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Command line to submit to cluster</span></span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a>    <span class="ex">python</span> <span class="va">$SCOMATIC</span>/scripts/BaseCellCounter/BaseCellCounter.py <span class="at">--bam</span> <span class="va">$bam</span> <span class="dt">\</span></span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a>      <span class="at">--ref</span> <span class="va">$REF</span> <span class="dt">\</span></span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a>      <span class="at">--chrom</span> all <span class="dt">\</span></span>
+<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a>      <span class="at">--out_folder</span> <span class="va">$output_dir2</span> <span class="dt">\</span></span>
+<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>      <span class="at">--min_bq</span> 30 <span class="dt">\</span></span>
+<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a>      <span class="at">--tmp_dir</span> <span class="va">$temp</span> <span class="dt">\</span></span>
+<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a>      <span class="at">--nprocs</span> 10</span>
+<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rm</span> <span class="at">-rf</span> <span class="va">$temp</span></span>
+<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a>    <span class="ex">log_message</span> <span class="st">"Finished base count processing for cell type: </span><span class="va">$cell_type</span><span class="st">"</span></span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a>  <span class="cf">done</span></span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a>  <span class="ex">log_message</span> <span class="st">"Listing files in </span><span class="va">$output_dir2</span><span class="st"> before renaming:"</span></span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ls</span> <span class="st">"</span><span class="va">$output_dir2</span><span class="st">"</span></span>
+<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Now, we have each .tsv for each sample in output_dir2=$output_dir/Step2_BaseCellCounts</span></span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a>  <span class="co"># We are going to move both .tsv from the same sample to a new folder inside output_dir2, named after the sample name.</span></span>
+<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a>  <span class="co"># echo "Organizing .tsv files into sample-specific folders..."</span></span>
+<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a>  <span class="ex">log_message</span> <span class="st">"Renaming .tsv files..."</span></span>
+<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> tsv <span class="kw">in</span> <span class="st">"</span><span class="va">$output_dir2</span><span class="st">"</span>/<span class="pp">*</span>.tsv</span>
+<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a>  <span class="cf">do</span></span>
+<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Create a new directory for the sample</span></span>
+<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Move the .tsv files corresponding to the sample into the sample directory</span></span>
+<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a>      <span class="va">base_name</span><span class="op">=</span><span class="va">$(</span><span class="fu">basename</span> <span class="st">"</span><span class="va">$tsv</span><span class="st">"</span><span class="va">)</span></span>
+<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a>      <span class="co"># lib1.lib1_Epi.tsv ; we want lib1.tsv -&gt; this will be our unique "cell types"</span></span>
+<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Extract run name, and spec cell</span></span>
+<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a>      <span class="va">sample_run</span><span class="op">=</span><span class="va">$(</span><span class="bu">echo</span> <span class="st">"</span><span class="va">$base_name</span><span class="st">"</span> <span class="kw">|</span> <span class="fu">awk</span> <span class="at">-F</span><span class="st">'.'</span> <span class="st">'{print $1}'</span><span class="va">)</span> <span class="co"># extracts lib1</span></span>
+<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a>      <span class="va">spec_cell</span><span class="op">=</span><span class="va">$(</span><span class="bu">echo</span> <span class="st">"</span><span class="va">$base_name</span><span class="st">"</span> <span class="kw">|</span> <span class="fu">awk</span> <span class="at">-F</span><span class="st">'_'</span> <span class="st">'{print $2}'</span><span class="va">)</span> <span class="co"># extracts Epi.tsv</span></span>
+<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a>      <span class="va">new_filename</span><span class="op">=</span><span class="st">"</span><span class="va">${output_dir2}</span><span class="st">/</span><span class="va">${sample_run}</span><span class="st">_</span><span class="va">${spec_cell}</span><span class="st">"</span> <span class="co"># lib1_Epi.tsv</span></span>
+<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Change each name of the .tsv files by adding its run</span></span>
+<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a>      <span class="co"># mv "$output_dir2/${sample_name}"*.tsv "$sample_dir/${run_name}${sample_name}"*.tsv</span></span>
+<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mv</span> <span class="st">"</span><span class="va">$tsv</span><span class="st">"</span> <span class="st">"</span><span class="va">$new_filename</span><span class="st">"</span></span>
+<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a>      <span class="co"># echo "Moved .tsv files for sample: $sample to $sample_dir"</span></span>
+<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a>      <span class="ex">log_message</span> <span class="st">"Renamed </span><span class="va">$tsv</span><span class="st"> to </span><span class="va">$new_filename</span><span class="st">"</span></span>
+<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a>  <span class="cf">done</span></span>
+<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a>  <span class="ex">log_message</span> <span class="st">"Listing files in </span><span class="va">$output_dir2</span><span class="st"> after renaming:"</span></span>
+<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ls</span> <span class="st">"</span><span class="va">$output_dir2</span><span class="st">"</span></span>
+<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a>  <span class="co"># echo "Moved the files successfully!"</span></span>
+<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a>  <span class="ex">log_message</span> <span class="st">"Renamed the files successfully!"</span></span>
+<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a>  <span class="co">#######################################</span></span>
+<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 3: Merging base count matrices</span></span>
+<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a>  <span class="ex">log_message</span> <span class="st">"Step 3: Merging base count matrices..."</span></span>
+<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a>  <span class="va">output_dir3</span><span class="op">=</span><span class="va">$output_dir</span>/Step3_BaseCellCountsMerged</span>
+<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mkdir</span> <span class="at">-p</span> <span class="va">$output_dir3</span></span>
+<span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a>  <span class="ex">log_message</span> <span class="st">"Merging base count matrices into a single .tsv file..."</span></span>
+<span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a>  <span class="ex">python</span> <span class="va">$SCOMATIC</span>/scripts/MergeCounts/MergeBaseCellCounts.py <span class="dt">\</span></span>
+<span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a>    <span class="at">--tsv_folder</span> <span class="va">${output_dir2}</span> <span class="dt">\</span></span>
+<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a>    <span class="at">--outfile</span> <span class="va">${output_dir3}</span>/<span class="va">${run}</span>.BaseCellCounts.AllCellTypes.tsv</span>
+<span id="cb1-166"><a href="#cb1-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-167"><a href="#cb1-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-168"><a href="#cb1-168" aria-hidden="true" tabindex="-1"></a>  <span class="co">#######################################</span></span>
+<span id="cb1-169"><a href="#cb1-169" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 4: Detection of somatic mutations</span></span>
+<span id="cb1-170"><a href="#cb1-170" aria-hidden="true" tabindex="-1"></a>  <span class="ex">log_message</span> <span class="st">"Step 4: Detection of somatic mutations..."</span></span>
+<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-172"><a href="#cb1-172" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 4.1</span></span>
+<span id="cb1-173"><a href="#cb1-173" aria-hidden="true" tabindex="-1"></a>  <span class="ex">log_message</span> <span class="st">"Step 4.1: Variant calling..."</span></span>
+<span id="cb1-174"><a href="#cb1-174" aria-hidden="true" tabindex="-1"></a>  <span class="va">output_dir4</span><span class="op">=</span><span class="va">$output_dir</span>/Step4_VariantCalling</span>
+<span id="cb1-175"><a href="#cb1-175" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mkdir</span> <span class="at">-p</span> <span class="va">$output_dir4</span></span>
+<span id="cb1-176"><a href="#cb1-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a>  <span class="ex">python</span> <span class="va">$SCOMATIC</span>/scripts/BaseCellCalling/BaseCellCalling.step1.py <span class="dt">\</span></span>
+<span id="cb1-178"><a href="#cb1-178" aria-hidden="true" tabindex="-1"></a>            <span class="at">--infile</span> <span class="va">${output_dir3}</span>/<span class="va">${run}</span>.BaseCellCounts.AllCellTypes.tsv <span class="dt">\</span></span>
+<span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a>            <span class="at">--outfile</span> <span class="va">${output_dir4}</span>/<span class="va">${run}</span> <span class="dt">\</span></span>
+<span id="cb1-180"><a href="#cb1-180" aria-hidden="true" tabindex="-1"></a>        <span class="at">--max_cell_types</span> 1 <span class="dt">\</span></span>
+<span id="cb1-181"><a href="#cb1-181" aria-hidden="true" tabindex="-1"></a>        <span class="at">--min_cell_types</span> 2 <span class="dt">\</span></span>
+<span id="cb1-182"><a href="#cb1-182" aria-hidden="true" tabindex="-1"></a>            <span class="at">--ref</span> <span class="va">$REF</span></span>
+<span id="cb1-183"><a href="#cb1-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-184"><a href="#cb1-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-185"><a href="#cb1-185" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 4.2</span></span>
+<span id="cb1-186"><a href="#cb1-186" aria-hidden="true" tabindex="-1"></a>  <span class="ex">log_message</span> <span class="st">"Step 4.2: Somatic mutation detection..."</span></span>
+<span id="cb1-187"><a href="#cb1-187" aria-hidden="true" tabindex="-1"></a>  <span class="va">editing</span><span class="op">=</span><span class="va">$SCOMATIC</span>/RNAediting/AllEditingSites.mm10.txt</span>
+<span id="cb1-188"><a href="#cb1-188" aria-hidden="true" tabindex="-1"></a>  <span class="va">PON</span><span class="op">=</span><span class="va">$SCOMATIC</span>/PoNs/PoN.scRNAseq.mm10.tsv</span>
+<span id="cb1-189"><a href="#cb1-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-190"><a href="#cb1-190" aria-hidden="true" tabindex="-1"></a>  <span class="ex">python</span> <span class="va">$SCOMATIC</span>/scripts/BaseCellCalling/BaseCellCalling.step2.py <span class="dt">\</span></span>
+<span id="cb1-191"><a href="#cb1-191" aria-hidden="true" tabindex="-1"></a>            <span class="at">--infile</span> <span class="va">${output_dir4}</span>/<span class="va">${run}</span>.calling.step1.tsv <span class="dt">\</span></span>
+<span id="cb1-192"><a href="#cb1-192" aria-hidden="true" tabindex="-1"></a>            <span class="at">--outfile</span> <span class="va">${output_dir4}</span>/<span class="va">${run}</span>.calling.step2.tsv <span class="dt">\</span></span>
+<span id="cb1-193"><a href="#cb1-193" aria-hidden="true" tabindex="-1"></a>            <span class="at">--editing</span> <span class="va">$editing</span> <span class="dt">\</span></span>
+<span id="cb1-194"><a href="#cb1-194" aria-hidden="true" tabindex="-1"></a>            <span class="at">--pon</span> <span class="va">$PON</span></span>
+<span id="cb1-195"><a href="#cb1-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-196"><a href="#cb1-196" aria-hidden="true" tabindex="-1"></a>  <span class="co"># extra step: Intersection with bed file</span></span>
+<span id="cb1-197"><a href="#cb1-197" aria-hidden="true" tabindex="-1"></a>  <span class="ex">log_message</span> <span class="st">"Extra step: Intersection with bed file..."</span></span>
+<span id="cb1-198"><a href="#cb1-198" aria-hidden="true" tabindex="-1"></a>  <span class="ex">bedtools</span> intersect <span class="at">-header</span> <span class="at">-a</span> <span class="va">${output_dir4}</span>/<span class="va">${run}</span>.calling.step2.tsv <span class="at">-b</span> <span class="va">$SCOMATIC</span>/bed_files_of_interest/UCSC.mm10.without.repeatmasker.bed <span class="kw">|</span> <span class="fu">awk</span> <span class="st">'$1 ~ /^#/ || $6 == "PASS"'</span> <span class="op">&gt;</span> <span class="va">${output_dir4}</span>/<span class="va">${run}</span>.calling.step2.pass.tsv</span>
+<span id="cb1-199"><a href="#cb1-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-200"><a href="#cb1-200" aria-hidden="true" tabindex="-1"></a>  <span class="ex">log_message</span> <span class="st">"Finished scomatic pipeline for </span><span class="va">${run}</span><span class="st"> successfully!"</span></span>
+<span id="cb1-201"><a href="#cb1-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-202"><a href="#cb1-202" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span>
+<span id="cb1-203"><a href="#cb1-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-204"><a href="#cb1-204" aria-hidden="true" tabindex="-1"></a><span class="ex">log_message</span> <span class="st">"Pipeline completed successfully for both runs!"</span></span>
+<span id="cb1-205"><a href="#cb1-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-206"><a href="#cb1-206" aria-hidden="true" tabindex="-1"></a><span class="co"># Display log file</span></span>
+<span id="cb1-207"><a href="#cb1-207" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Log file saved to: </span><span class="va">$logfile</span><span class="st">"</span></span>
+<span id="cb1-208"><a href="#cb1-208" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> <span class="st">"</span><span class="va">$logfile</span><span class="st">"</span></span>
+<span id="cb1-209"><a href="#cb1-209" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Execute:</p>
-<pre class="{bash}"><code># [matterhorn]
-./SComatic_mouse.sh
-</code></pre>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># [matterhorn]</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">./SComatic_mouse.sh</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="singlecellgenotype-calling-to-obtain-mutated-cell-barcodes" class="level2">
 <h2 class="anchored" data-anchor-id="singlecellgenotype-calling-to-obtain-mutated-cell-barcodes">3.2. SingleCellGenotype calling to obtain mutated cell barcodes</h2>
-<pre class="{bash}"><code>#!/bin/bash
-# SComatic extra functionality: Computing the genotype for each cell at the variant sites
-# 01/10/2024
-# Author: Alba Méndez Alejandre
-# This is going to allow us to map each variant in the UMAP
-
-SCOMATIC=~/bin/SComatic-main
-
-run_names=("run1" "run1") # list of runs
-
-REF=/media/storage/reference_genomes/Mus_musculus.GRCm38.dna.primary_assembly.fa
-meta_dir=/media/storage/mcGinn_2021/scomatic/markers
-
-i=0
-for run in "${run_names[@]}";
-do
-    i=$((i + 1))
-
-    output_dir="/media/storage/mcGinn_2021/scomatic/output/${run}"
-    output_dir1=$output_dir/Step1_BamCellTypes
-    output_dir4=$output_dir/Step4_VariantCalling
-
-    STEP4_2_pass=${output_dir4}/${run}_modif.calling.step2.pass.tsv # modified chr1 to 1 tsv file
-
-    output_dir7=$output_dir/SingleCellAlleles
-    mkdir -p $output_dir7
-    
-    
-    for bam in $(ls -d $output_dir1/*bam);do  
-            cell_type=$(basename $bam | awk -F'.' '{print $(NF-1)}')
-    
-        temp=$output_dir7/temp_${cell_type}
-            mkdir -p $temp
-
-        meta_file="$meta_dir/${run}/esoph_markers_scomatic_${run}_${cell_type}.tsv"
-        
-            python $SCOMATIC/scripts/SingleCellGenotype/SingleCellGenotype.py --bam $bam  \
-                --infile ${STEP4_2_pass}   \
-                --nprocs 10   \
-                --meta $meta_file   \
-                --outfile ${output_dir7}/${run}_${cell_type}.single_cell_genotype.tsv \
-                --tmp_dir $temp  \
-                --ref $REF \
-            --alt_flag All
-        
-        echo "bam file is: $bam, Infile is: ${STEP4_2_pass}, meta file is $meta_file and outfile is ${output_dir7}/${cell_type}.single_cell_genotype.tsv"
-
-            rm -rf $temp
-        done
-done</code></pre>
-<pre class="{bash}"><code># [matterhorn]
-cd /home/alba/scripts/scomatic
-
-./variants_mapping.sh</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># SComatic extra functionality: Computing the genotype for each cell at the variant sites</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 01/10/2024</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Author: Alba Méndez Alejandre</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># This is going to allow us to map each variant in the UMAP</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="va">SCOMATIC</span><span class="op">=</span>~/bin/SComatic-main</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="va">run_names</span><span class="op">=</span><span class="va">(</span><span class="st">"run1"</span> <span class="st">"run1"</span><span class="va">)</span> <span class="co"># list of runs</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="va">REF</span><span class="op">=</span>/media/storage/reference_genomes/Mus_musculus.GRCm38.dna.primary_assembly.fa</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="va">meta_dir</span><span class="op">=</span>/media/storage/mcGinn_2021/scomatic/markers</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="va">i</span><span class="op">=</span>0</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> run <span class="kw">in</span> <span class="st">"</span><span class="va">${run_names</span><span class="op">[@]</span><span class="va">}</span><span class="st">"</span><span class="kw">;</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="cf">do</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="va">i</span><span class="op">=</span><span class="va">$((i</span> <span class="op">+</span> <span class="dv">1</span><span class="va">))</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="va">output_dir</span><span class="op">=</span><span class="st">"/media/storage/mcGinn_2021/scomatic/output/</span><span class="va">${run}</span><span class="st">"</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="va">output_dir1</span><span class="op">=</span><span class="va">$output_dir</span>/Step1_BamCellTypes</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="va">output_dir4</span><span class="op">=</span><span class="va">$output_dir</span>/Step4_VariantCalling</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="va">STEP4_2_pass</span><span class="op">=</span><span class="va">${output_dir4}</span>/<span class="va">${run}</span>_modif.calling.step2.pass.tsv <span class="co"># modified chr1 to 1 tsv file</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    <span class="va">output_dir7</span><span class="op">=</span><span class="va">$output_dir</span>/SingleCellAlleles</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mkdir</span> <span class="at">-p</span> <span class="va">$output_dir7</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> bam <span class="kw">in</span> <span class="va">$(</span><span class="fu">ls</span> <span class="at">-d</span> <span class="va">$output_dir1</span>/<span class="pp">*</span>bam<span class="va">)</span><span class="kw">;</span><span class="cf">do</span>  </span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>            <span class="va">cell_type</span><span class="op">=</span><span class="va">$(</span><span class="fu">basename</span> <span class="va">$bam</span> <span class="kw">|</span> <span class="fu">awk</span> <span class="at">-F</span><span class="st">'.'</span> <span class="st">'{print $(NF-1)}'</span><span class="va">)</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>        <span class="va">temp</span><span class="op">=</span><span class="va">$output_dir7</span>/temp_<span class="va">${cell_type}</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>            <span class="fu">mkdir</span> <span class="at">-p</span> <span class="va">$temp</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>        <span class="va">meta_file</span><span class="op">=</span><span class="st">"</span><span class="va">$meta_dir</span><span class="st">/</span><span class="va">${run}</span><span class="st">/esoph_markers_scomatic_</span><span class="va">${run}</span><span class="st">_</span><span class="va">${cell_type}</span><span class="st">.tsv"</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>            <span class="ex">python</span> <span class="va">$SCOMATIC</span>/scripts/SingleCellGenotype/SingleCellGenotype.py <span class="at">--bam</span> <span class="va">$bam</span>  <span class="dt">\</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>                <span class="at">--infile</span> <span class="va">${STEP4_2_pass}</span>   <span class="dt">\</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>                <span class="at">--nprocs</span> 10   <span class="dt">\</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>                <span class="at">--meta</span> <span class="va">$meta_file</span>   <span class="dt">\</span></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>                <span class="at">--outfile</span> <span class="va">${output_dir7}</span>/<span class="va">${run}</span>_<span class="va">${cell_type}</span>.single_cell_genotype.tsv <span class="dt">\</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>                <span class="at">--tmp_dir</span> <span class="va">$temp</span>  <span class="dt">\</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>                <span class="at">--ref</span> <span class="va">$REF</span> <span class="dt">\</span></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>            <span class="at">--alt_flag</span> All</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>        <span class="bu">echo</span> <span class="st">"bam file is: </span><span class="va">$bam</span><span class="st">, Infile is: </span><span class="va">${STEP4_2_pass}</span><span class="st">, meta file is </span><span class="va">$meta_file</span><span class="st"> and outfile is </span><span class="va">${output_dir7}</span><span class="st">/</span><span class="va">${cell_type}</span><span class="st">.single_cell_genotype.tsv"</span></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>            <span class="fu">rm</span> <span class="at">-rf</span> <span class="va">$temp</span></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>        <span class="cf">done</span></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># [matterhorn]</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /home/alba/scripts/scomatic</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="ex">./variants_mapping.sh</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="discard-variants-falling-in-repetitive-regions" class="level2">
 <h2 class="anchored" data-anchor-id="discard-variants-falling-in-repetitive-regions">3.3. Discard variants falling in repetitive regions</h2>
 <p>Creation of bed file with regions overlapping with repetitive ones, in order to remove variants falling in repetitive regions.</p>
-<pre class="{bash}"><code>bedtools intersect -v -a mm10_genes.bed -b mm10_RepeatMasker.bed &gt; UCSC.m10.without.repeatmasker.bed
-</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">bedtools</span> intersect <span class="at">-v</span> <span class="at">-a</span> mm10_genes.bed <span class="at">-b</span> mm10_RepeatMasker.bed <span class="op">&gt;</span> UCSC.m10.without.repeatmasker.bed</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <section id="filter-scomatic-output-to-discard-variants-falling-in-repetitive-regions" class="level3">
 <h3 class="anchored" data-anchor-id="filter-scomatic-output-to-discard-variants-falling-in-repetitive-regions">Filter SComatic output to discard variants falling in repetitive regions</h3>
-<pre class="{bash}"><code>conda activate SComatic
-SCOMATIC=~/bin/SComatic-main
-output_dir4=/media/storage/mcGinn_2021/scomatic/output/run1/Step4_VariantCalling
-
-bedtools intersect -header -a ${output_dir4}/run1.calling.step2.tsv -b $SCOMATIC/bed_files_of_interest/UCSC.mm10.without.repeatmasker.bed | awk '$1 ~ /^#/ || $6 == "PASS"' &gt; ${output_dir4}/run1.calling.step2.pass.tsv
-
-output_dir4=/media/storage/mcGinn_2021/scomatic/output/run2/Step4_VariantCalling
-
-bedtools intersect -header -a ${output_dir4}/run2.calling.step2.tsv -b $SCOMATIC/bed_files_of_interest/UCSC.mm10.without.repeatmasker.bed | awk '$1 ~ /^#/ || $6 == "PASS"' &gt; ${output_dir4}/run2.calling.step2.pass.tsv</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate SComatic</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="va">SCOMATIC</span><span class="op">=</span>~/bin/SComatic-main</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="va">output_dir4</span><span class="op">=</span>/media/storage/mcGinn_2021/scomatic/output/run1/Step4_VariantCalling</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="ex">bedtools</span> intersect <span class="at">-header</span> <span class="at">-a</span> <span class="va">${output_dir4}</span>/run1.calling.step2.tsv <span class="at">-b</span> <span class="va">$SCOMATIC</span>/bed_files_of_interest/UCSC.mm10.without.repeatmasker.bed <span class="kw">|</span> <span class="fu">awk</span> <span class="st">'$1 ~ /^#/ || $6 == "PASS"'</span> <span class="op">&gt;</span> <span class="va">${output_dir4}</span>/run1.calling.step2.pass.tsv</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="va">output_dir4</span><span class="op">=</span>/media/storage/mcGinn_2021/scomatic/output/run2/Step4_VariantCalling</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="ex">bedtools</span> intersect <span class="at">-header</span> <span class="at">-a</span> <span class="va">${output_dir4}</span>/run2.calling.step2.tsv <span class="at">-b</span> <span class="va">$SCOMATIC</span>/bed_files_of_interest/UCSC.mm10.without.repeatmasker.bed <span class="kw">|</span> <span class="fu">awk</span> <span class="st">'$1 ~ /^#/ || $6 == "PASS"'</span> <span class="op">&gt;</span> <span class="va">${output_dir4}</span>/run2.calling.step2.pass.tsv</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -517,16 +572,15 @@ Note:
 <h2 class="anchored" data-anchor-id="filtering-of-tsvs">3.4. Filtering of TSVs</h2>
 <section id="filter-the-tsvs-with-only-pass-in-filter-column" class="level3">
 <h3 class="anchored" data-anchor-id="filter-the-tsvs-with-only-pass-in-filter-column">Filter the TSVs with only PASS in FILTER column</h3>
-<pre class="{bash}"><code>
-seq_ids=("run1" "run2")
-wd="/media/storage/mcGinn_2021/scomatic/output/"
-
-for seq in "${seq_ids[@]}"; do
-   
-    awk 'BEGIN {FS="\t"; OFS="\t"} NR &lt;= 29 || ($6 == "PASS" &amp;&amp; !/^#/) {print}' "${wd}/${seq}/Step4_VariantCalling/${seq}.calling.step2.tsv" &gt; "${wd}/${seq}/Step4_VariantCalling/${seq}_filtered.calling.step2.tsv"
-
-done
-</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="va">seq_ids</span><span class="op">=</span><span class="va">(</span><span class="st">"run1"</span> <span class="st">"run2"</span><span class="va">)</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="va">wd</span><span class="op">=</span><span class="st">"/media/storage/mcGinn_2021/scomatic/output/"</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> seq <span class="kw">in</span> <span class="st">"</span><span class="va">${seq_ids</span><span class="op">[@]</span><span class="va">}</span><span class="st">"</span><span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">awk</span> <span class="st">'BEGIN {FS="\t"; OFS="\t"} NR &lt;= 29 || ($6 == "PASS" &amp;&amp; !/^#/) {print}'</span> <span class="st">"</span><span class="va">${wd}</span><span class="st">/</span><span class="va">${seq}</span><span class="st">/Step4_VariantCalling/</span><span class="va">${seq}</span><span class="st">.calling.step2.tsv"</span> <span class="op">&gt;</span> <span class="st">"</span><span class="va">${wd}</span><span class="st">/</span><span class="va">${seq}</span><span class="st">/Step4_VariantCalling/</span><span class="va">${seq}</span><span class="st">_filtered.calling.step2.tsv"</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -544,15 +598,14 @@ Note:
 <section id="filter-the-tsvs-with-pass-or-multiple_cell_types-in-filter-column" class="level3">
 <h3 class="anchored" data-anchor-id="filter-the-tsvs-with-pass-or-multiple_cell_types-in-filter-column">Filter the TSVs with PASS or Multiple_cell_types in FILTER column</h3>
 <p>In order to analyze the variants that are arked solely as “Multiple_cell_types”, we obtain them via an awk command.</p>
-<pre class="{bash}"><code>
-seq_ids=("run1" "run2")
-wd="/media/storage/mcGinn_2021/scomatic/output/"
-
-for seq in "${seq_ids[@]}"; do
-
-    awk 'BEGIN {FS="\t"; OFS="\t"} NR &lt;= 29 || ($6 == "PASS" || $6 == "Multiple_cell_types") &amp;&amp; !/^#/ {print}' "${wd}/${seq}/Step4_VariantCalling/${seq}.calling.step2.tsv" &gt; "${wd}/${seq}/Step4_VariantCalling/${seq}_mult.calling.step2.tsv"
-done
-</code></pre>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="va">seq_ids</span><span class="op">=</span><span class="va">(</span><span class="st">"run1"</span> <span class="st">"run2"</span><span class="va">)</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="va">wd</span><span class="op">=</span><span class="st">"/media/storage/mcGinn_2021/scomatic/output/"</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> seq <span class="kw">in</span> <span class="st">"</span><span class="va">${seq_ids</span><span class="op">[@]</span><span class="va">}</span><span class="st">"</span><span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">awk</span> <span class="st">'BEGIN {FS="\t"; OFS="\t"} NR &lt;= 29 || ($6 == "PASS" || $6 == "Multiple_cell_types") &amp;&amp; !/^#/ {print}'</span> <span class="st">"</span><span class="va">${wd}</span><span class="st">/</span><span class="va">${seq}</span><span class="st">/Step4_VariantCalling/</span><span class="va">${seq}</span><span class="st">.calling.step2.tsv"</span> <span class="op">&gt;</span> <span class="st">"</span><span class="va">${wd}</span><span class="st">/</span><span class="va">${seq}</span><span class="st">/Step4_VariantCalling/</span><span class="va">${seq}</span><span class="st">_mult.calling.step2.tsv"</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -566,19 +619,18 @@ Note:
 <p>*_mult.calling.step2.tsv files contain only FILTER = PASS|Multiple_cell_types variants, including variants that fall in repetitive regions.</p>
 </div>
 </div>
-<pre class="{bash}"><code># [matterhorn]
-conda activate SComatic
-SCOMATIC=~/bin/SComatic-main
-output_dir4=/media/storage/mcGinn_2021/scomatic/output/run1/Step4_VariantCalling
-
-# for multiple_cell type
-bedtools intersect -header -a ${output_dir4}/run1_mult.calling.step2.tsv -b $SCOMATIC/bed_files_of_interest/UCSC.mm10.withouvt.repeatmasker.bed | awk '$1 ~ /^#/ || $6 == "PASS"' &gt; ${output_dir4}/run1_mult.calling.step2.pass.tsv
-
-output_dir4=/media/storage/mcGinn_2021/scomatic/output/run2/Step4_VariantCalling
-
-# for multiple_cell type
-bedtools intersect -header -a ${output_dir4}/run2_mult.calling.step2.tsv -b $SCOMATIC/bed_files_of_interest/UCSC.mm10.without.repeatmasker.bed | awk '$1 ~ /^#/ || $6 == "PASS"' &gt; ${output_dir4}/run2_mult.calling.step2.pass.tsv
-</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># [matterhorn]</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate SComatic</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="va">SCOMATIC</span><span class="op">=</span>~/bin/SComatic-main</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="va">output_dir4</span><span class="op">=</span>/media/storage/mcGinn_2021/scomatic/output/run1/Step4_VariantCalling</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co"># for multiple_cell type</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="ex">bedtools</span> intersect <span class="at">-header</span> <span class="at">-a</span> <span class="va">${output_dir4}</span>/run1_mult.calling.step2.tsv <span class="at">-b</span> <span class="va">$SCOMATIC</span>/bed_files_of_interest/UCSC.mm10.withouvt.repeatmasker.bed <span class="kw">|</span> <span class="fu">awk</span> <span class="st">'$1 ~ /^#/ || $6 == "PASS"'</span> <span class="op">&gt;</span> <span class="va">${output_dir4}</span>/run1_mult.calling.step2.pass.tsv</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="va">output_dir4</span><span class="op">=</span>/media/storage/mcGinn_2021/scomatic/output/run2/Step4_VariantCalling</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co"># for multiple_cell type</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="ex">bedtools</span> intersect <span class="at">-header</span> <span class="at">-a</span> <span class="va">${output_dir4}</span>/run2_mult.calling.step2.tsv <span class="at">-b</span> <span class="va">$SCOMATIC</span>/bed_files_of_interest/UCSC.mm10.without.repeatmasker.bed <span class="kw">|</span> <span class="fu">awk</span> <span class="st">'$1 ~ /^#/ || $6 == "PASS"'</span> <span class="op">&gt;</span> <span class="va">${output_dir4}</span>/run2_mult.calling.step2.pass.tsv</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -610,29 +662,29 @@ What is a VCF?
 <p>VCF is a text file format (most likely stored in a compressed manner). It contains meta-information lines (prefixed with “##”), a header line (prefixed with “#”), and data lines each containing information about a position in the genome and genotype information on samples for each position (text fields separated by tabs). Zero length fields are not allowed, a dot (“.”) must be used instead. In order to ensure interoperability across platforms, VCF compliant implementations must support both LF (“”) and CR+LF (“”) newline conventions.</p>
 </div>
 </div>
-<pre class="{bash}"><code>cd /media/storage/mcGinn_2021/scomatic
-conda activate d_vep
-
-python 3-5_TSVtoVCF.py --add-info --add-celltypes output/run1/Step4_VariantCalling/run1.calling.step2.tsv output/run1/Step4_VariantCalling/run1.calling.step2.vcf
-python 3-5_TSVtoVCF.py --add-info --add-celltypes output/run2/Step4_VariantCalling/run2.calling.step2.tsv output/run2/Step4_VariantCalling/run2.calling.step2.vcf</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /media/storage/mcGinn_2021/scomatic</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate d_vep</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> 3-5_TSVtoVCF.py <span class="at">--add-info</span> <span class="at">--add-celltypes</span> output/run1/Step4_VariantCalling/run1.calling.step2.tsv output/run1/Step4_VariantCalling/run1.calling.step2.vcf</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> 3-5_TSVtoVCF.py <span class="at">--add-info</span> <span class="at">--add-celltypes</span> output/run2/Step4_VariantCalling/run2.calling.step2.tsv output/run2/Step4_VariantCalling/run2.calling.step2.vcf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <section id="check-vcf-files-integrity" class="level3">
 <h3 class="anchored" data-anchor-id="check-vcf-files-integrity">Check VCF files’ integrity</h3>
 <p>We created a VCF file from the filtered SComatic output. Then, we confirmed that the file is properly formatted using both GATK4 and the EBI VCF validator. However, neither tool currently supports VCF version 4.4, they only support up to version 4.3.</p>
-<pre class="{bash}"><code># [matterhorn]
-conda activate samtools
-samtools faidx Mus_musculus.GRCm39.dna.primary_assembly.faidx
-
-conda activate d_gatk
-
-gatk CreateSequenceDictionary -R Mus_musculus.GRCm39.dna.primary_assembly.fa 
-
-REF=~/bin/SComatic-main/reference_genomes/Mus_musculus.GRCm38.dna.primary_assembly.fa 
-
-gatk ValidateVariants -V output/run1/Step4_VariantCalling/run1_filtered.calling.step2.vcf -R $REF --validation-type-to-exclude ALLELES
-gatk ValidateVariants -V output/run2/Step4_VariantCalling/run2_filtered.calling.step2.vcf -R $REF --validation-type-to-exclude ALLELES
-
-vcf_validator -i output/run1/Step4_VariantCalling/run1_filtered.calling.step2.vcf -r summary,text,database
-vcf_validator -i output/run2/Step4_VariantCalling/run2_filtered.calling.step2.vcf -r summary,text,database</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># [matterhorn]</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate samtools</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="ex">samtools</span> faidx Mus_musculus.GRCm39.dna.primary_assembly.faidx</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate d_gatk</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="ex">gatk</span> CreateSequenceDictionary <span class="at">-R</span> Mus_musculus.GRCm39.dna.primary_assembly.fa </span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="va">REF</span><span class="op">=</span>~/bin/SComatic-main/reference_genomes/Mus_musculus.GRCm38.dna.primary_assembly.fa </span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="ex">gatk</span> ValidateVariants <span class="at">-V</span> output/run1/Step4_VariantCalling/run1_filtered.calling.step2.vcf <span class="at">-R</span> <span class="va">$REF</span> <span class="at">--validation-type-to-exclude</span> ALLELES</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="ex">gatk</span> ValidateVariants <span class="at">-V</span> output/run2/Step4_VariantCalling/run2_filtered.calling.step2.vcf <span class="at">-R</span> <span class="va">$REF</span> <span class="at">--validation-type-to-exclude</span> ALLELES</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="ex">vcf_validator</span> <span class="at">-i</span> output/run1/Step4_VariantCalling/run1_filtered.calling.step2.vcf <span class="at">-r</span> summary,text,database</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="ex">vcf_validator</span> <span class="at">-i</span> output/run2/Step4_VariantCalling/run2_filtered.calling.step2.vcf <span class="at">-r</span> summary,text,database</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Both files are OK!!!</p>
 <p>📁 Generated files:</p>
 <ul>

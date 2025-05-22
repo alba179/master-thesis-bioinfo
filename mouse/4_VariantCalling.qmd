@@ -1,14 +1,14 @@
-# 3. SComatic calling
+# 4. SComatic calling
 We are going to perform somatic variant calling with the novel algorithm from Muyas et.al (2024) doi: https://doi.org/10.1038/s41587-023-01863-z
 
 
-## 3.1. Script to call somatic variants
+## 4.1. Script to call somatic variants
 - min_ac_cells = 2 (value by default); in HCA was used 1
 - min_cell_types = 2
 - max_cell_types = 1
 
 
-```{bash}
+```bash
 #!/bin/bash
 # Script with bams separated by run (run1 vs run2). Each run bams are analyzed in a scomatic pipeline. This means, the output of this script will give two final .tsv: one for the run of run1, and another one for the run of run2. Each of these runs/.tsv, will have 8 samples: sample1_Epi, samp2_Epi, samp3_Epi, samp4_Epi, samp5_Epi, samp6_Epi, samp7_Epi, samp8_Epi. 
 # There are 6 sample which are control adult, + one sample is old CTL, and + one sample is old DEN. 
@@ -222,16 +222,16 @@ cat "$logfile"
 ```
 
 Execute:
-```{bash}
+```bash
 # [matterhorn]
 ./SComatic_mouse.sh
 
 ```
 
 
-## 3.2. SingleCellGenotype calling to obtain mutated cell barcodes
+## 4.2. SingleCellGenotype calling to obtain mutated cell barcodes
 
-```{bash}
+```bash
 #!/bin/bash
 # SComatic extra functionality: Computing the genotype for each cell at the variant sites
 # 01/10/2024
@@ -285,7 +285,7 @@ done
 ```
 
 
-```{bash}
+```bash
 # [matterhorn]
 cd /home/alba/scripts/scomatic
 
@@ -293,10 +293,10 @@ cd /home/alba/scripts/scomatic
 ```
 
 
-## 3.3. Discard variants falling in repetitive regions 
+## 4.3. Discard variants falling in repetitive regions 
 Creation of bed file with regions overlapping with repetitive ones, in order to remove variants falling in repetitive regions.
 
-```{bash}
+```bash
 bedtools intersect -v -a mm10_genes.bed -b mm10_RepeatMasker.bed > UCSC.m10.without.repeatmasker.bed
 
 ```
@@ -304,7 +304,7 @@ bedtools intersect -v -a mm10_genes.bed -b mm10_RepeatMasker.bed > UCSC.m10.with
 
 ### Filter SComatic output to discard variants falling in repetitive regions
 
-```{bash}
+```bash
 conda activate SComatic
 SCOMATIC=~/bin/SComatic-main
 output_dir4=/media/storage/mcGinn_2021/scomatic/output/run1/Step4_VariantCalling
@@ -322,11 +322,11 @@ bedtools intersect -header -a ${output_dir4}/run2.calling.step2.tsv -b $SCOMATIC
 :::
 
 
-## 3.4. Filtering of TSVs
+## 4.4. Filtering of TSVs
 
 ### Filter the TSVs with only PASS in FILTER column
 
-```{bash}
+```bash
 
 seq_ids=("run1" "run2")
 wd="/media/storage/mcGinn_2021/scomatic/output/"
@@ -348,7 +348,7 @@ done
 ### Filter the TSVs with PASS or Multiple_cell_types in FILTER column
 In order to analyze the variants that are arked solely as "Multiple_cell_types", we obtain them via an awk command.
 
-```{bash}
+```bash
 
 seq_ids=("run1" "run2")
 wd="/media/storage/mcGinn_2021/scomatic/output/"
@@ -366,7 +366,7 @@ done
 :::
 
 
-```{bash}
+```bash
 # [matterhorn]
 conda activate SComatic
 SCOMATIC=~/bin/SComatic-main
@@ -389,7 +389,7 @@ bedtools intersect -header -a ${output_dir4}/run2_mult.calling.step2.tsv -b $SCO
 
 
 
-## 3.5. Convert the TSV files to VCF
+## 4.5. Convert the TSV files to VCF
 The program outputs its files in a custom TSV format which makes it very complex to analyze in standard pipelines from variant calling. Thus, we are going to convert it to the standard format file for variant calling in bioinformatics, the VCFv4.3 (https://samtools.github.io/hts-specs/VCFv4.3.pdf). For that, we generated a custom script "3-5_TSVtoVCF.py".
 
 :::{.callout-note}
@@ -397,7 +397,7 @@ The program outputs its files in a custom TSV format which makes it very complex
 VCF is a text file format (most likely stored in a compressed manner). It contains meta-information lines (prefixed with “##”), a header line (prefixed with “#”), and data lines each containing information about a position in the genome and genotype information on samples for each position (text fields separated by tabs). Zero length fields are not allowed, a dot (“.”) must be used instead. In order to ensure interoperability across platforms, VCF compliant implementations must support both LF (“\n”) and CR+LF (“\r\n”) newline conventions.
 :::
 
-```{bash}
+```bash
 cd /media/storage/mcGinn_2021/scomatic
 conda activate d_vep
 
@@ -410,7 +410,7 @@ python 3-5_TSVtoVCF.py --add-info --add-celltypes output/run2/Step4_VariantCalli
 
 We created a VCF file from the filtered SComatic output. Then, we confirmed that the file is properly formatted using both GATK4 and the EBI VCF validator. However, neither tool currently supports VCF version 4.4, they only support up to version 4.3.
 
-```{bash}
+```bash
 # [matterhorn]
 conda activate samtools
 samtools faidx Mus_musculus.GRCm39.dna.primary_assembly.faidx
