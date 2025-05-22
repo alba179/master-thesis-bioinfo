@@ -23,13 +23,16 @@ book:
         - Mouse/1_DataProcessing.qmd
         - Mouse/2_ClusteringCellAnnotation.qmd
         - Mouse/3_Velocity_inference.qmd
-        # - Mouse/4_SComatic_VariantCalling.qmd
+        - Mouse/4_VariantCalling.qmd
         - Mouse/5_AnnotationVariants.qmd
-        - Mouse/6_FunctionalAnalysis.qmd
+        - Mouse/6_GOAnalysis.qmd
     - part: "Human HCA analysis"
-      chapters:
-        - Human/
-        - Human/
+      # chapters:
+        # - Human/1_hca_esoph_inspection.qmd
+        # - Human/2_GeneExpression_hca.qmd
+        # - Human/3_VennDiagrams_hca.qmd
+        # - Human/4_clones_UMAP_mappging_hca.qmd
+        # - Human/mut_clones_analysis_hca.qmd
 
 execute: 
   enabled: false
