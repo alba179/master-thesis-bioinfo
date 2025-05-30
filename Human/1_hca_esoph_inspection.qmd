@@ -1,10 +1,10 @@
-# 1. Inspection of HCA seurat object"
+# 1. Inspection of HCA seurat object
 This is a scarce notebook with a couple analysis, just for visualization purposes. 
 
 
 ## Import libraries
-```{r, }
-#| fold: true
+```{r}
+#| code-fold: true 
 .libPaths("/home/albax/miniforge3/envs/seurat_v4/lib/R/library")
 
 if(.Platform$OS.type == "linux") Sys.setenv(PATH= paste("/home/albax/miniforge3/envs/seurat_v4/lib",Sys.getenv()["PATH"],sep=";"))

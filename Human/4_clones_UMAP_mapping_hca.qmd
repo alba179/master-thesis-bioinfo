@@ -6,7 +6,7 @@ date: 02-2025 -->
 
 ## Import libraries
 ```{r}
-#| fold: true
+#| code-fold: true 
 .libPaths("/home/albax/miniforge3/envs/seurat_v4/lib/R/library")
 
 if(.Platform$OS.type == "linux") Sys.setenv(PATH= paste("/home/albax/miniforge3/envs/seurat_v4/lib",Sys.getenv()["PATH"],sep=";"))
