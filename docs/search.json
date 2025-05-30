@@ -394,56 +394,56 @@
   {
     "objectID": "Human/1_hca_esoph_inspection.html",
     "href": "Human/1_hca_esoph_inspection.html",
-    "title": "1. Inspection of HCA seurat object”",
+    "title": "1. Inspection of HCA seurat object",
     "section": "",
-    "text": "Import libraries\n.libPaths(\"/home/albax/miniforge3/envs/seurat_v4/lib/R/library\")\n\nif(.Platform$OS.type == \"linux\") Sys.setenv(PATH= paste(\"/home/albax/miniforge3/envs/seurat_v4/lib\",Sys.getenv()[\"PATH\"],sep=\";\"))\n\nlibrary(reticulate)\n\nuse_condaenv(\"/home/albax/miniforge3/envs/seurat_v4\", required = TRUE)\npy_config()\n\nimport(\"numpy\")\nimport(\"leidenalg\")\nimport(\"pandas\")\n\nlibrary(Seurat) \nlibrary(dplyr) \nlibrary(ggplot2) \nlibrary(plotly) \nlibrary(SingleCellExperiment) \n# library(httpgd) \nlibrary(patchwork)\nlibrary(dplyr)\nlibrary(tidyverse)\nlibrary(tibble)\n\ncolor.list &lt;- RColorBrewer::brewer.pal(12,\"Paired\")\ncolor.list &lt;- c(color.list,RColorBrewer::brewer.pal(12,\"Set3\"))\n\n# Palette from orange to violet\npalette &lt;- scale_color_viridis_c(option = \"plasma\", direction = -1) # continue colors palette\npalette_d &lt;- scale_color_viridis_d(option = \"turbo\", direction = -1) # discrete colors palette\n\nprojectPath &lt;- setwd(\"/home/albax/human_esophagus\") # where we are",
+    "text": "Import libraries\nCode\n.libPaths(\"/home/albax/miniforge3/envs/seurat_v4/lib/R/library\")\n\nif(.Platform$OS.type == \"linux\") Sys.setenv(PATH= paste(\"/home/albax/miniforge3/envs/seurat_v4/lib\",Sys.getenv()[\"PATH\"],sep=\";\"))\n\nlibrary(reticulate)\n\nuse_condaenv(\"/home/albax/miniforge3/envs/seurat_v4\", required = TRUE)\npy_config()\n\nimport(\"numpy\")\nimport(\"leidenalg\")\nimport(\"pandas\")\n\nlibrary(Seurat) \nlibrary(dplyr) \nlibrary(ggplot2) \nlibrary(plotly) \nlibrary(SingleCellExperiment) \n# library(httpgd) \nlibrary(patchwork)\nlibrary(dplyr)\nlibrary(tidyverse)\nlibrary(tibble)\n\ncolor.list &lt;- RColorBrewer::brewer.pal(12,\"Paired\")\ncolor.list &lt;- c(color.list,RColorBrewer::brewer.pal(12,\"Set3\"))\n\n# Palette from orange to violet\npalette &lt;- scale_color_viridis_c(option = \"plasma\", direction = -1) # continue colors palette\npalette_d &lt;- scale_color_viridis_d(option = \"turbo\", direction = -1) # discrete colors palette\n\nprojectPath &lt;- setwd(\"/home/albax/human_esophagus\") # where we are",
     "crumbs": [
       "Human HCA analysis",
-      "<span class='chapter-number'>9</span>  <span class='chapter-title'>1. Inspection of HCA seurat object\"</span>"
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>1. Inspection of HCA seurat object</span>"
     ]
   },
   {
     "objectID": "Human/1_hca_esoph_inspection.html#load-rds-object",
     "href": "Human/1_hca_esoph_inspection.html#load-rds-object",
-    "title": "1. Inspection of HCA seurat object”",
+    "title": "1. Inspection of HCA seurat object",
     "section": "Load rds object",
     "text": "Load rds object\n\nmy_esoph &lt;- readRDS(\"./data/hca_myesoph.rds\")\nmy_esoph",
     "crumbs": [
       "Human HCA analysis",
-      "<span class='chapter-number'>9</span>  <span class='chapter-title'>1. Inspection of HCA seurat object\"</span>"
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>1. Inspection of HCA seurat object</span>"
     ]
   },
   {
     "objectID": "Human/1_hca_esoph_inspection.html#possible-artifacts",
     "href": "Human/1_hca_esoph_inspection.html#possible-artifacts",
-    "title": "1. Inspection of HCA seurat object”",
+    "title": "1. Inspection of HCA seurat object",
     "section": "1.1. Possible artifacts",
     "text": "1.1. Possible artifacts\n\nMALAT1\nAs shown in https://www.biorxiv.org/content/10.1101/2024.07.14.603469v2 and https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-024-11015-5 , low levels of MALAT1 might indicate empty droplets or poor quality cells, as it is a nuclear marker, so its absence indicates cells lacking a nucleus. Therefore, low expression of MALAT1 might indicate low-quality cells. The authors recommend to observe MALAT1 distribution (violinplot or density plot) and in parallel the nCount and % of intronic counts…\nAs RNA velocity has already been implemented, we don’t need to apply all that, it is enough by looking at the distributioni of the % nCount_unspliced.\n\nFeaturePlot(my_esoph, features = c(\"MALAT1\")) & scale_y_continuous(breaks = seq(0, 20, by = 2)) & palette\n\nFeaturePlot(my_esoph, features = c(\"MALAT1\"), split.by = \"Donor\") & scale_y_continuous(breaks = seq(0, 20, by = 2)) & palette\n\nit doesn’t look like there are low-quality cells anywhere.",
     "crumbs": [
       "Human HCA analysis",
-      "<span class='chapter-number'>9</span>  <span class='chapter-title'>1. Inspection of HCA seurat object\"</span>"
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>1. Inspection of HCA seurat object</span>"
     ]
   },
   {
     "objectID": "Human/1_hca_esoph_inspection.html#de-genes-for-specific-cells",
     "href": "Human/1_hca_esoph_inspection.html#de-genes-for-specific-cells",
-    "title": "1. Inspection of HCA seurat object”",
+    "title": "1. Inspection of HCA seurat object",
     "section": "1.2. DE genes for specific cells",
     "text": "1.2. DE genes for specific cells\n\nall_CBs &lt;-colnames(hca_esoph)[hca_esoph@meta.data$Donor == \"296C\"]\nrest_CBs &lt;- setdiff(all_CBs, cbs_lista$V1)\n\nhca_esoph &lt;- SetIdent(hca_esoph, value = hca_esoph@meta.data$Donor)\n\n\nmarkers_CB &lt;- FindMarkers(hca_esoph, ident.1 = cbs_lista$V1, ident.2 = rest_CBs) # from more expression to less in cbs_lista\n\n\nsignificant_genes &lt;- markers_CB[markers_CB$p_val_adj &lt; 0.05 & abs(markers_CB$avg_log2FC) &lt; 0, ]\n# log2FC &gt; 0 means that the gene is more highly expressed in ident.1 (group 1) compared to ident.2 (group 2).",
     "crumbs": [
       "Human HCA analysis",
-      "<span class='chapter-number'>9</span>  <span class='chapter-title'>1. Inspection of HCA seurat object\"</span>"
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>1. Inspection of HCA seurat object</span>"
     ]
   },
   {
     "objectID": "Human/1_hca_esoph_inspection.html#sec-save-norm-counts",
     "href": "Human/1_hca_esoph_inspection.html#sec-save-norm-counts",
-    "title": "1. Inspection of HCA seurat object”",
+    "title": "1. Inspection of HCA seurat object",
     "section": "1.3. Save normalized counts matrix",
     "text": "1.3. Save normalized counts matrix\n\n# normalized matrix counts\nnorm_counts &lt;- my_esoph[[\"RNA\"]]@data # columns are cells and rows are genes, not sure if RNA has SCT ransformed counts\n\nmetadata &lt;- my_esoph@meta.data # 68173 total cells\nepi_cells &lt;- rownames(metadata[grep(\"^Epi\", metadata$Celltypes_updated_July_2020), ]) # 61214 epi cells\nnorm_counts_epi &lt;- norm_counts[, epi_cells]\n\n# Matrix::writeMM(norm_counts, file = \"matrix_counts/hca_corrected_counts_matrix.mtx\")\n# Matrix::writeMM(norm_counts_epi, file = \"matrix_counts/hca_corrected_counts_matrix_Epi.mtx\")\n\ncells_296C &lt;- colnames(my_esoph)[my_esoph$Donor == \"296C\"] # matrix for only Donor = 296C\nnorm_counts_296 &lt;- norm_counts[, cells_296C]\n\n# Save the row names (gene names)\nwrite.table(rownames(norm_counts), file = \"matrix_counts/gene_names.txt\", \n            row.names = FALSE, col.names = FALSE, quote = FALSE)\n\n# Save the column names (cell names)\nwrite.table(colnames(norm_counts), file = \"matrix_counts/cell_names.txt\", \n            row.names = FALSE, col.names = FALSE, quote = FALSE)\n\n# Save the column names (cell names) that are only epithelial cells\nwrite.table(colnames(norm_counts_296), file = \"matrix_counts/cell_names_296C.txt\", \n        row.names = FALSE, col.names = FALSE, quote = FALSE)",
     "crumbs": [
       "Human HCA analysis",
-      "<span class='chapter-number'>9</span>  <span class='chapter-title'>1. Inspection of HCA seurat object\"</span>"
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>1. Inspection of HCA seurat object</span>"
     ]
   },
   {
@@ -451,7 +451,7 @@
     "href": "Human/2_GeneExpression_hca.html",
     "title": "2. Gene Expression in esophagus HCA dataset”",
     "section": "",
-    "text": "Import libraries\n.libPaths(\"/home/albax/miniforge3/envs/seurat_v4/lib/R/library\")\n\nif(.Platform$OS.type == \"linux\") Sys.setenv(PATH= paste(\"/home/albax/miniforge3/envs/seurat_v4/lib\",Sys.getenv()[\"PATH\"],sep=\";\"))\n\nlibrary(reticulate)\n\nuse_condaenv(\"/home/albax/miniforge3/envs/seurat_v4\", required = TRUE)\npy_config()\n\nimport(\"kaleido\")\nimport(\"orca\")\n# import(\"numpy\")\n# import(\"leidenalg\")\n# import(\"pandas\")\n\nlibrary(Seurat) \nlibrary(dplyr) \nlibrary(ggplot2) \nlibrary(plotly) \nlibrary(SingleCellExperiment) \n# library(httpgd) \nlibrary(patchwork)\nlibrary(dplyr)\nlibrary(tidyverse)\nlibrary(tibble)\n\ncolor.list &lt;- RColorBrewer::brewer.pal(12,\"Paired\")\ncolor.list &lt;- c(color.list,RColorBrewer::brewer.pal(12,\"Set3\"))\n\n# Palette from orange to violet\npalette &lt;- scale_color_viridis_c(option = \"plasma\", direction = -1) # continue colors palette\npalette_d &lt;- scale_color_viridis_d(option = \"turbo\", direction = -1) # discrete colors palette\n\nprojectPath &lt;- setwd(\"/home/albax/human_esophagus\") # where we are",
+    "text": "Import libraries\nCode\n.libPaths(\"/home/albax/miniforge3/envs/seurat_v4/lib/R/library\")\n\nif(.Platform$OS.type == \"linux\") Sys.setenv(PATH= paste(\"/home/albax/miniforge3/envs/seurat_v4/lib\",Sys.getenv()[\"PATH\"],sep=\";\"))\n\nlibrary(reticulate)\n\nuse_condaenv(\"/home/albax/miniforge3/envs/seurat_v4\", required = TRUE)\npy_config()\n\nimport(\"kaleido\")\nimport(\"orca\")\n# import(\"numpy\")\n# import(\"leidenalg\")\n# import(\"pandas\")\n\nlibrary(Seurat) \nlibrary(dplyr) \nlibrary(ggplot2) \nlibrary(plotly) \nlibrary(SingleCellExperiment) \n# library(httpgd) \nlibrary(patchwork)\nlibrary(dplyr)\nlibrary(tidyverse)\nlibrary(tibble)\n\ncolor.list &lt;- RColorBrewer::brewer.pal(12,\"Paired\")\ncolor.list &lt;- c(color.list,RColorBrewer::brewer.pal(12,\"Set3\"))\n\n# Palette from orange to violet\npalette &lt;- scale_color_viridis_c(option = \"plasma\", direction = -1) # continue colors palette\npalette_d &lt;- scale_color_viridis_d(option = \"turbo\", direction = -1) # discrete colors palette\n\nprojectPath &lt;- setwd(\"/home/albax/human_esophagus\") # where we are",
     "crumbs": [
       "Human HCA analysis",
       "<span class='chapter-number'>10</span>  <span class='chapter-title'>2. Gene Expression in esophagus HCA dataset\"</span>"
@@ -495,7 +495,7 @@
     "href": "Human/3_VennDiagrams_hca.html",
     "title": "3. Visualization of intersected genes with Venn diagrams in esophagus HCA dataset",
     "section": "",
-    "text": "Import libraries\n.libPaths(\"/home/albax/miniforge3/envs/seurat_v4/lib/R/library\")\n\nif(.Platform$OS.type == \"linux\") Sys.setenv(PATH= paste(\"/home/albax/miniforge3/envs/seurat_v4/lib\",Sys.getenv()[\"PATH\"],sep=\";\"))\n\nuse_condaenv(\"/home/albax/miniforge3/envs/seurat_v4\", required = TRUE)\n\nlibrary(VennDiagram)\nlibrary(ggplot2)\nlibrary(ggvenn)\nlibrary(svglite)\n\nprojectPath &lt;- setwd(\"/home/albax/human_esophagus\") # where we are",
+    "text": "Import libraries\nCode\n.libPaths(\"/home/albax/miniforge3/envs/seurat_v4/lib/R/library\")\n\nif(.Platform$OS.type == \"linux\") Sys.setenv(PATH= paste(\"/home/albax/miniforge3/envs/seurat_v4/lib\",Sys.getenv()[\"PATH\"],sep=\";\"))\n\nuse_condaenv(\"/home/albax/miniforge3/envs/seurat_v4\", required = TRUE)\n\nlibrary(VennDiagram)\nlibrary(ggplot2)\nlibrary(ggvenn)\nlibrary(svglite)\n\nprojectPath &lt;- setwd(\"/home/albax/human_esophagus\") # where we are",
     "crumbs": [
       "Human HCA analysis",
       "<span class='chapter-number'>11</span>  <span class='chapter-title'>3. Visualization of intersected genes with Venn diagrams in esophagus HCA dataset</span>"
@@ -528,7 +528,7 @@
     "href": "Human/4_clones_UMAP_mapping_hca.html",
     "title": "4. Mapping genotype-to-phenotype",
     "section": "",
-    "text": "Import libraries\n.libPaths(\"/home/albax/miniforge3/envs/seurat_v4/lib/R/library\")\n\nif(.Platform$OS.type == \"linux\") Sys.setenv(PATH= paste(\"/home/albax/miniforge3/envs/seurat_v4/lib\",Sys.getenv()[\"PATH\"],sep=\";\"))\n\nlibrary(reticulate)\n\nuse_condaenv(\"/home/albax/miniforge3/envs/seurat_v4\", required = TRUE)\npy_config()\n\nimport(\"numpy\")\nimport(\"leidenalg\")\nimport(\"pandas\")\n\nlibrary(Seurat) \nlibrary(dplyr) \nlibrary(ggplot2) \nlibrary(plotly) \nlibrary(SingleCellExperiment) \n# library(httpgd) \nlibrary(patchwork)\nlibrary(dplyr)\nlibrary(tidyverse)\nlibrary(tibble)\nlibrary(future)\nplan(\"sequential\")\noptions(future.globals.maxSize = 2000 * 1024^2)\n\ncolor.list &lt;- RColorBrewer::brewer.pal(12,\"Paired\")\ncolor.list &lt;- c(color.list,RColorBrewer::brewer.pal(12,\"Set3\"))\n\n# Palette from orange to violet\npalette &lt;- scale_color_viridis_c(option = \"plasma\", direction = -1) # continue colors palette\npalette_d &lt;- scale_color_viridis_d(option = \"turbo\", direction = -1) # discrete colors palette\n\nprojectPath &lt;- setwd(\"/home/albax/human_esophagus\") # where we are\nhca_esoph &lt;- readRDS(file = \"./data/hca_esoph_with_annotations.rds\")\nhca_esoph_upt &lt;- UpdateSeuratObject(hca_esoph)\nhca_esoph\n# An object of class Seurat \n# 24245 features across 87947 samples within 1 assay \n# Active assay: RNA (24245 features, 0 variable features)\n#  3 layers present: counts, data, scale.data\n#  2 dimensional reductions calculated: pca, umap\nDefaultAssay(hca_esoph) &lt;- \"RNA\"\nunique(Idents(hca_esoph))\n# Idents(hca_esoph) &lt;- \"Celltypes_updated_July_2020\"\numap_df &lt;- as.data.frame(Embeddings(hca_esoph[[\"umap\"]]))\numap_df$ident &lt;- Idents(hca_esoph)\numap_df$cell_id &lt;- rownames(umap_df)\n# rownames(umap_df) &lt;- umap_df$cell_id",
+    "text": "Import libraries\nCode\n.libPaths(\"/home/albax/miniforge3/envs/seurat_v4/lib/R/library\")\n\nif(.Platform$OS.type == \"linux\") Sys.setenv(PATH= paste(\"/home/albax/miniforge3/envs/seurat_v4/lib\",Sys.getenv()[\"PATH\"],sep=\";\"))\n\nlibrary(reticulate)\n\nuse_condaenv(\"/home/albax/miniforge3/envs/seurat_v4\", required = TRUE)\npy_config()\n\nimport(\"numpy\")\nimport(\"leidenalg\")\nimport(\"pandas\")\n\nlibrary(Seurat) \nlibrary(dplyr) \nlibrary(ggplot2) \nlibrary(plotly) \nlibrary(SingleCellExperiment) \n# library(httpgd) \nlibrary(patchwork)\nlibrary(dplyr)\nlibrary(tidyverse)\nlibrary(tibble)\nlibrary(future)\nplan(\"sequential\")\noptions(future.globals.maxSize = 2000 * 1024^2)\n\ncolor.list &lt;- RColorBrewer::brewer.pal(12,\"Paired\")\ncolor.list &lt;- c(color.list,RColorBrewer::brewer.pal(12,\"Set3\"))\n\n# Palette from orange to violet\npalette &lt;- scale_color_viridis_c(option = \"plasma\", direction = -1) # continue colors palette\npalette_d &lt;- scale_color_viridis_d(option = \"turbo\", direction = -1) # discrete colors palette\n\nprojectPath &lt;- setwd(\"/home/albax/human_esophagus\") # where we are\nhca_esoph &lt;- readRDS(file = \"./data/hca_esoph_with_annotations.rds\")\nhca_esoph_upt &lt;- UpdateSeuratObject(hca_esoph)\nhca_esoph\n# An object of class Seurat \n# 24245 features across 87947 samples within 1 assay \n# Active assay: RNA (24245 features, 0 variable features)\n#  3 layers present: counts, data, scale.data\n#  2 dimensional reductions calculated: pca, umap\nDefaultAssay(hca_esoph) &lt;- \"RNA\"\nunique(Idents(hca_esoph))\n# Idents(hca_esoph) &lt;- \"Celltypes_updated_July_2020\"\numap_df &lt;- as.data.frame(Embeddings(hca_esoph[[\"umap\"]]))\numap_df$ident &lt;- Idents(hca_esoph)\numap_df$cell_id &lt;- rownames(umap_df)\n# rownames(umap_df) &lt;- umap_df$cell_id",
     "crumbs": [
       "Human HCA analysis",
       "<span class='chapter-number'>12</span>  <span class='chapter-title'>4. Mapping genotype-to-phenotype</span>"
