@@ -55,6 +55,3 @@ The repository holds independent scripts for each dataset:
   └──  annotate_vep.sh # automated annotation with vep
 
 ```
-
-
-
