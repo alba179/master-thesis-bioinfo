@@ -30,7 +30,7 @@ book:
         - Human/1_hca_esoph_inspection.qmd
         - Human/2_GeneExpression_hca.qmd
         - Human/3_VennDiagrams_hca.qmd
-        - Human/4_clones_UMAP_mappging_hca.qmd
+        - Human/4_clones_UMAP_mapping_hca.qmd
         # - Human/mut_clones_analysis_hca.qmd
 
 execute: 

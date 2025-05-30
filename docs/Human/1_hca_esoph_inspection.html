@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Set-up and installations – Master's thesis in Bioinformatics and Computational Biology</title>
+<title>1. Inspection of HCA seurat object” – Master's thesis in Bioinformatics and Computational Biology</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -57,24 +57,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<link href="./Mouse/1_DataProcessing.html" rel="next">
-<link href="./index.html" rel="prev">
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../Human/2_GeneExpression_hca.html" rel="next">
+<link href="../Mouse/6_GOAnalysis.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -115,7 +115,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./intro.html"><span class="chapter-title">Set-up and installations</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Human/1_hca_esoph_inspection.html">Human HCA analysis</a></li><li class="breadcrumb-item"><a href="../Human/1_hca_esoph_inspection.html"><span class="chapter-title">1. Inspection of HCA seurat object”</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -130,7 +130,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">Master’s thesis in Bioinformatics and Computational Biology</a> 
+      <a href="../">Master’s thesis in Bioinformatics and Computational Biology</a> 
         <div class="sidebar-tools-main">
     <a href="https://github.com/alba179/master-thesis-bioinfo" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
 </div>
@@ -145,12 +145,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Introduction</span></a>
+  <a href="../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Introduction</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./intro.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Set-up and installations</span></a>
+  <a href="../intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Set-up and installations</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
@@ -164,32 +164,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./Mouse/1_DataProcessing.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">1. Data Pre-processing</span></a>
+  <a href="../Mouse/1_DataProcessing.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">1. Data Pre-processing</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./Mouse/2_ClusteringCellAnnotation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">2. Clustering and Cell annotation</span></a>
+  <a href="../Mouse/2_ClusteringCellAnnotation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">2. Clustering and Cell annotation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./Mouse/3_Velocity_inference.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">3. Inference of velocity</span></a>
+  <a href="../Mouse/3_Velocity_inference.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">3. Inference of velocity</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./Mouse/4_VariantCalling.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">4. SComatic calling</span></a>
+  <a href="../Mouse/4_VariantCalling.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">4. SComatic calling</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./Mouse/5_AnnotationVariants.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">5. Functional annotation of variants</span></a>
+  <a href="../Mouse/5_AnnotationVariants.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">5. Functional annotation of variants</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./Mouse/6_GOAnalysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">6. Gene Ontology Analysis</span></a>
+  <a href="../Mouse/6_GOAnalysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">6. Gene Ontology Analysis</span></a>
   </div>
 </li>
       </ul>
@@ -205,22 +205,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./Human/1_hca_esoph_inspection.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">1. Inspection of HCA seurat object”</span></a>
+  <a href="../Human/1_hca_esoph_inspection.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">1. Inspection of HCA seurat object”</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./Human/2_GeneExpression_hca.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">2. Gene Expression in esophagus HCA dataset”</span></a>
+  <a href="../Human/2_GeneExpression_hca.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">2. Gene Expression in esophagus HCA dataset”</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./Human/3_VennDiagrams_hca.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">3. Visualization of intersected genes with Venn diagrams in esophagus HCA dataset</span></a>
+  <a href="../Human/3_VennDiagrams_hca.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">3. Visualization of intersected genes with Venn diagrams in esophagus HCA dataset</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./Human/4_clones_UMAP_mapping_hca.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">4. Mapping genotype-to-phenotype</span></a>
+  <a href="../Human/4_clones_UMAP_mapping_hca.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">4. Mapping genotype-to-phenotype</span></a>
   </div>
 </li>
       </ul>
@@ -235,21 +235,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Index</h2>
    
   <ul>
-  <li><a href="#computers" id="toc-computers" class="nav-link active" data-scroll-target="#computers">Computers</a></li>
-  <li><a href="#conda-environments" id="toc-conda-environments" class="nav-link" data-scroll-target="#conda-environments">Conda environments</a>
+  <li><a href="#import-libraries" id="toc-import-libraries" class="nav-link active" data-scroll-target="#import-libraries">Import libraries</a></li>
+  <li><a href="#load-rds-object" id="toc-load-rds-object" class="nav-link" data-scroll-target="#load-rds-object">Load rds object</a></li>
+  <li><a href="#possible-artifacts" id="toc-possible-artifacts" class="nav-link" data-scroll-target="#possible-artifacts">1.1. Possible artifacts</a>
   <ul>
-  <li><a href="#d_rstudio" id="toc-d_rstudio" class="nav-link" data-scroll-target="#d_rstudio">d_rstudio</a></li>
-  <li><a href="#scomatic" id="toc-scomatic" class="nav-link" data-scroll-target="#scomatic">SComatic</a></li>
+  <li><a href="#malat1" id="toc-malat1" class="nav-link" data-scroll-target="#malat1">MALAT1</a></li>
   </ul></li>
+  <li><a href="#de-genes-for-specific-cells" id="toc-de-genes-for-specific-cells" class="nav-link" data-scroll-target="#de-genes-for-specific-cells">1.2. DE genes for specific cells</a></li>
+  <li><a href="#sec-save-norm-counts" id="toc-sec-save-norm-counts" class="nav-link" data-scroll-target="#sec-save-norm-counts">1.3. Save normalized counts matrix</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Human/1_hca_esoph_inspection.html">Human HCA analysis</a></li><li class="breadcrumb-item"><a href="../Human/1_hca_esoph_inspection.html"><span class="chapter-title">1. Inspection of HCA seurat object”</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-title">Set-up and installations</span></h1>
+<h1 class="title"><span class="chapter-title">1. Inspection of HCA seurat object”</span></h1>
 </div>
 
 
@@ -266,84 +268,111 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="computers" class="level2">
-<h2 class="anchored" data-anchor-id="computers">Computers</h2>
-<p>I used mainly two computers for all the calculations, though the HCA dataset was in a third one, so i had to use it sporadically.</p>
-<ul>
-<li><strong>matterhorn:</strong> main computer. Mainly used for storage and explorative analysis.</li>
-<li><strong>nuptse:</strong> used for storage and explorative analysis of HCA dataset.</li>
-<li><strong>folia:</strong> small computing server. Used for clusterization, alignment, etc.</li>
-</ul>
-<p>All code was executed in computers running Ubuntu 22.04.4 LTS.</p>
+<p>This is a scarce notebook with a couple analysis, just for visualization purposes.</p>
+<section id="import-libraries" class="level2">
+<h2 class="anchored" data-anchor-id="import-libraries">Import libraries</h2>
+<div class="cell" data-fold="true">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.libPaths</span>(<span class="st">"/home/albax/miniforge3/envs/seurat_v4/lib/R/library"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(.Platform<span class="sc">$</span>OS.type <span class="sc">==</span> <span class="st">"linux"</span>) <span class="fu">Sys.setenv</span>(<span class="at">PATH=</span> <span class="fu">paste</span>(<span class="st">"/home/albax/miniforge3/envs/seurat_v4/lib"</span>,<span class="fu">Sys.getenv</span>()[<span class="st">"PATH"</span>],<span class="at">sep=</span><span class="st">";"</span>))</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(reticulate)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">use_condaenv</span>(<span class="st">"/home/albax/miniforge3/envs/seurat_v4"</span>, <span class="at">required =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">py_config</span>()</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">import</span>(<span class="st">"numpy"</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">import</span>(<span class="st">"leidenalg"</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">import</span>(<span class="st">"pandas"</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Seurat) </span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr) </span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2) </span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plotly) </span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SingleCellExperiment) </span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># library(httpgd) </span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tibble)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>color.list <span class="ot">&lt;-</span> RColorBrewer<span class="sc">::</span><span class="fu">brewer.pal</span>(<span class="dv">12</span>,<span class="st">"Paired"</span>)</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>color.list <span class="ot">&lt;-</span> <span class="fu">c</span>(color.list,RColorBrewer<span class="sc">::</span><span class="fu">brewer.pal</span>(<span class="dv">12</span>,<span class="st">"Set3"</span>))</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Palette from orange to violet</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>palette <span class="ot">&lt;-</span> <span class="fu">scale_color_viridis_c</span>(<span class="at">option =</span> <span class="st">"plasma"</span>, <span class="at">direction =</span> <span class="sc">-</span><span class="dv">1</span>) <span class="co"># continue colors palette</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>palette_d <span class="ot">&lt;-</span> <span class="fu">scale_color_viridis_d</span>(<span class="at">option =</span> <span class="st">"turbo"</span>, <span class="at">direction =</span> <span class="sc">-</span><span class="dv">1</span>) <span class="co"># discrete colors palette</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>projectPath <span class="ot">&lt;-</span> <span class="fu">setwd</span>(<span class="st">"/home/albax/human_esophagus"</span>) <span class="co"># where we are</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
-<section id="conda-environments" class="level2">
-<h2 class="anchored" data-anchor-id="conda-environments">Conda environments</h2>
-<p>Most of the software was installed using mamba/conda environments when possible.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mamba</span> config <span class="at">--add</span> channels bioconda</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">mamba</span> config <span class="at">--add</span> channels conda-forge</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<section id="d_rstudio" class="level3">
-<h3 class="anchored" data-anchor-id="d_rstudio">d_rstudio</h3>
-<p><strong>State:</strong> active <strong>Computer:</strong> nuptse, folia, matterhorn <strong>Purpose:</strong> to have a functional RStudio/VSCode installation along with the packages for the kallisto-bustools velocity workflow. <strong>Creation:</strong> run the following commands to install RStudio along with the packages needed for data analysis.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mamba</span> create <span class="at">-n</span> d_rstudio <span class="at">-c</span> conda-forge rstudio-desktop jupyter r-seurat</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate d_rstudio</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ex">mamba</span> install r-devtools r-tidyverse r-zeallot r-ggally bioconductor-bsgenome.mmusculus.ucsc.mm10 bioconductor-dropletutils bioconductor-annotationhub bioconductor-singler</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Install packages from source</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="ex">R</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Hard-code the commit for reproducibility</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="ex">devtools::install_github</span><span class="er">(</span><span class="st">"satijalab/seurat-wrappers@73466e361ee759c6b1add58faa3bc4e7a2ee5753"</span><span class="kw">)</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="fu">q()</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Posterior installations</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="ex">mamba</span> install r-velocyto.r</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="ex">mamba</span> install <span class="at">-c</span> bioconda bioconductor-slingshot</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="ex">mamba</span> install leidenalg <span class="co"># for clustering</span></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="ex">mamba</span> install numpy pandas</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="ex">mamba</span> install <span class="at">-c</span> conda-forge r-clustree</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="ex">mamba</span> install <span class="at">-c</span> conda-forge r-svglite</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Installing packages to convert to H5AD data</span></span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="ex">R</span></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Hard-code commit for future reproducibility. Skip updates when asked</span></span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="ex">devtools::install_github</span><span class="er">(</span><span class="st">"mojaveazure/seurat-disk@877d4e18ab38c686f5db54f8cd290274ccdbe295"</span><span class="kw">)</span></span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="ex">mamba</span> install <span class="at">-c</span> conda-forge plotly python-kaleido</span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="ex">mamba</span> install <span class="at">-c</span> plotly plotly-orca</span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="ex">mamba</span> install <span class="at">-c</span> conda-forge r-processx</span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="ex">mamba</span> install <span class="at">-c</span> conda-forge r-pals</span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="ex">mamba</span> install <span class="at">-c</span> conda-forge r-ggvenn r-ggvenndiagram r-venn r-venndiagram</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="load-rds-object" class="level2">
+<h2 class="anchored" data-anchor-id="load-rds-object">Load rds object</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>my_esoph <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"./data/hca_myesoph.rds"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>my_esoph</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
-<section id="scomatic" class="level3">
-<h3 class="anchored" data-anchor-id="scomatic">SComatic</h3>
-<p><strong>State:</strong> active <strong>Computer:</strong> nuptse, folia, matterhorn <strong>Purpose:</strong> to have an isolated environment with SComatic for scRNA-seq mutation calling</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mamba</span> create <span class="at">-n</span> d_scomatic <span class="at">-c</span> bioconda python=3.7 r-base=3.6.1 samtools datamash bedtools</span>
+<section id="possible-artifacts" class="level2">
+<h2 class="anchored" data-anchor-id="possible-artifacts">1.1. Possible artifacts</h2>
+<section id="malat1" class="level3">
+<h3 class="anchored" data-anchor-id="malat1">MALAT1</h3>
+<p>As shown in https://www.biorxiv.org/content/10.1101/2024.07.14.603469v2 and https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-024-11015-5 , low levels of MALAT1 might indicate empty droplets or poor quality cells, as it is a nuclear marker, so its absence indicates cells lacking a nucleus. Therefore, low expression of MALAT1 might indicate low-quality cells. The authors recommend to observe MALAT1 distribution (violinplot or density plot) and in parallel the nCount and % of intronic counts…</p>
+<p>As RNA velocity has already been implemented, we don’t need to apply all that, it is enough by looking at the distributioni of the % nCount_unspliced.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">FeaturePlot</span>(my_esoph, <span class="at">features =</span> <span class="fu">c</span>(<span class="st">"MALAT1"</span>)) <span class="sc">&amp;</span> <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">20</span>, <span class="at">by =</span> <span class="dv">2</span>)) <span class="sc">&amp;</span> palette</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># You can download a zip file with the repository "Code" button in the web</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Or you can do the same thing in the linux terminal</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># For future reproducibility</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> <span class="at">-P</span> /home/dario/bin/ https://github.com/cortes-ciriano-lab/SComatic/archive/f515f4ee3e7c128600215d21992c051c16e0a03f.zip</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># To grab the latest branch</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> <span class="at">-P</span> /home/dario/bin/ https://github.com/cortes-ciriano-lab/SComatic/archive/main.zip</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="fu">unzip</span> <span class="pp">*</span>zip</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="fu">mv</span> SComatic-main SComatic</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co"># You could also clone the repository to keep the files up to date if needed</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone <span class="at">--single-branch</span> https://github.com/cortes-ciriano-lab/SComatic.git /path/to/dir/</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co"># I install the remaining dependencies as instructed, using the “requirements.txt” file in the repository.</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="ex">mamba</span> activate d_scomatic</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-r</span> requirements.txt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-
-
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">FeaturePlot</span>(my_esoph, <span class="at">features =</span> <span class="fu">c</span>(<span class="st">"MALAT1"</span>), <span class="at">split.by =</span> <span class="st">"Donor"</span>) <span class="sc">&amp;</span> <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">20</span>, <span class="at">by =</span> <span class="dv">2</span>)) <span class="sc">&amp;</span> palette</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>it doesn’t look like there are low-quality cells anywhere.</p>
 </section>
+</section>
+<section id="de-genes-for-specific-cells" class="level2">
+<h2 class="anchored" data-anchor-id="de-genes-for-specific-cells">1.2. DE genes for specific cells</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>all_CBs <span class="ot">&lt;-</span><span class="fu">colnames</span>(hca_esoph)[hca_esoph<span class="sc">@</span>meta.data<span class="sc">$</span>Donor <span class="sc">==</span> <span class="st">"296C"</span>]</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>rest_CBs <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(all_CBs, cbs_lista<span class="sc">$</span>V1)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>hca_esoph <span class="ot">&lt;-</span> <span class="fu">SetIdent</span>(hca_esoph, <span class="at">value =</span> hca_esoph<span class="sc">@</span>meta.data<span class="sc">$</span>Donor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>markers_CB <span class="ot">&lt;-</span> <span class="fu">FindMarkers</span>(hca_esoph, <span class="at">ident.1 =</span> cbs_lista<span class="sc">$</span>V1, <span class="at">ident.2 =</span> rest_CBs) <span class="co"># from more expression to less in cbs_lista</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>significant_genes <span class="ot">&lt;-</span> markers_CB[markers_CB<span class="sc">$</span>p_val_adj <span class="sc">&lt;</span> <span class="fl">0.05</span> <span class="sc">&amp;</span> <span class="fu">abs</span>(markers_CB<span class="sc">$</span>avg_log2FC) <span class="sc">&lt;</span> <span class="dv">0</span>, ]</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># log2FC &gt; 0 means that the gene is more highly expressed in ident.1 (group 1) compared to ident.2 (group 2).</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sec-save-norm-counts" class="level2">
+<h2 class="anchored" data-anchor-id="sec-save-norm-counts">1.3. Save normalized counts matrix</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># normalized matrix counts</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>norm_counts <span class="ot">&lt;-</span> my_esoph[[<span class="st">"RNA"</span>]]<span class="sc">@</span>data <span class="co"># columns are cells and rows are genes, not sure if RNA has SCT ransformed counts</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>metadata <span class="ot">&lt;-</span> my_esoph<span class="sc">@</span>meta.data <span class="co"># 68173 total cells</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>epi_cells <span class="ot">&lt;-</span> <span class="fu">rownames</span>(metadata[<span class="fu">grep</span>(<span class="st">"^Epi"</span>, metadata<span class="sc">$</span>Celltypes_updated_July_2020), ]) <span class="co"># 61214 epi cells</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>norm_counts_epi <span class="ot">&lt;-</span> norm_counts[, epi_cells]</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Matrix::writeMM(norm_counts, file = "matrix_counts/hca_corrected_counts_matrix.mtx")</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Matrix::writeMM(norm_counts_epi, file = "matrix_counts/hca_corrected_counts_matrix_Epi.mtx")</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>cells_296C <span class="ot">&lt;-</span> <span class="fu">colnames</span>(my_esoph)[my_esoph<span class="sc">$</span>Donor <span class="sc">==</span> <span class="st">"296C"</span>] <span class="co"># matrix for only Donor = 296C</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>norm_counts_296 <span class="ot">&lt;-</span> norm_counts[, cells_296C]</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Save the row names (gene names)</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="fu">write.table</span>(<span class="fu">rownames</span>(norm_counts), <span class="at">file =</span> <span class="st">"matrix_counts/gene_names.txt"</span>, </span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>            <span class="at">row.names =</span> <span class="cn">FALSE</span>, <span class="at">col.names =</span> <span class="cn">FALSE</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Save the column names (cell names)</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="fu">write.table</span>(<span class="fu">colnames</span>(norm_counts), <span class="at">file =</span> <span class="st">"matrix_counts/cell_names.txt"</span>, </span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>            <span class="at">row.names =</span> <span class="cn">FALSE</span>, <span class="at">col.names =</span> <span class="cn">FALSE</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Save the column names (cell names) that are only epithelial cells</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="fu">write.table</span>(<span class="fu">colnames</span>(norm_counts_296), <span class="at">file =</span> <span class="st">"matrix_counts/cell_names_296C.txt"</span>, </span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>        <span class="at">row.names =</span> <span class="cn">FALSE</span>, <span class="at">col.names =</span> <span class="cn">FALSE</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>)   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+
 </section>
 
 </main> <!-- /main -->
@@ -769,13 +798,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./index.html" class="pagination-link" aria-label="Introduction">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Introduction</span></span>
+      <a href="../Mouse/6_GOAnalysis.html" class="pagination-link" aria-label="6. Gene Ontology Analysis">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">6. Gene Ontology Analysis</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./Mouse/1_DataProcessing.html" class="pagination-link" aria-label="1. Data Pre-processing">
-        <span class="nav-page-text"><span class="chapter-title">1. Data Pre-processing</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../Human/2_GeneExpression_hca.html" class="pagination-link" aria-label="2. Gene Expression in esophagus HCA dataset&quot;">
+        <span class="nav-page-text"><span class="chapter-title">2. Gene Expression in esophagus HCA dataset”</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

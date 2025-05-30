@@ -64,7 +64,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../Mouse/6_GOAnalysis.html" rel="prev">
+<link href="../Human/4_clones_UMAP_mapping_hca.html" rel="next">
+<link href="../Human/2_GeneExpression_hca.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -114,7 +115,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Human/3_VennDiagrams_hca.html">Human HCA analysis</a></li><li class="breadcrumb-item"><a href="../Human/3_VennDiagrams_hca.html"><span class="chapter-title">3. Visualization of intersected genes with Venn diagrams in esophagus HCA dataset</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Human/1_hca_esoph_inspection.html">Human HCA analysis</a></li><li class="breadcrumb-item"><a href="../Human/3_VennDiagrams_hca.html"><span class="chapter-title">3. Visualization of intersected genes with Venn diagrams in esophagus HCA dataset</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -204,7 +205,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../Human/1_hca_esoph_inspection.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">1. Inspection of HCA seurat object”</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Human/2_GeneExpression_hca.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">2. Gene Expression in esophagus HCA dataset”</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../Human/3_VennDiagrams_hca.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">3. Visualization of intersected genes with Venn diagrams in esophagus HCA dataset</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Human/4_clones_UMAP_mapping_hca.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">4. Mapping genotype-to-phenotype</span></a>
   </div>
 </li>
       </ul>
@@ -233,7 +249,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Human/3_VennDiagrams_hca.html">Human HCA analysis</a></li><li class="breadcrumb-item"><a href="../Human/3_VennDiagrams_hca.html"><span class="chapter-title">3. Visualization of intersected genes with Venn diagrams in esophagus HCA dataset</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Human/1_hca_esoph_inspection.html">Human HCA analysis</a></li><li class="breadcrumb-item"><a href="../Human/3_VennDiagrams_hca.html"><span class="chapter-title">3. Visualization of intersected genes with Venn diagrams in esophagus HCA dataset</span></a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title"><span class="chapter-title">3. Visualization of intersected genes with Venn diagrams in esophagus HCA dataset</span></h1>
 </div>
@@ -257,7 +273,7 @@ date: 04-2025
 --- -->
 <section id="import-libraries" class="level3">
 <h3 class="anchored" data-anchor-id="import-libraries">Import libraries</h3>
-<div class="cell">
+<div class="cell" data-fold="true">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.libPaths</span>(<span class="st">"/home/albax/miniforge3/envs/seurat_v4/lib/R/library"</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(.Platform<span class="sc">$</span>OS.type <span class="sc">==</span> <span class="st">"linux"</span>) <span class="fu">Sys.setenv</span>(<span class="at">PATH=</span> <span class="fu">paste</span>(<span class="st">"/home/albax/miniforge3/envs/seurat_v4/lib"</span>,<span class="fu">Sys.getenv</span>()[<span class="st">"PATH"</span>],<span class="at">sep=</span><span class="st">";"</span>))</span>
@@ -282,10 +298,9 @@ date: 04-2025
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>all_intogen <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="st">"/home/albax/intogen/IntOGen-DriverGenes.tsv"</span>, <span class="at">sep=</span><span class="st">"</span><span class="sc">\t</span><span class="st">"</span>, <span class="at">header =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>common_cancer_genes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"ADAM29"</span>, <span class="st">"ADAMTS18"</span>, <span class="st">"AJUBA"</span>, <span class="st">"AKT1"</span>, <span class="st">"AKT2"</span>, <span class="st">"APOB"</span>, <span class="st">"ARID1A"</span>, <span class="st">"ARID2"</span>, <span class="st">"AURKA"</span>, <span class="st">"BAI3"</span>, <span class="st">"BRAF"</span>, <span class="st">"CASP8"</span>, <span class="st">"CCND1"</span>, <span class="st">"CDH1"</span>, <span class="st">"CDKN2A"</span>, <span class="st">"CR2"</span>, <span class="st">"CREBBP"</span>, <span class="st">"CUL3"</span>, <span class="st">"DICER1"</span>, <span class="st">"EGFR"</span>, <span class="st">"EPHA2"</span>, <span class="st">"ERBB2"</span>, <span class="st">"ERBB3"</span>, <span class="st">"ERBB4"</span>, <span class="st">"EZH2"</span>, <span class="st">"FAT1"</span>, <span class="st">"FAT4"</span>, <span class="st">"FBXW7"</span>, <span class="st">"FGFR1"</span>, <span class="st">"FGFR2"</span>, <span class="st">"FGFR3"</span>, <span class="st">"FLG2"</span>, <span class="st">"GRIN2A"</span>, <span class="st">"GRM3"</span>, <span class="st">"HRAS"</span>, <span class="st">"IRF6"</span>, <span class="st">"KCNH5"</span>, <span class="st">"KEAP1"</span>, <span class="st">"KMT2A"</span>, <span class="st">"KMT2C"</span>, <span class="st">"KMT2D"</span>, <span class="st">"KRAS"</span>, <span class="st">"MET"</span>, <span class="st">"MUC17"</span>, <span class="st">"NF1"</span>, <span class="st">"NFE2L2"</span>, <span class="st">"NOTCH1"</span>, <span class="st">"NOTCH2"</span>, <span class="st">"NOTCH3"</span>, <span class="st">"NOTCH4"</span>, <span class="st">"NRAS"</span>, <span class="st">"NSD1"</span>, <span class="st">"PCED1B"</span>, <span class="st">"PIK3CA"</span>, <span class="st">"PLCB1"</span>, <span class="st">"PPP1R3A"</span>, <span class="st">"PREX2"</span>, <span class="st">"PTCH1"</span>, <span class="st">"PTEN"</span>, <span class="st">"PTPRT"</span>, <span class="st">"RB1"</span>, <span class="st">"RBM10"</span>, <span class="st">"SALL1"</span>, <span class="st">"SCN11A"</span>, <span class="st">"SCN1A"</span>, <span class="st">"SETD2"</span>, <span class="st">"SMAD4"</span>, <span class="st">"SMO"</span>, <span class="st">"SOX2"</span>, <span class="st">"SPHKAP"</span>, <span class="st">"SUFU"</span>, <span class="st">"TP53"</span>, <span class="st">"TP63"</span>, <span class="st">"TRIOBP"</span>, <span class="st">"ZNF750"</span>, <span class="st">"TGFBR2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>common_cancer_genes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"ADAM29"</span>, <span class="st">"ADAMTS18"</span>, <span class="st">"AJUBA"</span>, <span class="st">"AKT1"</span>, <span class="st">"AKT2"</span>, <span class="st">"APOB"</span>, <span class="st">"ARID1A"</span>, <span class="st">"ARID2"</span>, <span class="st">"AURKA"</span>, <span class="st">"BAI3"</span>, <span class="st">"BRAF"</span>, <span class="st">"CASP8"</span>, <span class="st">"CCND1"</span>, <span class="st">"CDH1"</span>, <span class="st">"CDKN2A"</span>, <span class="st">"CR2"</span>, <span class="st">"CREBBP"</span>, <span class="st">"CUL3"</span>, <span class="st">"DICER1"</span>, <span class="st">"EGFR"</span>, <span class="st">"EPHA2"</span>, <span class="st">"ERBB2"</span>, <span class="st">"ERBB3"</span>, <span class="st">"ERBB4"</span>, <span class="st">"EZH2"</span>, <span class="st">"FAT1"</span>, <span class="st">"FAT4"</span>, <span class="st">"FBXW7"</span>, <span class="st">"FGFR1"</span>, <span class="st">"FGFR2"</span>, <span class="st">"FGFR3"</span>, <span class="st">"FLG2"</span>, <span class="st">"GRIN2A"</span>, <span class="st">"GRM3"</span>, <span class="st">"HRAS"</span>, <span class="st">"IRF6"</span>, <span class="st">"KCNH5"</span>, <span class="st">"KEAP1"</span>, <span class="st">"KMT2A"</span>, <span class="st">"KMT2C"</span>, <span class="st">"KMT2D"</span>, <span class="st">"KRAS"</span>, <span class="st">"MET"</span>, <span class="st">"MUC17"</span>, <span class="st">"NF1"</span>, <span class="st">"NFE2L2"</span>, <span class="st">"NOTCH1"</span>, <span class="st">"NOTCH2"</span>, <span class="st">"NOTCH3"</span>, <span class="st">"NOTCH4"</span>, <span class="st">"NRAS"</span>, <span class="st">"NSD1"</span>, <span class="st">"PCED1B"</span>, <span class="st">"PIK3CA"</span>, <span class="st">"PLCB1"</span>, <span class="st">"PPP1R3A"</span>, <span class="st">"PREX2"</span>, <span class="st">"PTCH1"</span>, <span class="st">"PTEN"</span>, <span class="st">"PTPRT"</span>, <span class="st">"RB1"</span>, <span class="st">"RBM10"</span>, <span class="st">"SALL1"</span>, <span class="st">"SCN11A"</span>, <span class="st">"SCN1A"</span>, <span class="st">"SETD2"</span>, <span class="st">"SMAD4"</span>, <span class="st">"SMO"</span>, <span class="st">"SOX2"</span>, <span class="st">"SPHKAP"</span>, <span class="st">"SUFU"</span>, <span class="st">"TP53"</span>, <span class="st">"TP63"</span>, <span class="st">"TRIOBP"</span>, <span class="st">"ZNF750"</span>, <span class="st">"TGFBR2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>SComatic mutated genes. They are __ in total.</p>
+<p>SComatic mutated genes:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>all_mutated_scomatic <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="st">"data/mutated_genes_hca.tsv"</span>, <span class="at">sep=</span><span class="st">"</span><span class="sc">\t</span><span class="st">"</span>, <span class="at">header =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -763,11 +778,14 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../Mouse/6_GOAnalysis.html" class="pagination-link" aria-label="6. Gene Ontology Analysis">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">6. Gene Ontology Analysis</span></span>
+      <a href="../Human/2_GeneExpression_hca.html" class="pagination-link" aria-label="2. Gene Expression in esophagus HCA dataset&quot;">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">2. Gene Expression in esophagus HCA dataset”</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="../Human/4_clones_UMAP_mapping_hca.html" class="pagination-link" aria-label="4. Mapping genotype-to-phenotype">
+        <span class="nav-page-text"><span class="chapter-title">4. Mapping genotype-to-phenotype</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav>
 </div> <!-- /content -->
