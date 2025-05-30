@@ -1,20 +1,12 @@
----
-title: "1 - Inspection of HCA seurat object"
-format:
-  html:
-    toc: true
-jupyter:
-  kernel: python3
-fig-show: hold
-execute:
-  eval: false
-author: Alba Mendez Alejandre
-date: 02-2025
----
+<!-- author: Alba Mendez Alejandre
+date: 02-2025 -->
 
-# Import libraries
+
+# 4. Mapping genotype-to-phenotype 
+
+## Import libraries
 ```{r}
-
+#| fold: true
 .libPaths("/home/albax/miniforge3/envs/seurat_v4/lib/R/library")
 
 if(.Platform$OS.type == "linux") Sys.setenv(PATH= paste("/home/albax/miniforge3/envs/seurat_v4/lib",Sys.getenv()["PATH"],sep=";"))
@@ -77,7 +69,7 @@ umap_df$cell_id <- rownames(umap_df)
 
 ```
 
-# A. Plot mutated gene
+## 4.1. Plot mutated gene
 
 ```{r}
 
@@ -186,7 +178,7 @@ plot_cells_w_mutated_gene_df(hca_esoph, c("KRAS"), umap_df, output_dir = "clone_
 ```
 
 
-# B. Plot clone
+## 4.2. Plot clone
 
 ```{r}
 plot_cells_w_mutated_clone_df <- function(seurat_obj, clone_name, umap_df, output_dir = NULL) {

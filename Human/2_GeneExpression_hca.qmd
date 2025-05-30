@@ -3,7 +3,7 @@
 
 ## Import libraries
 ```{r}
-
+#| fold: true
 .libPaths("/home/albax/miniforge3/envs/seurat_v4/lib/R/library")
 
 if(.Platform$OS.type == "linux") Sys.setenv(PATH= paste("/home/albax/miniforge3/envs/seurat_v4/lib",Sys.getenv()["PATH"],sep=";"))
@@ -101,26 +101,20 @@ generate_plotly_boxplot_ggplot2 <- function(data_table, col_to_plot) {
 # Grouped gene expression
 We are going to calculate the average expression os specific sets of genes. For that, we are going to do:
 
-"Avg_expression_per_cell_epi_genes" es la expresión media normalizada por célula de TODOS los genes del epi panel (drivers).
-
-"Avg_expression_per_cell_all_mut_genes" es la expresión media normalizada por célula de TODOS los genes que se encuentran mutados (incluidos drivers, dupluicated...).
-
-"Avg_expresion_per_cell_epi_mut_genes" es la expresión media normalizada por célula de los genes drivers del epi panel que se encuentran mutados
-
 - All *mutated* genes + all genes 
 - common cancer *mutated* genes + common cancer genes
 - intOGen *mutated* genes + intogen genes
 
-1. Calcular la expresión media por gen mutado -> Avg_expression_per_gene_all_mut_genes
-2. Calcular la expresión media por gen driver (mutado o no) de common cancer -> Avg_expression_common_cancer_genes
-3. Calcular la expresión media por gen mutado de intOGen -> Avg_expression_intogen_mut_genes
+1. Calculate the average expression per mutated gene -> Avg_expression_per_gene_all_mut_genes
+2. Calculate the average expression per driver gene (motated or not) from common cancer -> Avg_expression_common_cancer_genes
+3. Calculate the average expression per mutated gene from intOGen database -> Avg_expression_intogen_mut_genes
 
-Para calcular los gene expression plots, vamos a recapitular:
-- @assays$RNA@counts -> contiene los raw counts
-- @assays$RNA@data -> contiene los log1p counts = log(1 + x). Esta transofrmación se hace en datasets que contienen muchos numeros pequeños, cercanos a 0 (skewed data).
-- @assays$RNA@scale.data -> contiene Z-scored (mean=0, sd=1) expression values, typically after regressing out unwanted. For visualization in PCA or UMAP. 
-
-
+::: {.callout-note}
+# Remember:
+- @assays$RNA@counts -> contains raw counts
+- @assays$RNA@data -> contains log1p counts = log(1 + x). This transformation is done in datasets with a lot of small values, near 0 (skewed data).
+- @assays$RNA@scale.data -> contains Z-scored (mean=0, sd=1) expression values, typically after regressing out unwanted. For visualization in PCA or UMAP. 
+:::
 
 ```{r}
 mutated_genes <- read.table("/home/albax/dario_TFM/singlecell/gene_expression/mutated_genes_hca.txt", sep = "\t", header = TRUE)
@@ -131,7 +125,7 @@ colnames(mutated_genes)
 
 
 ## 2.1. Average gene expression
-Esta es la version definitiva que vamos a utilizar, con python. La idea es tener 3 "vectores", de tal forma que construyamos una tabla tal que: 
+The idea is to have three vectors, so that we construct a table: 
     | mutated_genes_scomatic | cancer_panel_genes | mutated_cancer_panel_genes  |
 genA |  0.32167 |
 genB | 1.219486 |
@@ -140,12 +134,13 @@ genD | 1.12442 |
 ...  | ...
 
 
-Cada valor es el promedio de expresión de ese gen a lo largo de todas las células donde se expresan, es decir, a lo largo de todas las células que tengan una expresión !=0 de ese gen. Así, ocnseguimos solo un vector, que es un vector promedio. 
+Each value is the average expressino of that gene across all the cells where they express, that means, across all the cells that contain a expression of !=0 for that gene. This way, we obtain a single vector, which is the average.
 
-Ejemplo: el p53 lo calcula para todas las células donde se expresa p53 (!=0). 
+Example: the p53 is calculates for all the cells where p53 is expressed (!=0). 
 
 
 ```{python}
+#| fold: true
 import itertools
 import numpy as np
 import pandas as pd
@@ -164,11 +159,8 @@ from scipy.sparse import csr_matrix
 
 ```
 
-### i. Save norlamized counts matrix 
-```{python}
-# (code in line 179 of notebook "1_hca_esoph_inspection"")
-
-```
+### i. Save normalized counts matrix 
+See @sec-save-norm-counts to view the code used.
 
 ### ii. Read only Epi cells matrix
 ```{python}
@@ -246,7 +238,7 @@ merged_df = pd.merge(merged_df, avg_expr_df_common_cancer_mut, on="gene", how="o
 ### iv. ViolinPlot for expression of each subset
 
 ```{python}
-melted_df = merged_df.melt(id_vars=["gene"], value_vars=("avg_expr_per_gene_common_cancer","avg_expr_per_gene_somatic_mut",  "avg_expr_per_gene_common_cancer_mut"),                          var_name="gene_group", value_name="Expression")
+melted_df = merged_df.melt(id_vars=["gene"], value_vars=("avg_expr_per_gene_common_cancer","avg_expr_per_gene_somatic_mut",  "avg_expr_per_gene_common_cancer_mut"), var_name="gene_group", value_name="Expression")
 
 plt.figure(figsize=(4, 8))
 sns.violinplot(data=melted_df, x="gene_group", y="Expression", orient="v", log_scale=False, cut=0)
@@ -274,9 +266,7 @@ cancer_expr = avg_expr_df_common_cancer["avg_expr_per_gene_common_cancer"].tolis
 # less: distribution underlying x is stochastically less than the distribution underlying y [mannwhitneyu(x,y)]
 mannwhitneyu(cancer_expr, mut_scomatic, alternative = "less") # MannwhitneyuResult(statistic=np.float64(42726.0), pvalue=np.float64(0.0008325722309072082))
 
-
 cancer_mut_expr = avg_expr_df_common_cancer_mut["avg_expr_per_gene_common_cancer_mut"].tolist()
 mannwhitneyu(cancer_mut_expr, mut_scomatic, alternative = "less") # MannwhitneyuResult(statistic=np.float64(9744.5), pvalue=np.float64(0.7028241416624055))
 
 ```
-

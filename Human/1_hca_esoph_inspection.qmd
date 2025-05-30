@@ -1,9 +1,10 @@
 # 1. Inspection of HCA seurat object"
+This is a scarce notebook with a couple analysis, just for visualization purposes. 
 
 
 ## Import libraries
-```{r}
-
+```{r, }
+#| fold: true
 .libPaths("/home/albax/miniforge3/envs/seurat_v4/lib/R/library")
 
 if(.Platform$OS.type == "linux") Sys.setenv(PATH= paste("/home/albax/miniforge3/envs/seurat_v4/lib",Sys.getenv()["PATH"],sep=";"))
@@ -43,13 +44,6 @@ projectPath <- setwd("/home/albax/human_esophagus") # where we are
 ## Load rds object
 
 ```{r}
-# hca_esoph <- readRDS(file = "./data/hca_esoph_with_annotations.rds")
-# hca_esoph <- UpdateSeuratObject(hca_esoph)
-# hca_esoph
-
-# hca_esoph_com <- readRDS(file = "./data/myesoph_norm_dim.rds")
-# hca_esoph_com
-
 my_esoph <- readRDS("./data/hca_myesoph.rds")
 my_esoph
 
@@ -60,16 +54,9 @@ my_esoph
 
 ### MALAT1
 
-As shown in https://www.biorxiv.org/content/10.1101/2024.07.14.603469v2 and https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-024-11015-5 , low levels of MALAT1 might indicate empty droplets or poor quality cells, as it is a nuclear marker, so its absence indicates cells lacking a nucleus. Therefore, low expression of MALAT1 might indicate low-quality cells. 
+As shown in https://www.biorxiv.org/content/10.1101/2024.07.14.603469v2 and https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-024-11015-5 , low levels of MALAT1 might indicate empty droplets or poor quality cells, as it is a nuclear marker, so its absence indicates cells lacking a nucleus. Therefore, low expression of MALAT1 might indicate low-quality cells. The authors recommend to observe MALAT1 distribution (violinplot or density plot) and in parallel the nCount and % of intronic counts...
 
-mirar la distribución de Malat1 (violinplot o density plot) y en paralelo la de nCount y % de intronic counts...
-Para esto último, dicen que ellos usan un paquete de R llamado DropletQC... to remove empty droplets based on intronic content, pero que básicamente mira:
-- intronic proportion in each cell from bam file.
-- threshold on empty droplet detected cells.
-- detect damaged cells.
-Pero que de todas formas al haber implementado RNA velocity, segruamente no necesitemos ni aplicarlo, que basta con mirar la distribución del % de nCount_unspliced y en este caso parece bastante claro que esas células están dañadas y se pueden quitar....
-De todas formas, para lo que a nosotros nos interesa, a estas alturas de la película creo que se queda más como una cosa testimonial, para tener en cuenta de cara al futuro...
-
+As RNA velocity has already been implemented, we don't need to apply all that, it is enough by looking at the distributioni of the % nCount_unspliced. 
 
 
 ```{r}
@@ -79,7 +66,7 @@ FeaturePlot(my_esoph, features = c("MALAT1"), split.by = "Donor") & scale_y_cont
 
 ```
 
-it doesn't look like there are low-quality cells anywhere
+it doesn't look like there are low-quality cells anywhere. 
 
 ## 1.2. DE genes for specific cells
 
@@ -100,4 +87,33 @@ markers_CB <- FindMarkers(hca_esoph, ident.1 = cbs_lista$V1, ident.2 = rest_CBs)
 significant_genes <- markers_CB[markers_CB$p_val_adj < 0.05 & abs(markers_CB$avg_log2FC) < 0, ]
 # log2FC > 0 means that the gene is more highly expressed in ident.1 (group 1) compared to ident.2 (group 2).
 
+```
+
+## 1.3. Save normalized counts matrix {#sec-save-norm-counts}
+
+```{r}
+# normalized matrix counts
+norm_counts <- my_esoph[["RNA"]]@data # columns are cells and rows are genes, not sure if RNA has SCT ransformed counts
+
+metadata <- my_esoph@meta.data # 68173 total cells
+epi_cells <- rownames(metadata[grep("^Epi", metadata$Celltypes_updated_July_2020), ]) # 61214 epi cells
+norm_counts_epi <- norm_counts[, epi_cells]
+
+# Matrix::writeMM(norm_counts, file = "matrix_counts/hca_corrected_counts_matrix.mtx")
+# Matrix::writeMM(norm_counts_epi, file = "matrix_counts/hca_corrected_counts_matrix_Epi.mtx")
+
+cells_296C <- colnames(my_esoph)[my_esoph$Donor == "296C"] # matrix for only Donor = 296C
+norm_counts_296 <- norm_counts[, cells_296C]
+
+# Save the row names (gene names)
+write.table(rownames(norm_counts), file = "matrix_counts/gene_names.txt", 
+            row.names = FALSE, col.names = FALSE, quote = FALSE)
+
+# Save the column names (cell names)
+write.table(colnames(norm_counts), file = "matrix_counts/cell_names.txt", 
+            row.names = FALSE, col.names = FALSE, quote = FALSE)
+
+# Save the column names (cell names) that are only epithelial cells
+write.table(colnames(norm_counts_296), file = "matrix_counts/cell_names_296C.txt", 
+        row.names = FALSE, col.names = FALSE, quote = FALSE)   
 ```
